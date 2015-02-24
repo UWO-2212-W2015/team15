@@ -31,13 +31,6 @@ class Location {
 	builder.append(country);
 	this.httpLocation = builder.toString();
     } 
-   
-    String parseUserSearch (String toParse){
-	String stemp = toParse;
-	//Remove spaces and replace with commas
-	stemp = stemp.replace(" ", ",");
-	return stemp;
-    }
 
     String getHttpLocation (){
 	return httpLocation;
