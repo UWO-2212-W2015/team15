@@ -1,10 +1,10 @@
-package weatherApp;
-
 public class ShortTermForecast extends Weather{
 
 	/*not sure if the times here is an array */
 	String[] times;
 	String[] precipitation_3h;
+	
+	Weather weather = new Weather();
 	
 	//counter for getTimes()
 	private int counter=0;
