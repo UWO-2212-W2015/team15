@@ -1,9 +1,9 @@
-package weatherApp;
-
 public class CurrentForecast extends Weather{
 
 	String date;
 	String precipitation_24h;
+	
+	Weather weather = new Weather();
 	
 	public CurrentForecast(){
 
@@ -25,5 +25,6 @@ public class CurrentForecast extends Weather{
 		return date;
 	
 	}
-
+	
 }
+
