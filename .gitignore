@@ -44,3 +44,6 @@ Temporary Items
 
 #Maven build directory
 target/
+
+#Class files
+*.class
