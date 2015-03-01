@@ -1,0 +1,5 @@
+class mike_main{
+    public static void main (String[] args){
+	Location loc = new Location("Toronto");
+    }
+}

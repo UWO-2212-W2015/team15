@@ -6,6 +6,9 @@ class Location {
     String country;
     String httpLocation;
     int latitude, longitude;
+
+    Forecast currentF = new CurrentForecast();
+    
     
     Location (String searchString){
 	this.userSearch = searchString;
