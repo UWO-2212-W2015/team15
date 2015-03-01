@@ -1,16 +1,22 @@
-import java.io.IOException;
+package team15;
 
+import java.io.IOException;
+import javax.swing.JFrame;
 import org.json.JSONException;
 
 
 public class Main {
 	public static void main(String[] args) throws IOException, JSONException {
+	    
+		/* This is instantiated because of Mars */ WeatherBuilder c = new WeatherBuilder("London,ca");
 		
-		WeatherBuilder c = new WeatherBuilder("London,ca");
+		/* This is the correct order to instantiate the classes */
+		Location location = new Location("London","ca");
+		Forecast forecast = location.forecast;
 		
 		/* Current weather */
-		Weather londonCurrentWeather = new Weather();
-		londonCurrentWeather = c.buildCurrent();
+		CurrentForecast londonCurrentForecast = forecast.current;
+		Weather londonCurrentWeather = londonCurrentForecast.weather;
 		
 		System.out.println("Current Weather:");
 		System.out.println("Temperature: "+londonCurrentWeather.temperature[0]);
@@ -27,8 +33,8 @@ public class Main {
 		System.out.println("icon: "+londonCurrentWeather.icon[0]+"\n");
 	
 		/* Short Term */
-		Weather londonShortTerm = new Weather();
-		londonShortTerm = c.buildShortTerm();
+		ShortTermForecast londonShortForecast = forecast.shortTerm;
+		Weather londonShortTerm = londonShortForecast.weather;
 		
 		System.out.println("Short Term:");
 		System.out.println("Temperature: "+londonShortTerm.temperature[0]+"->"+londonShortTerm.temperature[1]+"->"+londonShortTerm.temperature[2]+"...");
@@ -37,8 +43,8 @@ public class Main {
 		System.out.println("icon: "+londonShortTerm.icon[0]+"->"+londonShortTerm.icon[1]+"->"+londonShortTerm.icon[2]+"..."+"\n");
 		
 		/* Long Term */
-		Weather londonLongTerm = new Weather();
-		londonLongTerm = c.buildLongTerm();
+		LongtermForecast londonLongForecast = forecast.longterm;
+		Weather londonLongTerm = londonLongForecast.weather;
 		
 		System.out.println("Long Term:");
 		System.out.println("Temperature: "+londonLongTerm.temperature[0]+"->"+londonLongTerm.temperature[1]+"->"+londonLongTerm.temperature[2]+"...");
@@ -47,7 +53,7 @@ public class Main {
 		System.out.println("Sky Condition: "+londonLongTerm.skyCondition[0]+"->"+londonLongTerm.skyCondition[1]+"->"+londonLongTerm.skyCondition[2]+"...");
 		System.out.println("Icon: "+londonLongTerm.icon[0]+"->"+londonLongTerm.icon[1]+"->"+londonLongTerm.icon[2]+"..."+"\n");
 
-		/* Mars */
+		/* Mars ???? */
 		Weather marsCurrentWeather = new Weather();
 		marsCurrentWeather = c.buildMarsWeather();
 		
@@ -60,5 +66,15 @@ public class Main {
 		System.out.println("Sky condition: "+marsCurrentWeather.skyCondition[0]);
 		System.out.println("time: "+marsCurrentWeather.time[0]);
 		System.out.println("icon: "+marsCurrentWeather.icon[0]+"\n");
+		
+	    /* Now we need to put the frame and the information above together...*/
+		
+		/* GUI...*/
+	    JFrame frame = new LocalWeather();
+	    frame.setVisible(true);
+	    frame.setResizable(false);
+	    //Close frame
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
 	}
 }

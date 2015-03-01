@@ -1,3 +1,5 @@
+package team15;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -6,7 +8,7 @@ public class WeatherBuilder extends JSONObject{
 	
 	JSONFetcher json = new JSONFetcher();
 	
-	Weather weather = new Weather();
+	Weather weather;
 	private Object weatherInformation = new Object();
 	private String[] parts = new String[10];
 	
@@ -19,6 +21,7 @@ public class WeatherBuilder extends JSONObject{
 	
 	/* Current Weather */
 	public Weather buildCurrent(){
+		weather = new Weather();
 		JSONObject currentWeather = json.getCurrentWeather(location);
 		
 		/* main */
@@ -114,6 +117,7 @@ public class WeatherBuilder extends JSONObject{
 	
 	/* Short Term */
 	public Weather buildShortTerm(){
+		weather = new Weather();
 		JSONObject shortTerm = json.get3HourForecast(location);
 		int cont, lastIndex;
 		
@@ -178,6 +182,7 @@ public class WeatherBuilder extends JSONObject{
 	
 	/* Long term */
 	public Weather buildLongTerm(){
+		weather = new Weather();
 		JSONObject longTerm = json.getDailyForecast(location);
 		int cont, lastIndex;
 		
@@ -280,6 +285,7 @@ public class WeatherBuilder extends JSONObject{
 	
 	/* Mars Current Weather*/
 	public Weather buildMarsWeather(){
+		weather = new Weather();
 		JSONObject marsWeather = json.getMarsJason();
 		int lastIndex;
 		
@@ -397,3 +403,4 @@ public class WeatherBuilder extends JSONObject{
 		return weather;
 	}
 }
+

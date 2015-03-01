@@ -1,3 +1,5 @@
+package team15;
+
 public class Weather {
 	String[] temperature = new String[8];
 	String[] windSpeed = new String[8];

@@ -1,10 +1,12 @@
-package weatherApp;
+package team15;
 
 public class LongtermForecast extends Weather{
 
 		/*not sure if the times here is an array */
 		String[] days;
 		String[] precipitation;
+		
+		Weather weather = new Weather();
 		
 		//counter for getTimes()
 		private int counter=0;
@@ -33,9 +35,7 @@ public class LongtermForecast extends Weather{
 			 	return null;
 			
 		}
-
-
 		
-	}
-
 }
+
+

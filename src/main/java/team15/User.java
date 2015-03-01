@@ -1,4 +1,10 @@
+<<<<<<< HEAD:src/User.java
 import java.util.ArrayList;
+=======
+package team15;
+
+import java.util.List;
+>>>>>>> 5d93f0f532c5d11f32c0c048362055eb01906b22:src/main/java/team15/User.java
 
 class User {
 
@@ -20,12 +26,17 @@ class User {
 	return name;
     }
     
+<<<<<<< HEAD:src/User.java
     ArrayList<Location> getLocationList(){
 	return locList;
     }
     
     void setCurrentLoc (Location loc){
 	currentLocation = loc;
+=======
+    Location getLocations(){
+        return null; //Stub
+>>>>>>> 5d93f0f532c5d11f32c0c048362055eb01906b22:src/main/java/team15/User.java
     }
 
     Location getCurrentLocation(){
