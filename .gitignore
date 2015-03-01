@@ -47,3 +47,9 @@ target/
 
 #Class files
 *.class
+
+#Mike's personal files
+*mike*
+
+#Emacs temp files
+#*
