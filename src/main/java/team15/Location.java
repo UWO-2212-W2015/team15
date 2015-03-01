@@ -1,3 +1,5 @@
+package team15;
+
 class Location {
     String userSearch;
     String city;
@@ -6,9 +8,13 @@ class Location {
     String httpLocation;
     int latitude, longitude;
     
+    Forecast forecast;
+
     Location (String searchString){
-	this.userSearch = searchString;
-	this.httpLocation = userSearch.replace(" ", ",");
+    	this.userSearch = searchString;
+    	this.httpLocation = userSearch.replace(" ", ",");
+    	System.out.println(getHttpLocation());
+    	forecast = new Forecast(getHttpLocation());
     }
 
     Location (String city, String country){
@@ -18,6 +24,7 @@ class Location {
 	builder.append(",");
 	builder.append(country);
 	this.httpLocation = builder.toString();
+	forecast = new Forecast(getHttpLocation());
     }
 
     Location (String city, String province, String country){
@@ -30,6 +37,7 @@ class Location {
 	builder.append(",");
 	builder.append(country);
 	this.httpLocation = builder.toString();
+	forecast = new Forecast(getHttpLocation());
     } 
 
     String getHttpLocation (){
@@ -37,4 +45,3 @@ class Location {
     }
 }
 
-    

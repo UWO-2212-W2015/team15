@@ -1,3 +1,7 @@
+package team15;
+
+import java.util.List;
+
 class User {
 
     String name;
@@ -12,6 +16,7 @@ class User {
     }
     
     Location getLocations(){
+        return null; //Stub
     }
 
     void addLocation(){
