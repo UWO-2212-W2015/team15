@@ -3,7 +3,7 @@ package team15;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class mike_main {
+public class Main {
     public static void main (String[] args){
 	User mike = new User ("Mike");
 	mike.addLocation ("Toronto Canada");
