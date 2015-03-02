@@ -35,7 +35,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private int temperature = 19;
 	private String temperatureString = "" + temperature;
 	private JLabel tempNumber = new JLabel (temperatureString);
-	private JLabel tempScaleLabel = new JLabel ("°c");
+	private JLabel tempScaleLabel = new JLabel ("c");
 	private JTable table;
 	private JLabel locationLabel_1;
 	private boolean tempBool = true;
@@ -194,13 +194,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if (action.equals("c") && tempBool == false) {
-			this.tempScaleLabel.setText("°c");
+			this.tempScaleLabel.setText("c");
 			this.temperature = (this.temperature-30)/2;
 			this.temperatureString = ""+temperature;
 			this.tempNumber.setText(temperatureString);
 			tempBool = true;
 		} else if (action.equals("f") && tempBool == true){
-			this.tempScaleLabel.setText("°f");
+			this.tempScaleLabel.setText("f");
 			this.temperature = (this.temperature*2)+30;
 			this.temperatureString = ""+temperature;
 			this.tempNumber.setText(temperatureString);
