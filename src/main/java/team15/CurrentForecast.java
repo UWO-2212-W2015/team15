@@ -1,32 +1,14 @@
 package team15;
 
-public class CurrentForecast extends Weather{
+public class CurrentForecast extends Forecast{
+    Weather weather;
 
-	String date;
-	String precipitation_24h;
-	
-	Weather weather = new Weather();
-	
-	public CurrentForecast(){
+    public void updateForecast (String loc){
+	weather = wb.buildCurrent(loc);
+    }
 
-		super();
-		date = time[0];
-	}
-		
-	 
-
-	//what is that method supposed to do?
-	public void updateDate(){
-
-		date=time[0];
-		
-	}
-	
-	public String getDate(){
-		
-		return date;
-	
-	}
-	
+    public Weather getWeatherObject (){
+	return weather;
+    }
 }
 

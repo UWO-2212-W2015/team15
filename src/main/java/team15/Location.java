@@ -1,6 +1,7 @@
 package team15;
+import java.util.ArrayList;
 
-class Location {
+public class Location {
     static int locID = 0;
     String userSearch;
     String city;
@@ -9,15 +10,16 @@ class Location {
     String httpLocation;
     int latitude, longitude;
     
-    Forecast forecast;
+    CurrentForecast currentForecast = new CurrentForecast();
+    ShortTermForecast shortTermForecast = new ShortTermForecast();
 
-    Location (String searchString){
+    public Location (String searchString){
 	this.userSearch = searchString;
 	this.httpLocation = userSearch.replace(" ", ",");
 	locID++;
     }
 
-    Location (String city, String country){
+    public Location (String city, String country){
 	this.city = city;
 	this.country = country;
         StringBuilder builder = new StringBuilder(city);
@@ -27,7 +29,7 @@ class Location {
 	locID++;
     }
 
-    Location (String city, String province, String country){
+    public Location (String city, String province, String country){
     	this.city = city;
 	this.province = province;
 	this.country = country;
@@ -40,20 +42,30 @@ class Location {
 	locID++;
     } 
 
-    String getHttpLocation (){
+    public String getHttpLocation (){
 	return httpLocation;
     }
 
-    String getCityName(){
+    public String getCityName(){
 	return city;
     }
 
-    String getCountry(){
+    public String getCountry(){
 	return country;
     }
 
-    String getProvince() {
+    public String getProvince() {
 	return province;
+    }
+
+    public Weather getCurrentForecast (){
+	currentForecast.updateForecast(this.httpLocation);
+	return currentForecast.getWeatherObject();
+    }
+
+    public ArrayList <Weather> getShortTermForecast(){
+	shortTermForecast.updateForecast (this.httpLocation);
+	return shortTermForecast.getWeatherList();
     }
 }
 
