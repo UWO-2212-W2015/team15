@@ -54,3 +54,6 @@ target/
 #Emacs temp files
 \#*
 .#*
+
+#gedit temp files
+*~
