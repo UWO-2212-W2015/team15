@@ -1,7 +1,5 @@
 package team15;
 
-import javafx.stage.WindowEvent;
-
 import javax.swing.*;
 
 import java.awt.BorderLayout;
