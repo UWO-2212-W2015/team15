@@ -2,405 +2,178 @@ package team15;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
+import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 
 public class WeatherBuilder extends JSONObject{
 	
-	JSONFetcher json = new JSONFetcher();
+    JSONFetcher json = new JSONFetcher();
 	
-	Weather weather;
-	private Object weatherInformation = new Object();
-	private String[] parts = new String[10];
+    //Weather weather;
+    private Object weatherInformation = new Object();
+    private String[] parts = new String[10];
+    private static String[] mainKeys = {"temp", "temp_min", "temp_max", "pressure", "humidity"};
 	
-	String location;
-	/* Constructor */
-	public WeatherBuilder(String region){;
-		location = region;
-		/* Do we need anything else here? */
+    String location;
+    /*
+      public WeatherBuilder(String region){;
+      location = region;
+      }
+    */	
+    /* Current Weather */
+    public Weather buildCurrent(String location){
+	Weather weather = new Weather();
+	JSONObject currentWeather = json.getCurrentWeather(location);
+		
+	/* main */
+	try {
+	    weatherInformation = currentWeather.get("main");
+	} catch (JSONException e) {
+	    e.printStackTrace();
 	}
-	
-	/* Current Weather */
-	public Weather buildCurrent(){
-		weather = new Weather();
-		JSONObject currentWeather = json.getCurrentWeather(location);
+	parts = weatherInformation.toString().split("[\\:,}]");
 		
-		/* main */
-		try {
-			weatherInformation = currentWeather.get("main");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		parts = weatherInformation.toString().split("[\\:,}]");
+	/* Temperature */
+	weather.temperature = parts[1];
 		
-		/* Temperature */
-		weather.temperature[0] = parts[1];
+	/* Humidity */
+	weather.humidity = parts[5];
 		
-		/* Humidity */
-		weather.humidity[0] = parts[5];
+	/* Air pressure */
+	weather.airPressure = parts[7];
 		
-		/* Air pressure */
-		weather.airPressure[0] = parts[7];
+	/* Minimum temperature */
+	weather.minTemp = parts[3];
 		
-		/* Minimum temperature */
-		weather.minTemp[0] = parts[3];
+	/* Maximum temperature */
+	weather.maxTemp = parts[13];
 		
-		/* Maximum temperature */
-		weather.maxTemp[0] = parts[13];
-		
-		/* wind */
-		try {
-			weatherInformation = currentWeather.get("wind");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-		
-		/* Wind speed */
-		weather.windSpeed[0] = parts[3];
-		
-		/* Wind direction */
-		weather.windDirection[0] = parts[1];
-		
-		/* Weather */
-		try {
-			weatherInformation = currentWeather.get("weather");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-		
-		/* Sky condition */
-		weather.skyCondition[0] = parts[3];
-		
-		/* Icon */
-		String findStr = "\"" + "icon" +"\"" + ":"+"\"";
-		int lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		   lastIndex+=findStr.length();
-		}
-		String partOfIt;
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		String[] split;
-		split = partOfIt.split("\"");
-		parts[0] = split[0];
-		weather.icon[0] = parts[0];
-		
-		/* sys */
-		try {
-			weatherInformation = currentWeather.get("sys");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-		
-		/* Sunrise */
-		weather.sunrise[0] = parts[3];
-		
-		/* Sunset */
-		weather.sunset[0] = parts[5];
-		
-		/* Time ????*/
-		try {
-			weatherInformation = currentWeather.get("sys");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		parts = weatherInformation.toString().split("[\\:,}]");
-		weather.time[0] = parts[5];
-		
-		return weather;
+	/* wind */
+	try {
+	    weatherInformation = currentWeather.get("wind");
+	} catch (JSONException e) {
+	    e.printStackTrace();
 	}
-	
-	/* Short Term */
-	public Weather buildShortTerm(){
-		weather = new Weather();
-		JSONObject shortTerm = json.get3HourForecast(location);
-		int cont, lastIndex;
+	parts = weatherInformation.toString().split("[\\:,}]");
 		
-		/* List */
-		try {
-			weatherInformation = shortTerm.get("list");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+	/* Wind speed */
+	weather.windSpeed = parts[3];
 		
-		/* Temperature */
-		String findStr = "\"" + "temp" +"\"" + ":";
-		lastIndex = 0;
-		for(cont = 0; cont < 8; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+8);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.temperature[cont] = split[0];
-		}
+	/* Wind direction */
+	weather.windDirection = parts[1];
 		
-		/* Sky Condition */
-		findStr = "\"" + "description" +"\"" + ":";
-		lastIndex = 0;
-		for(cont = 0; cont < 8; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+18);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.skyCondition[cont] = split[0];
-		}
-		/* Icon */
-		findStr = "\"" + "icon" +"\"" + ":" + "\"";
-		lastIndex = 0;
-		for(cont = 0; cont < 8; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+3);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.icon[cont] = split[0];
-		}
-		return weather;
+	/* Weather */
+	try {
+	    weatherInformation = currentWeather.get("weather");
+	} catch (JSONException e) {
+	    e.printStackTrace();
 	}
-	
-	/* Long term */
-	public Weather buildLongTerm(){
-		weather = new Weather();
-		JSONObject longTerm = json.getDailyForecast(location);
-		int cont, lastIndex;
+	parts = weatherInformation.toString().split("[\\:,}]");
 		
-		/* List */
-		try {
-			weatherInformation = longTerm.get("list");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+	/* Sky condition */
+	weather.skyCondition = parts[3];
 		
-		/* Temperature */
-		String findStr = "\"" + "day" +"\"" + ":";
-		lastIndex = 0;
-		for(cont = 0; cont < 5; cont++){
+	/* Icon */
+	String findStr = "\"" + "icon" +"\"" + ":"+"\"";
+	int lastIndex = 0;
 
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
+	lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
 
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+8);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.temperature[cont] = split[0];
-		}
-		
-		/* Minimum Temperature */
-		findStr = "\"" + "min" +"\"" + ":";
-		lastIndex = 0;
-		
-		for(cont = 0; cont < 5; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+8);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.minTemp[cont] = split[0];
-		}
-		
-		/* Maximum Temperature */
-		findStr = "\"" + "max" +"\"" + ":";
-		lastIndex = 0;
-		
-		for(cont = 0; cont < 5; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+8);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.maxTemp[cont] = split[0];
-		}
-		
-		/* Sky Condition */
-		findStr = "\"" + "description" +"\"" + ":";
-		lastIndex = 0;
-		
-		for(cont = 0; cont < 5; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+18);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.skyCondition[cont] = split[0];
-		}
-		
-		/* Icon */
-		findStr = "\"" + "icon" +"\"" + ":" + "\"";
-		lastIndex = 0;
-		for(cont = 0; cont < 5; cont++){
-
-		       lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		       if( lastIndex != -1){
-		             lastIndex+=findStr.length();
-		       }
-		       String partOfIt;
-			   partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+3);
-			   String[] split;
-			   split = partOfIt.split(",");
-			   weather.icon[cont] = split[0];
-		}
-		return weather;
+	if( lastIndex != -1){
+	    lastIndex+=findStr.length();
 	}
-	
-	/* Mars Current Weather*/
-	public Weather buildMarsWeather(){
-		weather = new Weather();
-		JSONObject marsWeather = json.getMarsJason();
-		int lastIndex;
+	String partOfIt;
+	partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
+	String[] split;
+	split = partOfIt.split("\"");
+	parts[0] = split[0];
+	weather.icon = parts[0];
 		
-		/* Report */
-		try {
-			//System.out.println(marsWeather);
-			weatherInformation = marsWeather.get("report");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		/* Temperature */
-		String findStr = "\"" + "max_temp" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		String partOfIt;
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+2);
-		String[] split;
-		split = partOfIt.split(",");
-		weather.temperature[0] = split[0];
-		
-		
-		/* Wind Speed */
-		findStr = "\"" + "wind_speed" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		split = partOfIt.split(",");
-		weather.windSpeed[0] = split[0];
-				
-		/* Wind direction */
-		findStr = "\"" + "wind_direction" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		split = partOfIt.split(",");
-		weather.windDirection[0] = split[0];
-		
-		/* Air pressure */
-		findStr = "\"" + "pressure" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		split = partOfIt.split(",");
-		weather.airPressure[0] = split[0];
-		
-		/* Humidity */
-		findStr = "\"" + "abs_humidity" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		split = partOfIt.split(",");
-		weather.humidity[0] = split[0];	
-		
-		/* Sky condition */
-		findStr = "\"" + "atmo_opacity" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+9);
-		split = partOfIt.split(",");
-		weather.skyCondition[0] = split[0];
-		
-		/* time???? */
-		
-		/* Icon ???? */
-		findStr = "\"" + "atmo_opacity" +"\"" + ":";
-		lastIndex = 0;
-
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-
-		if( lastIndex != -1){
-		     lastIndex+=findStr.length();
-		}
-		
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+9);
-		split = partOfIt.split(",");
-		weather.icon[0] = split[0];
-		
-		return weather;
+	/* sys */
+	try {
+	    weatherInformation = currentWeather.get("sys");
+	} catch (JSONException e) {
+	    e.printStackTrace();
 	}
+	parts = weatherInformation.toString().split("[\\:,}]");
+		
+	/* Sunrise */
+	weather.sunrise = parts[3];
+		
+	/* Sunset */
+	weather.sunset = parts[5];
+		
+	/* Time ????*/
+	try {
+	    weatherInformation = currentWeather.get("dt");
+	} catch (JSONException e) {
+	    e.printStackTrace();
+	}
+		
+	parts = weatherInformation.toString().split("[\\:,}]");
+	weather.time = new GregorianCalendar();
+	weather.time.setTimeInMillis((long)Integer.parseInt(parts[0])*1000);
+	
+	return weather;
+    } 
+
+    public ArrayList <Weather> buildShortTerm (String location){
+	ArrayList <Weather> weather = new ArrayList <Weather>();
+	JSONObject shortTerm = json.get3HourForecast(location);
+	JSONArray subArray = new JSONArray();
+	int cont, lastIndex;
+	try {
+	    //Pick out the array list
+	    subArray = shortTerm.getJSONArray("list");
+
+	    //Loop through the indices of the array
+	    for (int i = 0; i < subArray.length(); i++){
+		Weather tempW = new Weather();
+		JSONArray subArray2 = new JSONArray();
+		JSONObject tmpObj = new JSONObject();
+
+		//Pick out the json object at index i
+	        tmpObj = subArray.getJSONObject(i);
+		
+		//save the time & date
+		weatherInformation = tmpObj.get("dt");
+		tempW.time = new GregorianCalendar();
+		tempW.time.setTimeInMillis((long)Integer.parseInt(weatherInformation.toString())*1000);
+		
+		//Pick out the main json
+		tmpObj = tmpObj.getJSONObject("main");
+
+		//Loop through the keys to pick out values !!! we dont NEED all the keys, but we can go above the min?
+		for (int key = 0; key < mainKeys.length; key++){
+
+		    weatherInformation = tmpObj.get(mainKeys[key]);
+
+		    switch(key) {
+		    case 0: tempW.temperature = weatherInformation.toString();
+			break;
+		    case 1: tempW.minTemp = weatherInformation.toString();
+			break;
+		    case 2: tempW.maxTemp = weatherInformation.toString();
+			break;
+		    case 3: tempW.airPressure = weatherInformation.toString();
+			break;
+		    case 4: tempW.humidity = weatherInformation.toString();
+			break;
+		    }
+		}
+
+		tmpObj = subArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
+		tempW.skyCondition = tmpObj.get("description").toString();
+		tempW.icon = tmpObj.get("icon").toString();
+		weather.add(tempW);
+	    }
+	} catch (JSONException e) {
+	    e.printStackTrace();
+	}
+	return weather;
+    }
 }
 
