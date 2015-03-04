@@ -63,9 +63,9 @@ public class Location {
 	return currentForecast.getWeatherObject();
     }
 
-    public ArrayList <Weather> getShortTermForecast(){
+    public ArrayList <Weather> getShortTermForecast(int num){
 	shortTermForecast.updateForecast (this.httpLocation);
-	return shortTermForecast.getWeatherList();
+	return shortTermForecast.getWeatherList(num);
     }
 }
 

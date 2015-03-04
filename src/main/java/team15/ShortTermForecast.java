@@ -9,8 +9,11 @@ public class ShortTermForecast extends Forecast{
 	weatherObjs = wb.buildShortTerm(loc);
     }
 
-    public ArrayList <Weather> getWeatherList (){
-	return weatherObjs;
+    public ArrayList <Weather> getWeatherList (int num){
+	ArrayList<Weather> tempWeather = new ArrayList<Weather>();
+	for (int i = 0; i < num; i++)
+	    tempWeather.add(weatherObjs.get(i));
+	return tempWeather;
     }
 
     //getWeatherList (int how_many) -> return an arraylist the size of how_many
