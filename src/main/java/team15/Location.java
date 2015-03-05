@@ -1,7 +1,11 @@
 package team15;
 import java.util.ArrayList;
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.IOException;
+import java.lang.ClassNotFoundException;
 
-public class Location {
+public class Location implements Serializable{
     static int locID = 0;
     String userSearch;
     String city;
@@ -10,8 +14,8 @@ public class Location {
     String httpLocation;
     int latitude, longitude;
     
-    CurrentForecast currentForecast = new CurrentForecast();
-    ShortTermForecast shortTermForecast = new ShortTermForecast();
+    transient CurrentForecast currentForecast = new CurrentForecast();
+    transient ShortTermForecast shortTermForecast = new ShortTermForecast();
 
     public Location (String searchString){
 	this.userSearch = searchString;
@@ -66,6 +70,14 @@ public class Location {
     public ArrayList <Weather> getShortTermForecast(int num){
 	shortTermForecast.updateForecast (this.httpLocation);
 	return shortTermForecast.getWeatherList(num);
+    }
+
+    private void readObject(ObjectInputStream ois)
+	throws IOException, ClassNotFoundException
+    {
+	ois.defaultReadObject();
+	currentForecast = new CurrentForecast();
+	shortTermForecast = new ShortTermForecast();
     }
 }
 

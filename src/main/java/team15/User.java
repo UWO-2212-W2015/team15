@@ -1,6 +1,6 @@
 package team15;
 import java.util.ArrayList;
-
+import java.io.Serializable;
 /**
  * The User object provides an api to interact with the underlying
  * weather application.  Users are identified by a unique name
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 
 
-public class User {
+public class User implements Serializable {
 
     String name;
     Location currentLocation;
@@ -101,7 +101,7 @@ public class User {
 	return w;
     }
     
-    /** Returns an {@link ArrayList} of Weather objects.  The number of Weather objects
+    /** Returns an ArrayList of Weather objects.  The number of Weather objects
      * returned need to be specified.  The temperature is converted from kelvin to celsius.
      * @param num Number of Weather objects, in 3 hours increment to be returned.
      * @return An ArrayList of Weather objects.
