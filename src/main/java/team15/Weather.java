@@ -1,5 +1,6 @@
 package team15;
 import java.util.Calendar;
+import javax.swing.ImageIcon;
 
 public class Weather {
     String temperature;
@@ -13,6 +14,6 @@ public class Weather {
     String sunrise;
     String sunset;
     Calendar time;
-    String icon;
+    ImageIcon icon;
 }
 

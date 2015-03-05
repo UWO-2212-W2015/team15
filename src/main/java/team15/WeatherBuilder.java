@@ -6,11 +6,14 @@ import org.json.JSONArray;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import javax.swing.ImageIcon;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 
 public class WeatherBuilder extends JSONObject{
 	
-    JSONFetcher json = new JSONFetcher();
+    static JSONFetcher json = new JSONFetcher();
 	
     //Weather weather;
     private Object weatherInformation = new Object();
@@ -49,7 +52,7 @@ public class WeatherBuilder extends JSONObject{
 	weather.minTemp = parts[3];
 		
 	/* Maximum temperature */
-	weather.maxTemp = parts[13];
+	weather.maxTemp = parts[3];
 		
 	/* wind */
 	try {
@@ -90,7 +93,14 @@ public class WeatherBuilder extends JSONObject{
 	String[] split;
 	split = partOfIt.split("\"");
 	parts[0] = split[0];
-	weather.icon = parts[0];
+	//weather.icon = parts[0];
+	
+	try{
+	    weather.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" 
+						 + parts[0] + ".png"));
+	}catch (MalformedURLException e){
+	    e.printStackTrace();
+	}
 		
 	/* sys */
 	try {
@@ -167,10 +177,14 @@ public class WeatherBuilder extends JSONObject{
 
 		tmpObj = subArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
 		tempW.skyCondition = tmpObj.get("description").toString();
-		tempW.icon = tmpObj.get("icon").toString();
+		//tempW.icon = tmpObj.get("icon").toString();
+		tempW.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" + 
+						   tmpObj.get("icon").toString() + ".png"));
 		weather.add(tempW);
 	    }
 	} catch (JSONException e) {
+	    e.printStackTrace();
+	} catch (MalformedURLException e){
 	    e.printStackTrace();
 	}
 	return weather;
