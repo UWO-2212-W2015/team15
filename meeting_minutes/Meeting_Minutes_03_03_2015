@@ -1,0 +1,22 @@
+Meeting Minutes - Team 15 - February 24, 2015
+
+In attendace:
+
+Amauri
+James
+Michael
+Song
+Vince
+Ziqi
+
+-Discussed finalizing requirements for stage 2
+-Decided to begin reducing the scope of the project to meet the specification requirements
+-Decided to remove Mars, multiple locations, and precipitation components
+-Ziqi and Vince to remove associated entries from Pivotal Tracker
+-Decided the User class will be the main interface for the GUI to the underlying application
+-Song and James to complete GUI for current and short term view
+-Mike to update UML once classes are finalized
+-Everyone to update classes for javadoc compatibility
+
+
+-Next meeting should discuss testing software (assigning role(s))
