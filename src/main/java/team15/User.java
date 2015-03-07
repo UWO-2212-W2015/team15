@@ -27,36 +27,36 @@ public class User implements Serializable {
      */
       
     public User (String userName){
-	name = userName;
+    	name = userName;
     }
     
     /** Returns the current user's name.
      * @return  A string containing the user's name
      */
     public String getName (){
-	return name;
+    	return name;
     }
     
     /** Returns the user's list of locations as an
 	{@link ArrayList}.
-     * @return ArrayList of the user's locations
+     * @return ArrayList of the user's locations.
      */
     public ArrayList<Location> getLocationList(){
-	return locList;
+    	return locList;
     }
     
     /** Set the current user's preferred location.
-     * @param loc A location object that specifies the user's new preferred location
+     * @param loc A location object that specifies the user's new preferred location.
      */
     public void setCurrentLoc (Location loc){
-	currentLocation = loc;
+    	currentLocation = loc;
     }
 
     /** Returns the users preferred location.
      * @return A location object that represents the user's current preferred location
      */
     public Location getCurrentLocation(){
-	return currentLocation;
+    	return currentLocation;
     }
 
     /** Add a new location to the list of user's locations.
@@ -67,38 +67,38 @@ public class User implements Serializable {
      * @param location A string specifying the user's location
      */
     public void addLocation(String location){
-	Location newLoc = new Location(location);
-	if (locList.size() == 0){
-	    currentLocation = newLoc;
-	}
-	locList.add(newLoc);
+		Location newLoc = new Location(location);
+		if (locList.size() == 0){
+		    currentLocation = newLoc;
+		}
+		locList.add(newLoc);
     }
     
     /** Allows the user to remove a specified location from their list.
      * @param loc A location object that specifies the location to remove
      */
     public void removeLocation(Location loc){
-	locList.remove(loc);
+    	locList.remove(loc);
     }
 
     /** Returns a single weather object that contains the most recent weather
      * information for the user's current preferred location.
      * The method also converts the weather's temperature to celsius.
      *
-     * @return A weather object with the most recent weather data for the current location
+     * @return A Weather object with the most recent weather data for the current location
      */
     public Weather getCurrentWeather(){
-	Weather w = currentLocation.getCurrentForecast();
-	double t = Double.parseDouble(w.temperature);
-	/* Can change the temperature units based on user's preference
-	if (userPreferences.tempUnits == false){
-	    t = t - 273.15;
-	}else{
-	    t = (t - 273.15) *1.8;
-	}
-	*/
-	w.temperature = Double.toString(t-273.15);
-	return w;
+		Weather w = currentLocation.getCurrentForecast();
+		double t = Double.parseDouble(w.temperature);
+		/* Can change the temperature units based on user's preference
+		if (userPreferences.tempUnits == false){
+		    t = t - 273.15;
+		}else{
+		    t = (t - 273.15) *1.8;
+		}
+		*/
+		w.temperature = Double.toString(t-273.15);
+		return w;
     }
     
     /** Returns an ArrayList of Weather objects.  The number of Weather objects

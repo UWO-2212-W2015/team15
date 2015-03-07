@@ -1,7 +1,6 @@
 package team15;
 import java.util.ArrayList;
 
-
 /**
  * The ShortTermForecast Class contains an array of weather for the short term forecast.
  * The weather object is built according to the user's location. It is also possible
@@ -21,7 +20,7 @@ public class ShortTermForecast extends Forecast{
 	weatherObjs = wb.buildShortTerm(loc);
     }
 
-    /** Returns an array of weather objects
+    /** Returns an array of weather objects.
      * @param num Thus parameter specifies how many forecasts 
      * for the array.
      * @return An array of Weather objects.

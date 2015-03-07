@@ -3,7 +3,7 @@ import java.util.Calendar;
 import javax.swing.ImageIcon;
 
 /**
- * The Weather class is constituted by the variables presents in the weather forecast.
+ * The Weather class is constituted by variables present in the weather forecast.
  * Even though it is a small class, it is necessary in order to have a unified class
  * which supports all kinds of weather forecast.
  *
