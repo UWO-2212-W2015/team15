@@ -1,6 +1,5 @@
 package team15;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -43,5 +42,6 @@ public class WeatherMain {
 	testCurrent = newUsr.getCurrentWeather();
 	System.out.println("Read object name: " + newUsr.getName());
 	System.out.println("Read object temp: " + testCurrent.temperature);
+	System.out.println("Read object humidity: " + testCurrent.humidity);
     }
 }

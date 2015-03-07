@@ -5,11 +5,20 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
 import javax.swing.ImageIcon;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+/**
+ * The WeatherBuilder Class is responsible for extracting the information in the 
+ * json object and building a Weather object. Variables such as temperature, humidity,
+ * condition of the sky, air direction, air speed and icon are the target. 
+ * The WeatherBuilder returns a Weather object or an array of Weather objects according 
+ * to the type of forecast.
+ *  
+ * @author Team 15
+ * @version
+ */
 
 public class WeatherBuilder extends JSONObject{
 	
@@ -26,6 +35,10 @@ public class WeatherBuilder extends JSONObject{
       location = region;
       }
     */	
+    
+    /** Returns the current weather.
+     * @return  A Weather object.
+     */
     /* Current Weather */
     public Weather buildCurrent(String location){
 	Weather weather = new Weather();
@@ -130,11 +143,13 @@ public class WeatherBuilder extends JSONObject{
 	return weather;
     } 
 
+    /** Returns the short term.
+     * @return  An array of Weather objects.
+     */
     public ArrayList <Weather> buildShortTerm (String location){
 	ArrayList <Weather> weather = new ArrayList <Weather>();
 	JSONObject shortTerm = json.get3HourForecast(location);
 	JSONArray subArray = new JSONArray();
-	int cont, lastIndex;
 	try {
 	    //Pick out the array list
 	    subArray = shortTerm.getJSONArray("list");

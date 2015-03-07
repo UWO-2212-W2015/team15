@@ -1,16 +1,11 @@
-package weather;
+package team15;
 
 
 import javax.swing.*;
-
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
-
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -23,9 +18,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.TextArea;
 import java.util.ArrayList;
 
 public class LocalWeather extends JFrame implements ActionListener{

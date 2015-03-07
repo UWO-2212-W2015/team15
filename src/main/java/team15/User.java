@@ -1,6 +1,7 @@
 package team15;
 import java.util.ArrayList;
 import java.io.Serializable;
+
 /**
  * The User object provides an api to interact with the underlying
  * weather application.  Users are identified by a unique name
@@ -10,7 +11,6 @@ import java.io.Serializable;
  * @author Team 15
  * @version
  */
-
 
 public class User implements Serializable {
 
