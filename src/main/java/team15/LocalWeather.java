@@ -47,6 +47,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	
 	private String locationName;
+	private String nameString;
 	
 	//for testing
 	
@@ -167,7 +168,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 	public LocalWeather() {
 		
 		JOptionPane test = new JOptionPane();
-		String nameString = test.showInputDialog("Enter your name");
+		nameString = test.showInputDialog("Enter your name");
 		JOptionPane location = new JOptionPane();
 		this.locationName = test.showInputDialog("Enter the city and country");
 		
@@ -213,7 +214,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		createLongTerm();
 		
 		//Create new tabbed pane
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBackground(Color.LIGHT_GRAY);
 		tabbedPane.setPreferredSize(new Dimension(5, 800));
 		tabbedPane.setMinimumSize(new Dimension(5, 500));
@@ -234,12 +235,31 @@ public class LocalWeather extends JFrame implements ActionListener{
 		
 		//Add menu bar and menus
 		JMenuBar menuBar = new JMenuBar();
+		JMenuItem refresh = new JMenuItem("Refresh");
+		refresh.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				tabbedPane.remove(current);
+				tabbedPane.remove(shortTerm);
+				tabbedPane.remove(longTerm);
+				user = new User(nameString);
+				user.addLocation(locationName);
+				shortTermList = user.getShortTermWeather(8);
+				createCurrent();
+				createShortTerm();
+				createLongTerm();
+				tabbedPane.addTab("Current", current);
+				tabbedPane.addTab("Short Term Forecast", shortTerm);
+				tabbedPane.addTab("Longterm Forecast", longTerm);
+				
+			}
+		});
 		setJMenuBar(menuBar);
 		
 		JMenu menu = new JMenu("Menu");
 		menu.getAccessibleContext().setAccessibleDescription(
 		        "Select difference page");
 		menuBar.add(menu);
+		menu.add(refresh);
 		
 	  }
 	
