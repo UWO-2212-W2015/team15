@@ -2,17 +2,19 @@ package team15;
 
 
 import javax.swing.*;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,15 +28,29 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private JPanel current;
 	private JPanel shortTerm;
 	private JPanel longTerm;
+	
 	private SpringLayout layout_1;
-	private int temperature = 19;
-	private String temperatureString = "" + temperature;
-	private JLabel tempNumber = new JLabel (temperatureString);
+	private double temperature = 19;
+	private JLabel tempNumber = new JLabel();
 	private JLabel tempScaleLabel = new JLabel ("c");
-	private JTable table;
-	private JLabel locationLabel_1;
+	private JLabel locationLabel_1 = new JLabel();
 	private boolean tempBool = true;
 	private JRadioButton tempRadioCelcius;
+	
+	private JLabel windSpeedLabel = new JLabel();
+	private	JLabel windDirectionLabel = new JLabel();
+	private JLabel airPressureLabel = new JLabel();
+	private JLabel humidityLabel = new JLabel();
+	private JLabel skyConditionLabel = new JLabel();
+	private JLabel expMinLabel = new JLabel();
+	private JLabel expMaxLabel = new JLabel();
+	private JLabel sunriseLabel = new JLabel();
+	private JLabel sunsetLabel = new JLabel();
+	private JLabel iconLabel = new JLabel();
+	
+	private Weather currentWeather;
+	private Location currentLocation;
+	private String tempLocation;
 	
 	//for testing
 	
@@ -135,7 +151,10 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	
 	//Constructor
-	public LocalWeather() {
+	public LocalWeather(String location, Weather currentWeather) {
+		//this.currentLocation = currentLocation;
+		this.tempLocation = location;
+		this.currentWeather = currentWeather;
 		//////////////////////////////////
 		//for testing
 		this.temperature1 = 50;
@@ -179,13 +198,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		tabbedPane.addTab("Longterm Forecast", longTerm);
 		getContentPane().add(tabbedPane);
 		
-		JSeparator separator = new JSeparator();
-		layout_1.putConstraint(SpringLayout.NORTH, separator, -2, SpringLayout.SOUTH, tempRadioCelcius);
-		layout_1.putConstraint(SpringLayout.WEST, separator, 6, SpringLayout.EAST, tempScaleLabel);
-		layout_1.putConstraint(SpringLayout.SOUTH, separator, 0, SpringLayout.SOUTH, tempRadioCelcius);
-		layout_1.putConstraint(SpringLayout.EAST, separator, 6, SpringLayout.EAST, tempScaleLabel);
-		current.add(separator);
-		
 		//Add menu bar and menus
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -199,48 +211,23 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	//Current weather panel
 	public void createCurrent(){
-		
+		try {
+			currentConstructor(this.currentLocation, this.currentWeather);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		//Set layout
 		layout_1 = new SpringLayout();
 		current = new JPanel();
 		current.setLayout(layout_1);
 		
-		
-		//Textpane
-		DefaultStyledDocument document = new DefaultStyledDocument();
-		JTextPane textPane = new JTextPane(document);
-		//new style
-		StyleContext context = new StyleContext();
-		
-		//Attribute set
-		Font f = new Font("Tahoma" , Font.PLAIN, 18);
-		textPane.setFont(f);
-		AttributeSet aset = context.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.red);
-		
-		Style style = context.addStyle("test", null);
-		textPane.setEditable(false);
-		String data = "Wind" + "\n" + "\n" + 
-				"Pressure" + "\n" +  "\n" + 
-				"Humidity" + "\n" +  "\n" ;
-		try {
-			document.insertString(0, data, style);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-		textPane.setCharacterAttributes(aset, false);
-		layout_1.putConstraint(SpringLayout.NORTH, textPane, 39, SpringLayout.NORTH, current);
-		layout_1.putConstraint(SpringLayout.WEST, textPane, 100, SpringLayout.EAST, tempNumber);
-		current.add(textPane);
-		
 		//Location label
-		locationLabel_1 = new JLabel ("Location");
-		locationLabel_1.setBounds(100,100,150,20);
 		locationLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, locationLabel_1, 20, SpringLayout.WEST, current);
 		current.add(locationLabel_1);
 		
 		//Temperature label
 		tempNumber.setFont(new Font("Tahoma", Font.PLAIN, 90));
-		layout_1.putConstraint(SpringLayout.WEST, locationLabel_1, 20, SpringLayout.WEST, current);
 		current.add(tempNumber);
 		layout_1.putConstraint(SpringLayout.WEST, tempNumber, 120, SpringLayout.WEST, current);
 		layout_1.putConstraint(SpringLayout.NORTH, tempNumber, 20, SpringLayout.NORTH, locationLabel_1);
@@ -265,6 +252,65 @@ public class LocalWeather extends JFrame implements ActionListener{
 		layout_1.putConstraint(SpringLayout.WEST, tempRadioFahrenheit, 5, SpringLayout.EAST, tempRadioCelcius);
 		tempRadioFahrenheit.addActionListener(this);
 		tempRadioFahrenheit.setActionCommand("f");
+		
+		//Air pressure label
+		airPressureLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, airPressureLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, airPressureLabel, 50, SpringLayout.NORTH, current);
+		current.add(airPressureLabel);
+		
+		//Humidity Label
+		humidityLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, humidityLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, humidityLabel, 10, SpringLayout.SOUTH, airPressureLabel);
+		current.add(humidityLabel);
+		
+		//skyCondition Label
+		skyConditionLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, skyConditionLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, skyConditionLabel, 10, SpringLayout.SOUTH, humidityLabel);
+		current.add(skyConditionLabel);
+		
+		//Expected Minimum Label
+		expMinLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, expMinLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, expMinLabel, 10, SpringLayout.SOUTH, skyConditionLabel);
+		current.add(expMinLabel);
+		
+		//Expected Maxmimum Label
+		expMaxLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, expMaxLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, expMaxLabel, 10, SpringLayout.SOUTH, expMinLabel);
+		current.add(expMaxLabel);
+		
+		//Wind Speed Label
+		windSpeedLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, windSpeedLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, windSpeedLabel, 10, SpringLayout.SOUTH, expMaxLabel);
+		current.add(windSpeedLabel);
+		
+		//Wind Direction Label
+		windDirectionLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, windDirectionLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, windDirectionLabel, 10, SpringLayout.SOUTH, windSpeedLabel);
+		current.add(windDirectionLabel);
+		
+		//Sunrise Label
+		sunriseLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, sunriseLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, sunriseLabel, 10, SpringLayout.SOUTH, windDirectionLabel);
+		//current.add(sunriseLabel);
+		
+		//Sunset Label
+		sunsetLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		layout_1.putConstraint(SpringLayout.WEST, sunsetLabel, 30, SpringLayout.EAST, tempScaleLabel);
+		layout_1.putConstraint(SpringLayout.NORTH, sunsetLabel, 10, SpringLayout.SOUTH, sunriseLabel);
+		//current.add(sunsetLabel);
+		
+		//Icon Label
+		layout_1.putConstraint(SpringLayout.WEST, iconLabel, 30, SpringLayout.WEST, current);
+		layout_1.putConstraint(SpringLayout.NORTH, iconLabel, 60, SpringLayout.NORTH, current);
+		current.add(iconLabel);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(tempRadioCelcius);
@@ -332,7 +378,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton c1 = new JRadioButton("Celcius", true);
 		
 		c1.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature1 = (shortTemperature1 - 30)/2;
 				shortTemperatureLabel1.setText(""+ shortTemperature1);
@@ -342,7 +387,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f1 = new JRadioButton("Fahrenheit", false);
 		
 		f1.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature1 = shortTemperature1*2 + 30;
 				shortTemperatureLabel1.setText(""+shortTemperature1);
@@ -391,7 +435,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton c2 = new JRadioButton("Celcius", true);
 		
 		c2.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature2 = (shortTemperature2 - 30)/2;
 				shortTemperatureLabel2.setText(""+ shortTemperature2);
@@ -401,7 +444,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f2 = new JRadioButton("Fahrenheit", false);
 		
 		f2.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature2 = shortTemperature2*2 + 30;
 				shortTemperatureLabel2.setText(""+shortTemperature2);
@@ -453,7 +495,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton c3 = new JRadioButton("Celcius", true);
 		
 		c3.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature3 = (shortTemperature3 - 30)/2;
 				shortTemperatureLabel3.setText(""+ shortTemperature3);
@@ -463,7 +504,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f3 = new JRadioButton("Fahrenheit", false);
 		
 		f3.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature3 = shortTemperature3*2 + 30;
 				shortTemperatureLabel3.setText(""+shortTemperature3);
@@ -510,7 +550,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout4.putConstraint(SpringLayout.NORTH,shortScale4, 5,SpringLayout.NORTH,p4);
 		JRadioButton c4 = new JRadioButton("Celcius", true);
 		c4.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature4 = (shortTemperature4 - 30)/2;
 				shortTemperatureLabel4.setText(""+ shortTemperature4);
@@ -520,7 +559,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f4 = new JRadioButton("Fahrenheit", false);
 		
 		f4.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature4 = shortTemperature4*2 + 30;
 				shortTemperatureLabel4.setText(""+shortTemperature4);
@@ -567,7 +605,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout5.putConstraint(SpringLayout.NORTH,shortScale5, 5,SpringLayout.NORTH,p5);
 		JRadioButton c5 = new JRadioButton("Celcius", true);
 		c5.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature5 = (shortTemperature5 - 30)/2;
 				shortTemperatureLabel5.setText(""+ shortTemperature5);
@@ -577,7 +614,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f5 = new JRadioButton("Fahrenheit", false);
 		
 		f5.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature5 = shortTemperature5*2 + 30;
 				shortTemperatureLabel5.setText(""+shortTemperature5);
@@ -624,7 +660,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout6.putConstraint(SpringLayout.NORTH,shortScale6, 5,SpringLayout.NORTH,p6);
 		JRadioButton c6 = new JRadioButton("Celcius", true);
 		c6.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature6 = (shortTemperature6 - 30)/2;
 				shortTemperatureLabel6.setText(""+ shortTemperature6);
@@ -634,7 +669,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f6 = new JRadioButton("Fahrenheit", false);
 		
 		f6.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature6 = shortTemperature6*2 + 30;
 				shortTemperatureLabel6.setText(""+shortTemperature6);
@@ -681,7 +715,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout7.putConstraint(SpringLayout.NORTH,shortScale7, 5,SpringLayout.NORTH,p7);
 		JRadioButton c7 = new JRadioButton("Celcius", true);
 		c7.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature7 = (shortTemperature7 - 30)/2;
 				shortTemperatureLabel7.setText(""+ shortTemperature7);
@@ -691,7 +724,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f7 = new JRadioButton("Fahrenheit", false);
 		
 		f7.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature7 = shortTemperature7*2 + 30;
 				shortTemperatureLabel7.setText(""+shortTemperature7);
@@ -738,7 +770,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout8.putConstraint(SpringLayout.NORTH,shortScale8, 5,SpringLayout.NORTH,p8);
 		JRadioButton c8 = new JRadioButton("Celcius", true);
 		c8.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature8 = (shortTemperature8 - 30)/2;
 				shortTemperatureLabel8.setText(""+ shortTemperature8);
@@ -748,7 +779,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f8 = new JRadioButton("Fahrenheit", false);
 		
 		f8.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				shortTemperature8 = shortTemperature8*2 + 30;
 				shortTemperatureLabel8.setText(""+shortTemperature8);
@@ -860,7 +890,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		
 		JRadioButton c1 = new JRadioButton("Celcius", true);
 		c1.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				longTemperature1 = (longTemperature1 - 30)/2;
 				longTemperatureLabel1.setText(""+ longTemperature1);
@@ -870,7 +899,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JRadioButton f1 = new JRadioButton("Fahrenheit", false);
 		
 		f1.addActionListener(new ActionListener(){
-			@Override
 			public void actionPerformed(ActionEvent event) {
 				longTemperature1 = longTemperature1*2 + 30;
 				longTemperatureLabel1.setText(""+longTemperature1);
@@ -1225,20 +1253,40 @@ public class LocalWeather extends JFrame implements ActionListener{
 
 	}
 	
+	public void currentConstructor(Location l, Weather w) throws IOException{
+		this.temperature = Double.parseDouble(w.temperature);
+		this.temperature = (Math.floor(this.temperature*10))/10;
+		
+		this.iconLabel = new JLabel(w.icon);
+		
+		//locationLabel_1.setText(l.getCityName() + ", " + l.getCountry());
+		locationLabel_1.setText(this.tempLocation);
+		tempNumber.setText("" + this.temperature);
+		windSpeedLabel.setText("WindSpeed: " + w.windSpeed);
+		windDirectionLabel.setText("Wind Direction: " + w.windDirection);
+		airPressureLabel.setText("Air Pressure: " + w.airPressure);
+		humidityLabel.setText("Humidity: " + w.humidity);
+		skyConditionLabel.setText("Sky Condition: " + w.skyCondition);
+		expMinLabel.setText("Minimum Temperature: " + w.minTemp);
+		expMaxLabel.setText("Maximum Temperature: " + w.maxTemp);
+		sunriseLabel.setText("Sunrise: " + w.sunrise);
+		sunsetLabel.setText("Sunset: " + w.sunset);
+	}
+
 	//Radio celcius / fahrenheit conversions
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if (action.equals("c") && tempBool == false) {
 			this.tempScaleLabel.setText("c");
 			this.temperature = (this.temperature-30)/2;
-			this.temperatureString = ""+temperature;
-			this.tempNumber.setText(temperatureString);
+			this.temperature = (Math.floor(this.temperature*10))/10;
+			this.tempNumber.setText(""+ this.temperature);
 			tempBool = true;
 		} else if (action.equals("f") && tempBool == true){
 			this.tempScaleLabel.setText("f");
 			this.temperature = (this.temperature*2)+30;
-			this.temperatureString = ""+temperature;
-			this.tempNumber.setText(temperatureString);
+			this.temperature = (Math.floor(this.temperature*10))/10;
+			this.tempNumber.setText(""+ this.temperature);
 			tempBool = false;
 		}
 	}
@@ -1255,30 +1303,16 @@ public class LocalWeather extends JFrame implements ActionListener{
 
 	
 	public static void main(String[] args) {
-	    JFrame frame = new LocalWeather();
+		User mike = new User ("Mike");
+		String locationString = "Toronto Canada";
+		mike.addLocation ("Toronto Canada");
+		
+	    LocalWeather frame = new LocalWeather(locationString , mike.getCurrentWeather());
 	    frame.setVisible(true);
 	    frame.setResizable(false);
 
 	    //Close frame
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    
-	    //Ignore this. This code segment is for later when we want the program to persist in the background
-	    /*frame.addWindowListener( new WindowAdapter()
-	    {
-	        public void windowClosing(WindowEvent e)
-	        {
-	            JFrame frame = (JFrame)e.getSource();
-	     
-	            int result = JOptionPane.showConfirmDialog(
-	                frame,
-	                "Are you sure you want to exit the application?",
-	                "Exit Application",
-	                JOptionPane.YES_NO_OPTION);
-	     
-	            if (result == JOptionPane.YES_OPTION)
-	                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        }
-	    }); */
 	    
 	    
 	  }
