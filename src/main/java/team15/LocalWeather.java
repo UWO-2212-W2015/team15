@@ -1,11 +1,16 @@
-package team15;
+package weather;
 
 
 import javax.swing.*;
+
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
+
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -18,6 +23,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.TextArea;
 import java.util.ArrayList;
 
 public class LocalWeather extends JFrame implements ActionListener{
@@ -35,6 +43,10 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private JLabel locationLabel_1;
 	private boolean tempBool = true;
 	private JRadioButton tempRadioCelcius;
+	
+	
+	
+	private String locationName;
 	
 	//for testing
 	
@@ -73,14 +85,23 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private Weather longTerm7;
 	private Weather longTerm8;
 	
-	private int shortTemperature1;
-	private int shortTemperature2;
-	private int shortTemperature3;
-	private int shortTemperature4;
-	private int shortTemperature5;
-	private int shortTemperature6;
-	private int shortTemperature7;
-	private int shortTemperature8;
+	private double shortTemperature1;
+	private double shortTemperature2;
+	private double shortTemperature3;
+	private double shortTemperature4;
+	private double shortTemperature5;
+	private double shortTemperature6;
+	private double shortTemperature7;
+	private double shortTemperature8;
+	
+	private double shortftemp1;
+	private double shortftemp2;
+	private double shortftemp3;
+	private double shortftemp4;
+	private double shortftemp5;
+	private double shortftemp6;
+	private double shortftemp7;
+	private double shortftemp8;
 	
 	private int longTemperature1;
 	private int longTemperature2;
@@ -91,6 +112,14 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private int longTemperature7;
 	private int longTemperature8;
 	
+	private double longftemp1;
+	private double longftemp2;
+	private double longftemp3;
+	private double longftemp4;
+	private double longftemp5;
+	private double longftemp6;
+	private double longftemp7;
+	private double longftemp8;
 	
 	private JLabel shortScale1 = new JLabel("c");
 	private JLabel shortScale2 = new JLabel("c");
@@ -136,7 +165,24 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	//Constructor
 	public LocalWeather() {
+		
+		JOptionPane test = new JOptionPane();
+		String nameString = test.showInputDialog("Enter your name");
+		JOptionPane location = new JOptionPane();
+		this.locationName = test.showInputDialog("Enter the city and country");
+		
+		
+		
+		//test
+		this.user = new User(nameString);
+		user.addLocation(locationName);
+		this.shortTermList = user.getShortTermWeather(8);
+
+		
+		
+		
 		//////////////////////////////////
+		
 		//for testing
 		this.temperature1 = 50;
 		tempNum1 = getTemperatureLabel(temperature1);
@@ -233,7 +279,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		current.add(textPane);
 		
 		//Location label
-		locationLabel_1 = new JLabel ("Location");
+		locationLabel_1 = new JLabel ("Location :   " + locationName);
 		locationLabel_1.setBounds(100,100,150,20);
 		locationLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		current.add(locationLabel_1);
@@ -275,14 +321,38 @@ public class LocalWeather extends JFrame implements ActionListener{
 	//Short term forecast panel
 	public void createShortTerm(){
 		////////////////////////////////////////////////////////////////
-		this.shortTemperature1 = 10;
-		this.shortTemperature2 = 20;
-		this.shortTemperature3 = 30;
-		this.shortTemperature4 = 40;
-		this.shortTemperature5 = 50;
-		this.shortTemperature6 = 60;
-		this.shortTemperature7 = 70;
-		this.shortTemperature8 = 80;
+
+		
+		
+		this.shortTerm1 = shortTermList.get(0);
+		this.shortTerm2 = shortTermList.get(1);
+		this.shortTerm3 = shortTermList.get(2);
+		this.shortTerm4 = shortTermList.get(3);
+		this.shortTerm5 = shortTermList.get(4);
+		this.shortTerm6 = shortTermList.get(5);
+		this.shortTerm7 = shortTermList.get(6);
+		this.shortTerm8 = shortTermList.get(7);
+		
+		
+		
+		
+		this.shortTemperature1 = getDoubleValue(shortTerm1.temperature);
+		this.shortTemperature2 = getDoubleValue(shortTerm2.temperature);
+		this.shortTemperature3 = getDoubleValue(shortTerm3.temperature);
+		this.shortTemperature4 = getDoubleValue(shortTerm4.temperature);
+		this.shortTemperature5 = getDoubleValue(shortTerm5.temperature);
+		this.shortTemperature6 = getDoubleValue(shortTerm6.temperature);
+		this.shortTemperature7 = getDoubleValue(shortTerm7.temperature);
+		this.shortTemperature8 = getDoubleValue(shortTerm8.temperature);
+		
+		this.shortftemp1 = shortTemperature1*2 + 30;
+		this.shortftemp2 = shortTemperature2*2 + 30;
+		this.shortftemp3 = shortTemperature3*2 + 30;
+		this.shortftemp4 = shortTemperature4*2 + 30;
+		this.shortftemp5 = shortTemperature5*2 + 30;
+		this.shortftemp6 = shortTemperature6*2 + 30;
+		this.shortftemp7 = shortTemperature7*2 + 30;
+		this.shortftemp8 = shortTemperature8*2 + 30;
 		
 		shortTemperatureLabel1 = getTemperatureLabel(shortTemperature1);
 		shortTemperatureLabel2 = getTemperatureLabel(shortTemperature2);
@@ -302,7 +372,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTerm.setLayout(layout);
 		
 		//Location Label
-		JLabel locationLabel = new JLabel ("Location");
+		JLabel locationLabel = new JLabel ("Location:   " + locationName);
 		locationLabel.setBounds(100,100,150,20);
 		locationLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		
@@ -324,7 +394,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel1.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p1.add(shortTemperatureLabel1);
-		sprlayout1.putConstraint(SpringLayout.WEST, shortTemperatureLabel1, 100, SpringLayout.WEST, p1);
+		sprlayout1.putConstraint(SpringLayout.WEST, shortTemperatureLabel1, 80, SpringLayout.WEST, p1);
 		shortScale1.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p1.add(shortScale1);
 		sprlayout1.putConstraint(SpringLayout.WEST, shortScale1, 5, SpringLayout.EAST, shortTemperatureLabel1);
@@ -334,7 +404,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c1.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature1 = (shortTemperature1 - 30)/2;
 				shortTemperatureLabel1.setText(""+ shortTemperature1);
 				shortScale1.setText("c");
 			}
@@ -344,8 +413,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f1.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature1 = shortTemperature1*2 + 30;
-				shortTemperatureLabel1.setText(""+shortTemperature1);
+				shortTemperatureLabel1.setText(""+shortftemp1);
 				shortScale1.setText("f");
 			}
 		});
@@ -361,13 +429,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout1.putConstraint(SpringLayout.WEST,f1,5,SpringLayout.EAST,c1);
 		sprlayout1.putConstraint(SpringLayout.NORTH, f1, 5, SpringLayout.SOUTH, shortTemperatureLabel1);
 		
-		JLabel t1 = new JLabel("Temperature :  "+shortTemperature1);
-		JLabel sc1 = new JLabel("Sky Condition :");
+		JLabel t1 = new JLabel("Temperature :  " +shortTerm1.temperature.substring(0,10));
+		JLabel sc1 = new JLabel("Sky Condition :   "+shortTerm1.skyCondition);
 		p1.add(t1);
 		p1.add(sc1);
-		sprlayout1.putConstraint(SpringLayout.WEST, t1, 80, SpringLayout.WEST, p1);
+		sprlayout1.putConstraint(SpringLayout.WEST, t1, 20, SpringLayout.WEST, p1);
 		sprlayout1.putConstraint(SpringLayout.NORTH, t1, 120, SpringLayout.NORTH, p1);
-		sprlayout1.putConstraint(SpringLayout.WEST, sc1, 80, SpringLayout.WEST, p1);
+		sprlayout1.putConstraint(SpringLayout.WEST, sc1, 20, SpringLayout.WEST, p1);
 		sprlayout1.putConstraint(SpringLayout.NORTH,sc1,10,SpringLayout.SOUTH,t1);
 	
 		shortTerm.add(p1,gc);
@@ -383,7 +451,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel2.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p2.add(shortTemperatureLabel2);
-		sprlayout2.putConstraint(SpringLayout.WEST, shortTemperatureLabel2, 100, SpringLayout.WEST, p2);
+		sprlayout2.putConstraint(SpringLayout.WEST, shortTemperatureLabel2, 80, SpringLayout.WEST, p2);
 		shortScale2.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p2.add(shortScale2);
 		sprlayout2.putConstraint(SpringLayout.WEST, shortScale2, 5, SpringLayout.EAST, shortTemperatureLabel2);
@@ -393,7 +461,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c2.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature2 = (shortTemperature2 - 30)/2;
 				shortTemperatureLabel2.setText(""+ shortTemperature2);
 				shortScale2.setText("c");
 			}
@@ -403,8 +470,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f2.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature2 = shortTemperature2*2 + 30;
-				shortTemperatureLabel2.setText(""+shortTemperature2);
+				shortTemperatureLabel2.setText(""+shortftemp2);
 				shortScale2.setText("f");
 			}
 		});
@@ -421,13 +487,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout2.putConstraint(SpringLayout.WEST,f2,5,SpringLayout.EAST,c2);
 		sprlayout2.putConstraint(SpringLayout.NORTH, f2, 5, SpringLayout.SOUTH, shortTemperatureLabel2);
 		
-		JLabel t2 = new JLabel("Temperature :   "+shortTemperature2);
-		JLabel sc2 = new JLabel("Sky Condition :");
+		JLabel t2 = new JLabel("Temperature :  " +shortTerm2.temperature.substring(0,10));
+		JLabel sc2 = new JLabel("Sky Condition :   "+shortTerm2.skyCondition);
 		p2.add(t2);
 		p2.add(sc2);
-		sprlayout2.putConstraint(SpringLayout.WEST, t2, 80, SpringLayout.WEST, p2);
+		sprlayout2.putConstraint(SpringLayout.WEST, t2, 20, SpringLayout.WEST, p2);
 		sprlayout2.putConstraint(SpringLayout.NORTH, t2, 120, SpringLayout.NORTH, p2);
-		sprlayout2.putConstraint(SpringLayout.WEST, sc2, 80, SpringLayout.WEST, p2);
+		sprlayout2.putConstraint(SpringLayout.WEST, sc2, 20, SpringLayout.WEST, p2);
 		sprlayout2.putConstraint(SpringLayout.NORTH,sc2,10,SpringLayout.SOUTH,t2);
 		
 		shortTerm.add(p2,gc);
@@ -445,7 +511,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel3.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p3.add(shortTemperatureLabel3);
-		sprlayout3.putConstraint(SpringLayout.WEST, shortTemperatureLabel3, 100, SpringLayout.WEST, p3);
+		sprlayout3.putConstraint(SpringLayout.WEST, shortTemperatureLabel3, 80, SpringLayout.WEST, p3);
 		shortScale3.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p3.add(shortScale3);
 		sprlayout3.putConstraint(SpringLayout.WEST, shortScale3, 5, SpringLayout.EAST, shortTemperatureLabel3);
@@ -455,7 +521,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c3.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature3 = (shortTemperature3 - 30)/2;
 				shortTemperatureLabel3.setText(""+ shortTemperature3);
 				shortScale3.setText("c");
 			}
@@ -465,8 +530,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f3.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature3 = shortTemperature3*2 + 30;
-				shortTemperatureLabel3.setText(""+shortTemperature3);
+				shortTemperatureLabel3.setText(""+shortftemp3);
 				shortScale3.setText("f");
 			}
 		});
@@ -481,13 +545,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout3.putConstraint(SpringLayout.WEST,f3,5,SpringLayout.EAST,c3);
 		sprlayout3.putConstraint(SpringLayout.NORTH, f3, 5, SpringLayout.SOUTH, shortTemperatureLabel3);
 		
-		JLabel t3 = new JLabel("Temperature :   "+shortTemperature3);
-		JLabel sc3 = new JLabel("Sky Condition :");
+		JLabel t3 = new JLabel("Temperature :  " +shortTerm3.temperature.substring(0,10));
+		JLabel sc3 = new JLabel("Sky Condition :   "+shortTerm3.skyCondition);
 		p3.add(t3);
 		p3.add(sc3);
-		sprlayout3.putConstraint(SpringLayout.WEST, t3, 80, SpringLayout.WEST, p3);
+		sprlayout3.putConstraint(SpringLayout.WEST, t3, 20, SpringLayout.WEST, p3);
 		sprlayout3.putConstraint(SpringLayout.NORTH, t3, 120, SpringLayout.NORTH, p3);
-		sprlayout3.putConstraint(SpringLayout.WEST, sc3, 80, SpringLayout.WEST, p3);
+		sprlayout3.putConstraint(SpringLayout.WEST, sc3, 20, SpringLayout.WEST, p3);
 		sprlayout3.putConstraint(SpringLayout.NORTH,sc3,10,SpringLayout.SOUTH,t3);
 		
 		shortTerm.add(p3,gc);
@@ -503,7 +567,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel4.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p4.add(shortTemperatureLabel4);
-		sprlayout4.putConstraint(SpringLayout.WEST, shortTemperatureLabel4, 100, SpringLayout.WEST, p4);
+		sprlayout4.putConstraint(SpringLayout.WEST, shortTemperatureLabel4, 80, SpringLayout.WEST, p4);
 		shortScale4.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p4.add(shortScale4);
 		sprlayout4.putConstraint(SpringLayout.WEST, shortScale4, 5, SpringLayout.EAST, shortTemperatureLabel4);
@@ -512,7 +576,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c4.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature4 = (shortTemperature4 - 30)/2;
 				shortTemperatureLabel4.setText(""+ shortTemperature4);
 				shortScale4.setText("c");
 			}
@@ -522,8 +585,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f4.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature4 = shortTemperature4*2 + 30;
-				shortTemperatureLabel4.setText(""+shortTemperature4);
+				shortTemperatureLabel4.setText(""+shortftemp4);
 				shortScale4.setText("f");
 			}
 		});
@@ -538,13 +600,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout4.putConstraint(SpringLayout.WEST,f4,5,SpringLayout.EAST,c4);
 		sprlayout4.putConstraint(SpringLayout.NORTH, f4, 5, SpringLayout.SOUTH, shortTemperatureLabel4);
 		
-		JLabel t4 = new JLabel("Temperature :   "+shortTemperature4);
-		JLabel sc4 = new JLabel("Sky Condition :");
+		JLabel t4 = new JLabel("Temperature :  " +shortTerm4.temperature.substring(0,10));
+		JLabel sc4 = new JLabel("Sky Condition :   "+shortTerm4.skyCondition);
 		p4.add(t4);
 		p4.add(sc4);
-		sprlayout4.putConstraint(SpringLayout.WEST, t4, 80, SpringLayout.WEST, p4);
+		sprlayout4.putConstraint(SpringLayout.WEST, t4, 20, SpringLayout.WEST, p4);
 		sprlayout4.putConstraint(SpringLayout.NORTH, t4, 120, SpringLayout.NORTH, p4);
-		sprlayout4.putConstraint(SpringLayout.WEST, sc4, 80, SpringLayout.WEST, p4);
+		sprlayout4.putConstraint(SpringLayout.WEST, sc4, 20, SpringLayout.WEST, p4);
 		sprlayout4.putConstraint(SpringLayout.NORTH,sc4,10,SpringLayout.SOUTH,t4);
 		
 		shortTerm.add(p4,gc);
@@ -560,7 +622,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel5.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p5.add(shortTemperatureLabel5);
-		sprlayout5.putConstraint(SpringLayout.WEST, shortTemperatureLabel5, 100, SpringLayout.WEST, p5);
+		sprlayout5.putConstraint(SpringLayout.WEST, shortTemperatureLabel5, 80, SpringLayout.WEST, p5);
 		shortScale5.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p5.add(shortScale5);
 		sprlayout5.putConstraint(SpringLayout.WEST, shortScale5, 5, SpringLayout.EAST, shortTemperatureLabel5);
@@ -569,7 +631,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c5.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature5 = (shortTemperature5 - 30)/2;
 				shortTemperatureLabel5.setText(""+ shortTemperature5);
 				shortScale5.setText("c");
 			}
@@ -579,8 +640,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f5.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature5 = shortTemperature5*2 + 30;
-				shortTemperatureLabel5.setText(""+shortTemperature5);
+				shortTemperatureLabel5.setText(""+shortftemp5);
 				shortScale5.setText("f");
 			}
 		});
@@ -595,13 +655,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout5.putConstraint(SpringLayout.WEST,f5,5,SpringLayout.EAST,c5);
 		sprlayout5.putConstraint(SpringLayout.NORTH, f5, 5, SpringLayout.SOUTH, shortTemperatureLabel5);
 		
-		JLabel t5 = new JLabel("Temperature :   "+shortTemperature5);
-		JLabel sc5 = new JLabel("Sky Condition :");
+		JLabel t5 = new JLabel("Temperature :  " +shortTerm5.temperature.substring(0,10));
+		JLabel sc5 = new JLabel("Sky Condition :   "+shortTerm5.skyCondition);
 		p5.add(t5);
 		p5.add(sc5);
-		sprlayout5.putConstraint(SpringLayout.WEST, t5, 80, SpringLayout.WEST, p5);
+		sprlayout5.putConstraint(SpringLayout.WEST, t5, 20, SpringLayout.WEST, p5);
 		sprlayout5.putConstraint(SpringLayout.NORTH, t5, 120, SpringLayout.NORTH, p5);
-		sprlayout5.putConstraint(SpringLayout.WEST, sc5, 80, SpringLayout.WEST, p5);
+		sprlayout5.putConstraint(SpringLayout.WEST, sc5, 20, SpringLayout.WEST, p5);
 		sprlayout5.putConstraint(SpringLayout.NORTH,sc5,10,SpringLayout.SOUTH,t5);
 		
 		shortTerm.add(p5,gc);
@@ -617,7 +677,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel6.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p6.add(shortTemperatureLabel6);
-		sprlayout6.putConstraint(SpringLayout.WEST, shortTemperatureLabel6, 100, SpringLayout.WEST, p6);
+		sprlayout6.putConstraint(SpringLayout.WEST, shortTemperatureLabel6, 80, SpringLayout.WEST, p6);
 		shortScale6.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p6.add(shortScale6);
 		sprlayout6.putConstraint(SpringLayout.WEST, shortScale6, 5, SpringLayout.EAST, shortTemperatureLabel6);
@@ -626,7 +686,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c6.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature6 = (shortTemperature6 - 30)/2;
 				shortTemperatureLabel6.setText(""+ shortTemperature6);
 				shortScale6.setText("c");
 			}
@@ -636,8 +695,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f6.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature6 = shortTemperature6*2 + 30;
-				shortTemperatureLabel6.setText(""+shortTemperature6);
+				shortTemperatureLabel6.setText(""+shortftemp6);
 				shortScale6.setText("f");
 			}
 		});
@@ -652,13 +710,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout6.putConstraint(SpringLayout.WEST,f6,5,SpringLayout.EAST,c6);
 		sprlayout6.putConstraint(SpringLayout.NORTH, f6, 5, SpringLayout.SOUTH, shortTemperatureLabel6);
 		
-		JLabel t6 = new JLabel("Temperature :   " + shortTemperature6);
-		JLabel sc6 = new JLabel("Sky Condition :");
+		JLabel t6 = new JLabel("Temperature :  " +shortTerm6.temperature.substring(0,10));
+		JLabel sc6 = new JLabel("Sky Condition :   "+shortTerm6.skyCondition);
 		p6.add(t6);
 		p6.add(sc6);
-		sprlayout6.putConstraint(SpringLayout.WEST, t6, 80, SpringLayout.WEST, p6);
+		sprlayout6.putConstraint(SpringLayout.WEST, t6, 20, SpringLayout.WEST, p6);
 		sprlayout6.putConstraint(SpringLayout.NORTH, t6, 120, SpringLayout.NORTH, p6);
-		sprlayout6.putConstraint(SpringLayout.WEST, sc6, 80, SpringLayout.WEST, p6);
+		sprlayout6.putConstraint(SpringLayout.WEST, sc6, 20, SpringLayout.WEST, p6);
 		sprlayout6.putConstraint(SpringLayout.NORTH,sc6,10,SpringLayout.SOUTH,t6);
 		
 		shortTerm.add(p6,gc);
@@ -674,7 +732,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel7.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p7.add(shortTemperatureLabel7);
-		sprlayout7.putConstraint(SpringLayout.WEST, shortTemperatureLabel7, 100, SpringLayout.WEST, p7);
+		sprlayout7.putConstraint(SpringLayout.WEST, shortTemperatureLabel7, 80, SpringLayout.WEST, p7);
 		shortScale7.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p7.add(shortScale7);
 		sprlayout7.putConstraint(SpringLayout.WEST, shortScale7, 5, SpringLayout.EAST, shortTemperatureLabel7);
@@ -683,7 +741,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c7.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature7 = (shortTemperature7 - 30)/2;
 				shortTemperatureLabel7.setText(""+ shortTemperature7);
 				shortScale7.setText("c");
 			}
@@ -693,8 +750,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f7.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature7 = shortTemperature7*2 + 30;
-				shortTemperatureLabel7.setText(""+shortTemperature7);
+				shortTemperatureLabel7.setText(""+shortftemp7);
 				shortScale7.setText("f");
 			}
 		});
@@ -709,13 +765,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout7.putConstraint(SpringLayout.WEST,f7,5,SpringLayout.EAST,c7);
 		sprlayout7.putConstraint(SpringLayout.NORTH, f7, 5, SpringLayout.SOUTH, shortTemperatureLabel7);
 		
-		JLabel t7 = new JLabel("Temperature :   "+shortTemperature7);
-		JLabel sc7 = new JLabel("Sky Condition :");
+		JLabel t7 = new JLabel("Temperature :  " +shortTerm7.temperature.substring(0,10));
+		JLabel sc7 = new JLabel("Sky Condition :   "+shortTerm7.skyCondition);
 		p7.add(t7);
 		p7.add(sc7);
-		sprlayout7.putConstraint(SpringLayout.WEST, t7, 80, SpringLayout.WEST, p7);
+		sprlayout7.putConstraint(SpringLayout.WEST, t7, 20, SpringLayout.WEST, p7);
 		sprlayout7.putConstraint(SpringLayout.NORTH, t7, 120, SpringLayout.NORTH, p7);
-		sprlayout7.putConstraint(SpringLayout.WEST, sc7, 80, SpringLayout.WEST, p7);
+		sprlayout7.putConstraint(SpringLayout.WEST, sc7, 20, SpringLayout.WEST, p7);
 		sprlayout7.putConstraint(SpringLayout.NORTH,sc7,10,SpringLayout.SOUTH,t7);
 		
 		shortTerm.add(p7,gc);
@@ -731,7 +787,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		shortTemperatureLabel8.setFont(new Font("Tahoma",Font.PLAIN,60));	
 
 		p8.add(shortTemperatureLabel8);
-		sprlayout8.putConstraint(SpringLayout.WEST, shortTemperatureLabel8, 100, SpringLayout.WEST, p8);
+		sprlayout8.putConstraint(SpringLayout.WEST, shortTemperatureLabel8, 80, SpringLayout.WEST, p8);
 		shortScale8.setFont(new Font("Tahoma",Font.PLAIN,40));
 		p8.add(shortScale8);
 		sprlayout8.putConstraint(SpringLayout.WEST, shortScale8, 5, SpringLayout.EAST, shortTemperatureLabel8);
@@ -740,7 +796,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		c8.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature8 = (shortTemperature8 - 30)/2;
 				shortTemperatureLabel8.setText(""+ shortTemperature8);
 				shortScale8.setText("c");
 			}
@@ -750,8 +805,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		f8.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				shortTemperature8 = shortTemperature8*2 + 30;
-				shortTemperatureLabel8.setText(""+shortTemperature8);
+				shortTemperatureLabel8.setText(""+shortftemp8);
 				shortScale8.setText("f");
 			}
 		});
@@ -766,13 +820,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 		sprlayout8.putConstraint(SpringLayout.WEST,f8,5,SpringLayout.EAST,c8);
 		sprlayout8.putConstraint(SpringLayout.NORTH, f8, 5, SpringLayout.SOUTH, shortTemperatureLabel8);
 		
-		JLabel t8 = new JLabel("Temperature :   "+shortTemperature8);
-		JLabel sc8 = new JLabel("Sky Condition :");
+		JLabel t8 = new JLabel("Temperature :  " +shortTerm8.temperature.substring(0,10));
+		JLabel sc8 = new JLabel("Sky Condition :   "+shortTerm8.skyCondition);
 		p8.add(t8);
 		p8.add(sc8);
-		sprlayout8.putConstraint(SpringLayout.WEST, t8, 80, SpringLayout.WEST, p8);
+		sprlayout8.putConstraint(SpringLayout.WEST, t8, 20, SpringLayout.WEST, p8);
 		sprlayout8.putConstraint(SpringLayout.NORTH, t8, 120, SpringLayout.NORTH, p8);
-		sprlayout8.putConstraint(SpringLayout.WEST, sc8, 80, SpringLayout.WEST, p8);
+		sprlayout8.putConstraint(SpringLayout.WEST, sc8, 20, SpringLayout.WEST, p8);
 		sprlayout8.putConstraint(SpringLayout.NORTH,sc8,10,SpringLayout.SOUTH,t8);
 		
 		shortTerm.add(p8,gc);
@@ -787,17 +841,22 @@ public class LocalWeather extends JFrame implements ActionListener{
 		
 	}
 	
+	private int parseInt(String shortTemperatureString1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	//Long term forecast panel
 	public void createLongTerm(){
 		///////////////////////////////////////////////////////////
-		Image icon1;
-		Image icon2;
-		Image icon3;
-		Image icon4;
-		Image icon5;
-		Image icon6;
-		Image icon7;
-		Image icon8;
+		ImageIcon icon1;
+		ImageIcon icon2;
+		ImageIcon icon3;
+		ImageIcon icon4;
+		ImageIcon icon5;
+		ImageIcon icon6;
+		ImageIcon icon7;
+		ImageIcon icon8;
 		
 		this.longTemperature1 = 10;
 		this.longTemperature2 = 20;
@@ -1247,10 +1306,31 @@ public class LocalWeather extends JFrame implements ActionListener{
 	 * @param temp
 	 * @return a JLabel of temperature
 	 */
-	public JLabel getTemperatureLabel(int temp){
+	public JLabel getTemperatureLabel(double temp){
 		String tempString = "" + temp;
 		JLabel temperatureLabel = new JLabel(tempString);
 		return temperatureLabel;
+	}
+	
+	/**
+	 * a method to return a double variable with the string as its parameter
+	 * @param temp which is the temperature string
+	 * @return double variable
+	 */
+	public double getDoubleValue(String temp){
+		double d;
+		String s;
+		
+		if(temp.charAt(0)=='-'){
+			s = ""+temp.charAt(1)+temp.charAt(2)+temp.charAt(3)+temp.charAt(4);
+			d = Double.parseDouble(s);
+			d = 0 - d;
+		}
+		else{
+			s = ""+temp.charAt(0)+temp.charAt(1)+temp.charAt(2)+temp.charAt(3);
+			d = Double.parseDouble(s);
+		}
+		return d;
 	}
 
 	
