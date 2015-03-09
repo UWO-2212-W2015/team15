@@ -1390,12 +1390,12 @@ public class LocalWeather extends JFrame implements ActionListener{
 		
 		tempNumber.setText("" + this.temperature);
 		windSpeedLabel.setText("WindSpeed: " + w.windSpeed);
-		windDirectionLabel.setText("Wind Direction: " + w.windDirection);
+		windDirectionLabel.setText("Wind Direction: " + w.windDirection + "degrees");
 		airPressureLabel.setText("Air Pressure: " + w.airPressure);
 		humidityLabel.setText("Humidity: " + w.humidity);
 		skyConditionLabel.setText("Condition: " + w.skyCondition);
-		expMinLabel.setText("Minimum Temperature: " + this.tempMin + "c");
-		expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "c");
+		expMinLabel.setText("Minimum Temperature: " + Double.toString(this.tempMin).substring(0,4) + "c");
+		expMaxLabel.setText("Maximum Temperature: " + Double.toString(this.tempMax).substring(0,4) + "c");
 		sunriseLabel.setText("Sunrise: " + w.sunrise);
 		sunsetLabel.setText("Sunset: " + w.sunset);
 	}
