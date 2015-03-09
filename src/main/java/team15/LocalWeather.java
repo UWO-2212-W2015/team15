@@ -1450,29 +1450,46 @@ public class LocalWeather extends JFrame implements ActionListener{
 	 */
 	public double getDoubleValue(String temp){
 		double d = 0.00;
-		String s = null;
+		String s = "";
 		int i = 0;
-		boolean tempboolean = false;
-		if(temp.charAt(0)=='-'){
-			i = 1;
-			tempboolean = true;
-		}
-		while(i<temp.length()&&temp.charAt(i)!='.'){
-			s = ""+temp.charAt(i);
-			i++;
+
+		if(temp.charAt(0)!='-'){
+			while(i<temp.length() && temp.charAt(i)!='.'){
+				s = s + temp.charAt(i);
+				i++;
 			}
-		if(temp.length() < i+2){
-			s = ""+temp.charAt(i)+temp.charAt(i+1)+"0";
+			if(i == temp.length()){
+				d = Double.parseDouble(s);
+			}
+			else{
+				if(temp.length()<i+2){
+					s = temp.charAt(i)+temp.charAt(i+1)+"0";
+				}
+				else{
+					s = ""+temp.charAt(i)+temp.charAt(i+1)+temp.charAt(i+2);
+				}
+				d = Double.parseDouble(s);
+			}
 		}
 		else{
-			s = ""+temp.charAt(i)+temp.charAt(i+1)+temp.charAt(i+2);
-		}
-		if(tempboolean = true){
-			d = Double.parseDouble(s);
-			d = 0 - d;
-		}
-		else{
-			d = Double.parseDouble(s);
+			i = 1;
+			while(i<temp.length() && temp.charAt(i)!='.'){
+				s = s + temp.charAt(i);
+				i++;
+			}
+			if(i == temp.length()){
+				d = 0 - Double.parseDouble(s);
+			}
+			else{
+				if(temp.length()<i+2){
+					s = temp.charAt(i)+temp.charAt(i+1)+"0";
+				}
+				else{
+					s = ""+temp.charAt(i)+temp.charAt(i+1)+temp.charAt(i+2);
+				}
+				d = 0 - Double.parseDouble(s);
+			}
+			
 		}
 		return d;
 	}
