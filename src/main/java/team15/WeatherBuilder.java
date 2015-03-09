@@ -51,98 +51,66 @@ public class WeatherBuilder extends JSONObject{
 		try {
 		    tempJSON = currentWeather.getJSONObject("main");
 
-		parts = weatherInformation.toString().split("[\\:,}]");
+		    parts = weatherInformation.toString().split("[\\:,}]");
 			
-		/* Temperature */
-		weather.temperature = tempJSON.get("temp").toString();
+		    /* Temperature */
+		    weather.temperature = tempJSON.get("temp").toString();
 			
-		/* Humidity */
-		weather.humidity = tempJSON.get("humidity").toString();
+		    /* Humidity */
+		    weather.humidity = tempJSON.get("humidity").toString();
 			
-		/* Air pressure */
-		weather.airPressure = tempJSON.get("pressure").toString();
+		    /* Air pressure */
+		    weather.airPressure = tempJSON.get("pressure").toString();
 			
-		/* Minimum temperature */
-		weather.minTemp = tempJSON.get("temp_min").toString();
+		    /* Minimum temperature */
+		    weather.minTemp = tempJSON.get("temp_min").toString();
 			
-		/* Maximum temperature */
-		weather.maxTemp = tempJSON.get("temp_max").toString();
+		    /* Maximum temperature */
+		    weather.maxTemp = tempJSON.get("temp_max").toString();
 		} catch (JSONException e) {
 		    e.printStackTrace();
 		}
 		/* wind */
 		try {
-		    weatherInformation = currentWeather.get("wind");
+		    tempJSON = currentWeather.getJSONObject("wind");
+
+		    /* Wind speed */
+		    weather.windSpeed = tempJSON.get("speed").toString();
+			
+		    /* Wind direction */
+		    weather.windDirection = tempJSON.get("deg").toString();
+			
 		} catch (JSONException e) {
 		    e.printStackTrace();
 		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-			
-		/* Wind speed */
-		weather.windSpeed = parts[3];
-			
-		/* Wind direction */
-		weather.windDirection = parts[1];
-			
 		/* Weather */
 		try {
-		    weatherInformation = currentWeather.get("weather");
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-			
-		/* Sky condition */
-		weather.skyCondition = parts[3];
-			
-		/* Icon */
-		String findStr = "\"" + "icon" +"\"" + ":"+"\"";
-		int lastIndex = 0;
-	
-		lastIndex =  weatherInformation.toString().indexOf(findStr,lastIndex);
-	
-		if( lastIndex != -1){
-		    lastIndex+=findStr.length();
-		}
-		String partOfIt;
-		partOfIt = weatherInformation.toString().substring(lastIndex, lastIndex+5);
-		String[] split;
-		split = partOfIt.split("\"");
-		parts[0] = split[0];
-		//weather.icon = parts[0];
-		
-		try{
+		    tempJSON = currentWeather.getJSONArray("weather").getJSONObject(0);
+		    weather.skyCondition = tempJSON.get("description").toString();
+		    System.out.println(weather.skyCondition);
 		    weather.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" 
-							 + parts[0] + ".png"));
+							 + tempJSON.get("icon").toString() + ".png"));
 		}catch (MalformedURLException e){
+		    e.printStackTrace();
+		} catch (JSONException e) {
 		    e.printStackTrace();
 		}
 			
 		/* sys */
 		try {
-		    weatherInformation = currentWeather.get("sys");
+		    tempJSON = currentWeather.getJSONObject("sys");
+		    weather.sunrise = tempJSON.get("sunrise").toString();
+		    weather.sunset = tempJSON.get("sunset").toString();
 		} catch (JSONException e) {
 		    e.printStackTrace();
 		}
-		parts = weatherInformation.toString().split("[\\:,}]");
-			
-		/* Sunrise */
-		weather.sunrise = parts[3];
-			
-		/* Sunset */
-		weather.sunset = parts[5];
-			
-		/* Time ????*/
 		try {
 		    weatherInformation = currentWeather.get("dt");
+		    weather.time = new GregorianCalendar();
+		    weather.time.setTimeInMillis((long)Integer.parseInt(currentWeather.get("dt").toString())*1000);
 		} catch (JSONException e) {
 		    e.printStackTrace();
 		}
-			
-		parts = weatherInformation.toString().split("[\\:,}]");
-		weather.time = new GregorianCalendar();
-		weather.time.setTimeInMillis((long)Integer.parseInt(parts[0])*1000);
-		
 		return weather;
     } 
 
