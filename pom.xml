@@ -20,7 +20,7 @@
 	<configuration>
 	  <archive>
 	    <manifest>
-	      <mainClass>team15.WeatherMain</mainClass>
+	      <mainClass>team15.LocalWeather</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>
@@ -35,7 +35,7 @@
 	  </descriptorRefs>
 	  <archive>
 	    <manifest>
-              <mainClass>team15.WeatherMain</mainClass>
+              <mainClass>team15.LocalWeather</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>
