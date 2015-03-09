@@ -389,14 +389,14 @@ public class LocalWeather extends JFrame implements ActionListener{
 		this.shortTerm7 = shortTermList.get(6);
 		this.shortTerm8 = shortTermList.get(7);
 			
-		this.shortTemperature1 = getDoubleValue(shortTerm1.temperature);
-		this.shortTemperature2 = getDoubleValue(shortTerm2.temperature);
-		this.shortTemperature3 = getDoubleValue(shortTerm3.temperature);
-		this.shortTemperature4 = getDoubleValue(shortTerm4.temperature);
-		this.shortTemperature5 = getDoubleValue(shortTerm5.temperature);
-		this.shortTemperature6 = getDoubleValue(shortTerm6.temperature);
-		this.shortTemperature7 = getDoubleValue(shortTerm7.temperature);
-		this.shortTemperature8 = getDoubleValue(shortTerm8.temperature);
+		this.shortTemperature1 = Double.valueOf(shortTerm1.temperature);
+		this.shortTemperature2 = Double.valueOf(shortTerm2.temperature);
+		this.shortTemperature3 = Double.valueOf(shortTerm3.temperature);
+		this.shortTemperature4 = Double.valueOf(shortTerm4.temperature);
+		this.shortTemperature5 = Double.valueOf(shortTerm5.temperature);
+		this.shortTemperature6 = Double.valueOf(shortTerm6.temperature);
+		this.shortTemperature7 = Double.valueOf(shortTerm7.temperature);
+		this.shortTemperature8 = Double.valueOf(shortTerm8.temperature);
 		
 		this.shortftemp1 = shortTemperature1*2 + 30;
 		this.shortftemp2 = shortTemperature2*2 + 30;
@@ -1380,13 +1380,13 @@ public class LocalWeather extends JFrame implements ActionListener{
 	 * @throws IOException
 	 */
 	public void currentConstructor(Weather w) throws IOException{
-		this.temperature = getDoubleValue(w.temperature);
+		this.temperature = Double.valueOf(w.temperature);
 		this.temperature = (Math.floor(this.temperature*100))/100;
 		
 		this.iconLabel = new JLabel(w.icon);
 		
-		this.tempMax = getDoubleValue(w.maxTemp);
-		this.tempMin = getDoubleValue(w.minTemp);
+		this.tempMax = Double.valueOf(w.maxTemp);
+		this.tempMin = Double.valueOf(w.minTemp);
 		
 		tempNumber.setText("" + this.temperature);
 		windSpeedLabel.setText("WindSpeed: " + w.windSpeed);
@@ -1442,57 +1442,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JLabel temperatureLabel = new JLabel(tempString);
 		return temperatureLabel;
 	}
-	
-	/**
-	 * a method to return a double variable with the string as its parameter
-	 * @param temp which is the temperature string
-	 * @return double variable
-	 */
-	public double getDoubleValue(String temp){
-		double d = 0.00;
-		String s = "";
-		int i = 0;
-
-		if(temp.charAt(0)!='-'){
-			while(i<temp.length() && temp.charAt(i)!='.'){
-				s = s + temp.charAt(i);
-				i++;
-			}
-			if(i == temp.length()){
-				d = Double.parseDouble(s);
-			}
-			else{
-				if(temp.length()<i+2){
-					s = temp.charAt(i)+temp.charAt(i+1)+"0";
-				}
-				else{
-					s = ""+temp.charAt(i)+temp.charAt(i+1)+temp.charAt(i+2);
-				}
-				d = Double.parseDouble(s);
-			}
-		}
-		else{
-			i = 1;
-			while(i<temp.length() && temp.charAt(i)!='.'){
-				s = s + temp.charAt(i);
-				i++;
-			}
-			if(i == temp.length()){
-				d = 0 - Double.parseDouble(s);
-			}
-			else{
-				if(temp.length()<i+2){
-					s = temp.charAt(i)+temp.charAt(i+1)+"0";
-				}
-				else{
-					s = ""+temp.charAt(i)+temp.charAt(i+1)+temp.charAt(i+2);
-				}
-				d = 0 - Double.parseDouble(s);
-			}
-			
-		}
-		return d;
-	}
 
 	public static void main(String[] args) {
 	    LocalWeather frame = new LocalWeather();
@@ -1505,3 +1454,4 @@ public class LocalWeather extends JFrame implements ActionListener{
 	    
 	  }
 }
+
