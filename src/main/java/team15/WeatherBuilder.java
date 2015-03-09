@@ -45,30 +45,31 @@ public class WeatherBuilder extends JSONObject{
     public Weather buildCurrent(String location){
 		Weather weather = new Weather();
 		JSONObject currentWeather = json.getCurrentWeather(location);
+		JSONObject tempJSON;
 			
 		/* main */
 		try {
-		    weatherInformation = currentWeather.get("main");
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
+		    tempJSON = currentWeather.getJSONObject("main");
+
 		parts = weatherInformation.toString().split("[\\:,}]");
 			
 		/* Temperature */
-		weather.temperature = parts[1];
+		weather.temperature = tempJSON.get("temp").toString();
 			
 		/* Humidity */
-		weather.humidity = parts[5];
+		weather.humidity = tempJSON.get("humidity").toString();
 			
 		/* Air pressure */
-		weather.airPressure = parts[7];
+		weather.airPressure = tempJSON.get("pressure").toString();
 			
 		/* Minimum temperature */
-		weather.minTemp = parts[3];
+		weather.minTemp = tempJSON.get("temp_min").toString();
 			
 		/* Maximum temperature */
-		weather.maxTemp = parts[3];
-			
+		weather.maxTemp = tempJSON.get("temp_max").toString();
+		} catch (JSONException e) {
+		    e.printStackTrace();
+		}
 		/* wind */
 		try {
 		    weatherInformation = currentWeather.get("wind");

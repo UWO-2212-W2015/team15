@@ -98,6 +98,10 @@ public class User implements Serializable {
 		}
 		*/
 		w.temperature = Double.toString(t-273.15);
+		t = Double.parseDouble(w.minTemp);
+		w.minTemp = Double.toString(t-273.15);
+		t = Double.parseDouble(w.maxTemp);
+		w.maxTemp = Double.toString(t-273.15);
 		return w;
     }
     
