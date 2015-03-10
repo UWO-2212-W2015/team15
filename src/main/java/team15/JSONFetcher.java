@@ -29,7 +29,7 @@ public class JSONFetcher extends JSONObject{
      * @return  A Json object containing the information or null if there was
      * an error creating the JSON
      */
-    public static JSONObject makeJSON(String location,String type){
+    public static JSONObject makeJSON(String location, String type){
         String url = "http://api.openweathermap.org/data/2.5/";
 
         //Makes the url based on the specified type of json object we

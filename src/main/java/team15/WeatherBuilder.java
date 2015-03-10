@@ -23,93 +23,69 @@ import java.net.MalformedURLException;
 public class WeatherBuilder extends JSONObject{
     //Weather weather;
     private Object weatherInformation = new Object();
-    private String[] parts = new String[10];
     private static String[] mainKeys = {"temp", "temp_min", "temp_max", "pressure", "humidity"};
 	
     String location;
-    /*
-      public WeatherBuilder(String region){;
-      location = region;
-      }
-    */	
-    
+
     /** Returns the current weather which has the values of temperature, humidity, air pressure,
      * air direction, minimum temperature, maximum temperature, wind speed, condition of the sky, 
      * sunrise, sunset and the icon.
+     * @param location
      * @return  A Weather object.
      */
     /* Current Weather */
     public Weather buildCurrent(String location){
-		Weather weather = new Weather();
-		JSONObject currentWeather 
-                        = JSONFetcher.makeJSON(location, "local");
-		JSONObject tempJSON;
-			
-		/* main */
-		try {
-		    tempJSON = currentWeather.getJSONObject("main");
+        Weather weather = new Weather();
+        JSONObject currentWeather = JSONFetcher.makeJSON(location, "local");
+        JSONObject tempJSON;
 
-		    parts = weatherInformation.toString().split("[\\:,}]");
-			
-		    /* Temperature */
-		    weather.temperature = tempJSON.get("temp").toString();
-			
-		    /* Humidity */
-		    weather.humidity = tempJSON.get("humidity").toString();
-			
-		    /* Air pressure */
-		    weather.airPressure = tempJSON.get("pressure").toString();
-			
-		    /* Minimum temperature */
-		    weather.minTemp = tempJSON.get("temp_min").toString();
-			
-		    /* Maximum temperature */
-		    weather.maxTemp = tempJSON.get("temp_max").toString();
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-		/* wind */
-		try {
-		    tempJSON = currentWeather.getJSONObject("wind");
+        //Load the values from the JSON into the weather 
+        try {
+            //Main
+            
+            tempJSON = currentWeather.getJSONObject("main");
+            //Temperature
+            weather.temperature = tempJSON.get("temp").toString();
+            //Humidity
+            weather.humidity = tempJSON.get("humidity").toString();
+            //Air pressure
+            weather.airPressure = tempJSON.get("pressure").toString();
+            //Minimum temperature
+            weather.minTemp = tempJSON.get("temp_min").toString();
+            //Maximum temperature
+            weather.maxTemp = tempJSON.get("temp_max").toString();
+            
+            //wind
+            tempJSON = currentWeather.getJSONObject("wind");
+            //Wind speed
+            weather.windSpeed = tempJSON.get("speed").toString();
+            //Wind direction
+            weather.windDirection = tempJSON.get("deg").toString();
+            
+            //Sunrise/Sunset
+            tempJSON = currentWeather.getJSONObject("sys");
+            //Sunrise
+            weather.sunrise = tempJSON.get("sunrise").toString();
+            //Sunset
+            weather.sunset = tempJSON.get("sunset").toString();
+            
+            //Weather
+            tempJSON = currentWeather.getJSONArray("weather").getJSONObject(0);
+            //Weather Description
+            weather.skyCondition = tempJSON.get("description").toString();
+            //Weather Icon
+            weather.icon = 
+                    new ImageIcon(new URL("http://openweathermap.org/img/w/" 
+                            + tempJSON.get("icon").toString() + ".png"));
+        } 
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        catch (MalformedURLException e){
+            e.printStackTrace();
+        }
 
-		    /* Wind speed */
-		    weather.windSpeed = tempJSON.get("speed").toString();
-			
-		    /* Wind direction */
-		    weather.windDirection = tempJSON.get("deg").toString();
-			
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-		/* Weather */
-		try {
-		    tempJSON = currentWeather.getJSONArray("weather").getJSONObject(0);
-		    weather.skyCondition = tempJSON.get("description").toString();
-		    System.out.println(weather.skyCondition);
-		    weather.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" 
-							 + tempJSON.get("icon").toString() + ".png"));
-		}catch (MalformedURLException e){
-		    e.printStackTrace();
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-			
-		/* sys */
-		try {
-		    tempJSON = currentWeather.getJSONObject("sys");
-		    weather.sunrise = tempJSON.get("sunrise").toString();
-		    weather.sunset = tempJSON.get("sunset").toString();
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-		try {
-		    weatherInformation = currentWeather.get("dt");
-		    weather.time = new GregorianCalendar();
-		    weather.time.setTimeInMillis((long)Integer.parseInt(currentWeather.get("dt").toString())*1000);
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-		return weather;
+        return weather;
     } 
 
     /** Returns the short term which has the values of temperature, condition of the sky, 

@@ -4,8 +4,8 @@ import javax.swing.ImageIcon;
 
 /**
  * The Weather class is constituted by variables present in the weather forecast.
- * Even though it is a small class, it is necessary in order to have a unified class
- * which supports all kinds of weather forecast.
+ * Even though it is a small class, it is necessary in order to have a unified 
+ * class which supports all kinds of weather forecast.
  *
  * @author Team 15
  * @version
