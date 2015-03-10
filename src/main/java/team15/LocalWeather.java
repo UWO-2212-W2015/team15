@@ -32,7 +32,8 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private JLabel tempScaleLabel = new JLabel ("c");
 	private JLabel locationLabel_1 = new JLabel();
 	private boolean tempBool = true;
-	private JRadioButton tempRadioCelcius;
+	private JRadioButton tempRadioCelcius =  new JRadioButton("Celcius", true);
+	private JRadioButton tempRadioFahrenheit =  new JRadioButton("FahrenHeit", true);
 
 	private JLabel windSpeedLabel = new JLabel();
 	private	JLabel windDirectionLabel = new JLabel();
@@ -54,6 +55,9 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	private String locationName;
 	private String nameString;
+	
+	private JFrame dialogFrame;
+	private JDialog	dialog;
 	//for testing
 	
 	private int temperature1;
@@ -66,6 +70,16 @@ public class LocalWeather extends JFrame implements ActionListener{
 	private JLabel tempNum2;
 	private JLabel tempScaleLabel2;
 	
+	
+	//preference booleans
+	private boolean tempPref = true;
+	private boolean skyCondPref = true;
+	private boolean pressurePref = true;
+	private boolean windPref = true;
+	private boolean sunPref = true;
+	private boolean iconPref = true;
+	private boolean minMaxPref = true;
+	private boolean humidityPref = true;
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -232,6 +246,14 @@ public class LocalWeather extends JFrame implements ActionListener{
 		//Add menu bar and menus
 		JMenuBar menuBar = new JMenuBar();
 		JMenuItem refresh = new JMenuItem("Refresh");
+		JMenuItem preferences = new JMenuItem ("Preferences");
+		preferences.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				prefInit();
+			}
+		});
+		
+		JMenuItem users = new JMenuItem ("Users");
 		refresh.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				tabbedPane.remove(current);
@@ -256,7 +278,8 @@ public class LocalWeather extends JFrame implements ActionListener{
 		        "Select difference page");
 		menuBar.add(menu);
 		menu.add(refresh);
-		
+		menu.add(preferences);
+		menu.add(users);
 	  }
 	
 	/**
@@ -284,23 +307,21 @@ public class LocalWeather extends JFrame implements ActionListener{
 		tempNumber.setFont(new Font("Tahoma", Font.PLAIN, 90));
 		current.add(tempNumber);
 		layout_1.putConstraint(SpringLayout.WEST, tempNumber, 120, SpringLayout.WEST, current);
-		layout_1.putConstraint(SpringLayout.NORTH, tempNumber, 20, SpringLayout.NORTH, locationLabel_1);
+		layout_1.putConstraint(SpringLayout.NORTH, tempNumber, 11, SpringLayout.SOUTH, locationLabel_1);
 		
 		this.tempScaleLabel.setFont(new Font("Tahoma", Font.PLAIN, 60));
 		current.add(this.tempScaleLabel);
 		layout_1.putConstraint(SpringLayout.WEST, this.tempScaleLabel, 5, SpringLayout.EAST, tempNumber);
-		layout_1.putConstraint(SpringLayout.NORTH, this.tempScaleLabel, 25, SpringLayout.NORTH, locationLabel_1);
+		layout_1.putConstraint(SpringLayout.NORTH, this.tempScaleLabel, 16, SpringLayout.SOUTH, locationLabel_1);
 		
 		//Temperature radio celcius
-		tempRadioCelcius = new JRadioButton("Celcius", true);
 		current.add(tempRadioCelcius);
 		layout_1.putConstraint(SpringLayout.NORTH, tempRadioCelcius, 6, SpringLayout.SOUTH, tempNumber);
-		layout_1.putConstraint(SpringLayout.WEST, tempRadioCelcius, 120, SpringLayout.WEST, current);
+		layout_1.putConstraint(SpringLayout.WEST, tempRadioCelcius, 140, SpringLayout.WEST, current);
 		tempRadioCelcius.addActionListener(this);
 		tempRadioCelcius.setActionCommand("c");
 		
 		//Temperature radio fahrenheit
-		JRadioButton tempRadioFahrenheit = new JRadioButton("Fahrenheit", false);
 		current.add(tempRadioFahrenheit);
 		layout_1.putConstraint(SpringLayout.NORTH, tempRadioFahrenheit, 6, SpringLayout.SOUTH, tempNumber);
 		layout_1.putConstraint(SpringLayout.WEST, tempRadioFahrenheit, 5, SpringLayout.EAST, tempRadioCelcius);
@@ -310,7 +331,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 		//Air pressure label
 		airPressureLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		layout_1.putConstraint(SpringLayout.WEST, airPressureLabel, 30, SpringLayout.EAST, tempScaleLabel);
-		layout_1.putConstraint(SpringLayout.NORTH, airPressureLabel, 50, SpringLayout.NORTH, current);
+		layout_1.putConstraint(SpringLayout.NORTH, airPressureLabel, 80, SpringLayout.NORTH, current);
 		current.add(airPressureLabel);
 		
 		//Humidity Label
@@ -1376,6 +1397,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 	
 	/**
 	 * a method that gets the values out of the weather object and changes the labels for the current pane
+	 * this method also writes the labels depending on the preferences
 	 * @param w
 	 * @throws IOException
 	 */
@@ -1388,16 +1410,59 @@ public class LocalWeather extends JFrame implements ActionListener{
 		this.tempMax = Double.valueOf(w.maxTemp);
 		this.tempMin = Double.valueOf(w.minTemp);
 		
-		tempNumber.setText("" + this.temperature);
-		windSpeedLabel.setText("WindSpeed: " + w.windSpeed);
-		windDirectionLabel.setText("Wind Direction: " + w.windDirection + " degrees");
-		airPressureLabel.setText("Air Pressure: " + w.airPressure);
-		humidityLabel.setText("Humidity: " + w.humidity);
-		skyConditionLabel.setText("Condition: " + w.skyCondition);
-		expMinLabel.setText("Minimum Temperature: " + Double.toString(this.tempMin).substring(0,4) + "c");
-		expMaxLabel.setText("Maximum Temperature: " + Double.toString(this.tempMax).substring(0,4) + "c");
-		sunriseLabel.setText("Sunrise: " + w.sunrise);
-		sunsetLabel.setText("Sunset: " + w.sunset);
+		if(tempPref){
+			tempNumber.setText("" + this.temperature);
+			if(tempBool){
+				tempScaleLabel.setText("c");
+			}else if(!tempBool){
+				tempScaleLabel.setText("f");
+			}
+		} else if (!tempPref){
+			tempNumber.setText("");
+			tempScaleLabel.setText("");
+		}
+		
+		if(windPref){
+			windSpeedLabel.setText("WindSpeed: " + w.windSpeed);
+			windDirectionLabel.setText("Wind Direction: " + w.windDirection + " degrees");
+		} else if(!windPref){
+			windSpeedLabel.setText("");
+			windDirectionLabel.setText("");
+		}
+		
+		if(pressurePref){
+			airPressureLabel.setText("Air Pressure: " + w.airPressure);
+		} else if(!pressurePref){
+			airPressureLabel.setText("");
+		}
+		
+		if(humidityPref){
+			humidityLabel.setText("Humidity: " + w.humidity);
+		} else if(!humidityPref){
+			humidityLabel.setText("");
+		}
+		
+		if(skyCondPref){
+			skyConditionLabel.setText("Condition: " + w.skyCondition);
+		} else if(!skyCondPref){
+			skyConditionLabel.setText("");
+		}
+		
+		if(minMaxPref){
+			expMinLabel.setText("Minimum Temperature: " + this.tempMin+ "c");
+			expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "c");
+		} else if(!minMaxPref){
+			expMinLabel.setText("");
+			expMaxLabel.setText("");
+		}
+		
+		if(sunPref){
+			sunriseLabel.setText("Sunrise: " + w.sunrise);
+			sunsetLabel.setText("Sunset: " + w.sunset);
+		} else if(!sunPref){
+			sunriseLabel.setText("");
+			sunsetLabel.setText("");
+		}
 	}
 
 	/**
@@ -1407,29 +1472,118 @@ public class LocalWeather extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if (action.equals("c") && tempBool == false) {
-			this.tempScaleLabel.setText("c");
 			this.temperature = (this.temperature-32)/1.8;
 			this.temperature = (Math.floor(this.temperature*100))/100;
-			this.tempNumber.setText(""+ this.temperature);
+
+			if(tempPref){
+				this.tempNumber.setText(""+ this.temperature);
+				this.tempScaleLabel.setText("c");
+			}else if(!tempPref){
+				this.tempNumber.setText("");
+				this.tempScaleLabel.setText("");
+			}
 			this.tempMin = (this.tempMin-32)/1.8;
 			this.tempMax = (this.tempMax-32)/1.8;
 			this.tempMin = (Math.floor(this.tempMin*100))/100;
 			this.tempMax = (Math.floor(this.tempMax*100))/100;
-			expMinLabel.setText("Minimum Temperature: " + this.tempMin + "c");
-			expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "c");
+			if(minMaxPref){
+				expMinLabel.setText("Minimum Temperature: " + this.tempMin + "c");
+				expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "c");
+			}else if(!minMaxPref){
+				expMinLabel.setText("");
+				expMaxLabel.setText("");
+			}
 			tempBool = true;
 		} else if (action.equals("f") && tempBool == true){
-			this.tempScaleLabel.setText("f");
 			this.temperature = (this.temperature*1.8)+32;
 			this.temperature = (Math.floor(this.temperature*100))/100;
-			this.tempNumber.setText(""+ this.temperature);
 			this.tempMin = (this.tempMin*1.8)+32;
 			this.tempMax = (this.tempMax*1.8)+32;
 			this.tempMin = (Math.floor(this.tempMin*100))/100;
 			this.tempMax = (Math.floor(this.tempMax*100))/100;
-			expMinLabel.setText("Minimum Temperature: " + this.tempMin + "f");
-			expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "f");
+			
+			if(tempPref){
+				this.tempNumber.setText(""+ this.temperature);
+				this.tempScaleLabel.setText("f");
+			}else if(!tempPref){
+				this.tempNumber.setText("");
+				this.tempScaleLabel.setText("");
+			}
+			
+			if(minMaxPref){
+				expMinLabel.setText("Minimum Temperature: " + this.tempMin + "f");
+				expMaxLabel.setText("Maximum Temperature: " + this.tempMax + "f");
+			}else if(!minMaxPref){
+				expMinLabel.setText("");
+				expMaxLabel.setText("");
+			}
 			tempBool = false;
+			
+		} else if(action.equals("conf")){
+			try{
+				currentConstructor(this.currentWeather);
+			} catch(IOException e){
+				
+			}
+			
+			dialog.dispose();
+			
+		} else if(action.equals("tc")){
+			if(tempPref){
+				tempPref = false;
+			}else if(!tempPref){
+				tempPref = true;
+			}
+			
+		} else if(action.equals("wc")){
+			if(windPref){
+				windPref = false;
+			}else if(!windPref){
+				windPref = true;
+			}
+			
+		} else if(action.equals("hc")){
+			if(humidityPref){
+				humidityPref = false;
+			}else if(!humidityPref){
+				humidityPref = true;
+			}
+			
+		} else if(action.equals("sc")){
+			if(sunPref){
+				sunPref = false;
+			}else if(!sunPref){
+				sunPref = true;
+			}
+			
+		} else if(action.equals("skc")){
+			if(skyCondPref){
+				skyCondPref = false;
+			}else if(!skyCondPref){
+				skyCondPref = true;
+			}
+			
+		} else if(action.equals("ic")){
+			if(iconPref){
+				iconPref = false;
+			}else if(!iconPref){
+				iconPref = true;
+			}
+			
+		} else if(action.equals("mc")){
+			if(minMaxPref){
+				minMaxPref = false;
+			}else if(!minMaxPref){
+				minMaxPref = true;
+			}
+			
+		} else if(action.equals("pc")){
+			if(pressurePref){
+				pressurePref = false;
+			}else if(!pressurePref){
+				pressurePref = true;
+			}
+			
 		}
 	}
 	/**
@@ -1442,6 +1596,82 @@ public class LocalWeather extends JFrame implements ActionListener{
 		JLabel temperatureLabel = new JLabel(tempString);
 		return temperatureLabel;
 	}
+	
+	public void prefInit(){
+		SpringLayout prefLayout = new SpringLayout();
+		JPanel dialogPanel = new JPanel();
+		dialogPanel.setLayout(prefLayout);
+		this.dialog = new JDialog(this.dialogFrame, "Current Weather Preferences", true);
+		this.dialog.setResizable(false);
+		this.dialog.getContentPane().add(dialogPanel);
+		this.dialog.setSize(350, 250);
+		this.dialog.setLocation(200, 200);
+		
+		JCheckBox tempChk = new JCheckBox("Temperature", tempPref);
+		prefLayout.putConstraint(SpringLayout.WEST, tempChk, 10, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, tempChk, 10, SpringLayout.NORTH, dialogPanel);
+		dialogPanel.add(tempChk);
+		tempChk.addActionListener(this);
+		tempChk.setActionCommand("tc");
+		
+		JCheckBox iconChk = new JCheckBox("Icon", iconPref);
+		prefLayout.putConstraint(SpringLayout.WEST, iconChk, 10, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, iconChk, 40, SpringLayout.NORTH, tempChk);
+		dialogPanel.add(iconChk);
+		iconChk.addActionListener(this);
+		iconChk.setActionCommand("ic");
+		
+		JCheckBox windChk = new JCheckBox("Wind Speed/Direction", windPref);
+		prefLayout.putConstraint(SpringLayout.WEST, windChk, 10, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, windChk, 40, SpringLayout.NORTH, iconChk);
+		dialogPanel.add(windChk);
+		windChk.addActionListener(this);
+		windChk.setActionCommand("wc");
+		
+		JCheckBox pressureChk = new JCheckBox("Air Pressure", pressurePref);
+		prefLayout.putConstraint(SpringLayout.WEST, pressureChk, 10, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, pressureChk, 40, SpringLayout.NORTH, windChk);
+		dialogPanel.add(pressureChk);
+		pressureChk.addActionListener(this);
+		pressureChk.setActionCommand("pc");
+		
+		JCheckBox humidityChk = new JCheckBox("Humidity", humidityPref);
+		prefLayout.putConstraint(SpringLayout.WEST, humidityChk, 200, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, humidityChk, 10, SpringLayout.NORTH, dialogPanel);
+		dialogPanel.add(humidityChk);
+		humidityChk.addActionListener(this);
+		humidityChk.setActionCommand("wc");
+		
+		JCheckBox minMaxChk = new JCheckBox("Minimum/Maximum", minMaxPref);
+		prefLayout.putConstraint(SpringLayout.WEST, minMaxChk, 200, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, minMaxChk, 40, SpringLayout.NORTH, humidityChk);
+		dialogPanel.add(minMaxChk);
+		minMaxChk.addActionListener(this);
+		minMaxChk.setActionCommand("mc");
+		
+		JCheckBox sunChk = new JCheckBox("Sunset/Sunrise", sunPref);
+		prefLayout.putConstraint(SpringLayout.WEST, sunChk, 200, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, sunChk, 40, SpringLayout.NORTH, minMaxChk);
+		dialogPanel.add(sunChk);
+		sunChk.addActionListener(this);
+		sunChk.setActionCommand("sc");
+		
+		JCheckBox skyCondChk = new JCheckBox("Sky Condition", skyCondPref);
+		prefLayout.putConstraint(SpringLayout.WEST, skyCondChk, 200, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, skyCondChk, 40, SpringLayout.NORTH, sunChk);
+		dialogPanel.add(skyCondChk);
+		skyCondChk.addActionListener(this);
+		skyCondChk.setActionCommand("skc");
+		
+		JButton confirm = new JButton("Confirm");
+		prefLayout.putConstraint(SpringLayout.WEST, confirm, 115, SpringLayout.WEST, dialogPanel);
+		prefLayout.putConstraint(SpringLayout.NORTH, confirm, 40, SpringLayout.NORTH, skyCondChk);
+		dialogPanel.add(confirm);
+		
+		confirm.addActionListener(this);
+		confirm.setActionCommand("conf");
+		this.dialog.setVisible(true);
+	}
 
 	public static void main(String[] args) {
 	    LocalWeather frame = new LocalWeather();
@@ -1450,6 +1680,7 @@ public class LocalWeather extends JFrame implements ActionListener{
 
 	    //Close frame
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    
 	    
 	    
 	  }
