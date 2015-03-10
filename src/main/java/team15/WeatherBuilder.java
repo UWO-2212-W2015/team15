@@ -21,9 +21,6 @@ import java.net.MalformedURLException;
  */
 
 public class WeatherBuilder extends JSONObject{
-	
-    static JSONFetcher json = new JSONFetcher();
-	
     //Weather weather;
     private Object weatherInformation = new Object();
     private String[] parts = new String[10];
@@ -44,7 +41,8 @@ public class WeatherBuilder extends JSONObject{
     /* Current Weather */
     public Weather buildCurrent(String location){
 		Weather weather = new Weather();
-		JSONObject currentWeather = json.getCurrentWeather(location);
+		JSONObject currentWeather 
+                        = JSONFetcher.makeJSON(location, "local");
 		JSONObject tempJSON;
 			
 		/* main */
@@ -120,8 +118,9 @@ public class WeatherBuilder extends JSONObject{
      */
     public ArrayList <Weather> buildShortTerm (String location){
 		ArrayList <Weather> weather = new ArrayList <Weather>();
-		JSONObject shortTerm = json.get3HourForecast(location);
-		JSONArray subArray = new JSONArray();
+		JSONObject shortTerm 
+                        = JSONFetcher.makeJSON(location, "shortterm");
+		JSONArray subArray;
 		try {
 		    //Pick out the array list
 		    subArray = shortTerm.getJSONArray("list");
