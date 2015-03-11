@@ -3,7 +3,7 @@
   <groupId>team15</groupId>
   <artifactId>cs2212-weather</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.json</groupId>
