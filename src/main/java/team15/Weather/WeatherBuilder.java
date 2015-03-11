@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import team15.JSON.URLToJSON;
 
 /**
@@ -25,7 +27,7 @@ public class WeatherBuilder{
     //TESTS
     private final String def = "{\"coord\":{\"lon\":-81.23,\"lat\":42.98},\"sys\":{\"type\":3,\"id\":36456,\"message\":2.1257,\"country\":\"CA\",\"sunrise\":1426074180,\"sunset\":1426116398},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"Sky is Clear\",\"icon\":\"01d\"}],\"base\":\"cmc stations\",\"main\":{\"temp\":276.48,\"pressure\":1018,\"temp_min\":276.48,\"temp_max\":276.48,\"humidity\":90},\"wind\":{\"speed\":2.57,\"gust\":4.11,\"deg\":0},\"clouds\":{\"all\":0},\"dt\":1426088655,\"id\":6058560,\"name\":\"London\",\"cod\":200}";
     //Number of weather objects in a forcast
-    private static final int NUM_FORCAST = 8;
+    private static final int NUM_FORECAST = 8;
     
     //URL variables
     private final String localURL;
@@ -53,64 +55,9 @@ public class WeatherBuilder{
      * @throws team15.Weather.WeatherBuilderException
      */
     /* Current Weather */
-    public Weather buildCurrent() throws WeatherBuilderException{
-        Weather weather = new Weather();
+    public Weather buildCurrent(){
         JSONObject currentWeather = URLToJSON.makeJSON(localURL);
-        if (currentWeather == null){
-            currentWeather = new JSONObject(def);
-        }
-        JSONObject tempJSON;
-
-        //Load the values from the JSON into the weather 
-        try{
-            //Main
-            tempJSON = currentWeather.getJSONObject("main");
-            
-            //Temperature
-            weather.setTemp(tempJSON.get("temp").toString());
-            //Humidity
-            weather.humidity = tempJSON.get("humidity").toString();
-            //Air pressure
-            weather.airPressure = tempJSON.get("pressure").toString();
-            //Minimum temperature
-            weather.setMinTemp(tempJSON.get("temp_min").toString());
-            //Maximum temperature
-            weather.setMaxTemp(tempJSON.get("temp_max").toString());
-            
-            //wind
-            tempJSON = currentWeather.getJSONObject("wind");
-            
-            //Wind speed
-            weather.windSpeed = tempJSON.get("speed").toString();
-            //Wind direction
-            weather.windDirection = tempJSON.get("deg").toString();
-            
-            //Sunrise/Sunset
-            tempJSON = currentWeather.getJSONObject("sys");
-            
-            //Sunrise
-            weather.sunrise = tempJSON.get("sunrise").toString();
-            //Sunset
-            weather.sunset = tempJSON.get("sunset").toString();
-            
-            //Weather
-            tempJSON = currentWeather.getJSONArray("weather").getJSONObject(0);
-            
-            //Weather Description
-            weather.skyCondition = tempJSON.get("description").toString();
-            //Weather Icon
-            weather.icon = 
-                    new ImageIcon(new URL("http://openweathermap.org/img/w/" 
-                            + tempJSON.get("icon").toString() + ".png"));
-        } 
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-        catch (MalformedURLException e){
-            e.printStackTrace();
-        }
-
-        return weather;
+        return createWeather(currentWeather, true);
     } 
 
     /** Returns the short term which has the values of temperature, condition of the sky, 
@@ -118,66 +65,94 @@ public class WeatherBuilder{
      * @return  An array of Weather objects.
      */
     public ArrayList<Weather> buildShortTerm (){
-        ArrayList<Weather> weather = new ArrayList<Weather>();
+        ArrayList<Weather> weather = new ArrayList(NUM_FORECAST);
         JSONObject shortTerm = URLToJSON.makeJSON(shortTermURL);
-        JSONArray subArray;
+        
         try {
             //Pick out the array list
+            JSONArray subArray;
             subArray = shortTerm.getJSONArray("list");
 
             //Loop through the indices of the array
-            for (int i = 0; i < NUM_FORCAST; i++){
-                Weather tempW = new Weather();
-                JSONArray subArray2 = new JSONArray();
-                JSONObject tmpObj;
-
-                //Pick out the json object at index i
-                tmpObj = subArray.getJSONObject(i);
-
-                //save the time & date
-                weatherInformation = tmpObj.get("dt");
-                tempW.time = new GregorianCalendar();
-                tempW.time.setTimeInMillis((long)Integer.parseInt(weatherInformation.toString())*1000);
-
-                //Pick out the main json
-                tmpObj = tmpObj.getJSONObject("main");
-
-                //Loop through the keys to pick out values !!! we dont NEED all the keys, but we can go above the min?
-                for (int key = 0; key < mainKeys.length; key++){
-
-                    weatherInformation = tmpObj.get(mainKeys[key]);
-
-                    switch(key) {
-                    case 0: tempW.setTemp(weatherInformation.toString());
-                        break;
-                    case 1: tempW.setMinTemp(weatherInformation.toString());
-                        break;
-                    case 2: tempW.setMaxTemp(weatherInformation.toString());
-                        break;
-                    case 3: tempW.airPressure = weatherInformation.toString();
-                        break;
-                    case 4: tempW.humidity = weatherInformation.toString();
-                        break;
-                    }
-                }
-
-                tmpObj = subArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
-                tempW.skyCondition = tmpObj.get("description").toString();
-                //tempW.icon = tmpObj.get("icon").toString();
-                tempW.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" + 
-                                                   tmpObj.get("icon").toString() + ".png"));
-                weather.add(tempW);
+            for (int i = 0; i < NUM_FORECAST; i++){
+                weather.add(createWeather(subArray.getJSONObject(i), false));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e){
             e.printStackTrace();
         }
         return weather;
     }
     
     public ArrayList<Weather> buildLongTerm (){
-        return null;
+        ArrayList<Weather> weather = new ArrayList(NUM_FORECAST);
+        JSONObject longTerm = URLToJSON.makeJSON(longTermURL);
+        
+        try {
+            //Pick out the array list
+            JSONArray subArray;
+            subArray = longTerm.getJSONArray("list");
+
+            //Loop through the indices of the array
+            for (int i = 0; i < NUM_FORECAST; i++){
+                weather.add(createWeather(subArray.getJSONObject(i), false));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return weather;
+    }
+    
+    private Weather createWeather(JSONObject j, boolean current){
+        Weather result = new Weather();
+        try {
+            JSONObject temp;
+            
+            //Set sky condition and sky icon
+            temp = j.getJSONArray("weather").getJSONObject(0);
+            result.skyCondition = temp.get("description").toString();
+            result.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
+                    temp.get("icon") + ".png"));
+            
+            //Set tempriture values
+            
+            //Set long term termpriture values
+            if(j.has("temp")){
+                temp = j.getJSONObject("temp");
+                result.setTemp(temp.get("day").toString());
+                result.setMinTemp(temp.get("min").toString());
+                result.setMaxTemp(temp.get("max").toString());
+            }
+            //Set short and current tempriture values
+            else{
+                temp = j.getJSONObject("main");
+                result.setTemp(temp.get("temp").toString());
+            }
+
+            if(!current) return result;
+            
+            //Set current min/max tempriture
+            result.setMinTemp(temp.get("temp_min").toString());
+            result.setMaxTemp(temp.get("temp_max").toString());
+            
+            //Set current pressure and humidity
+            result.humidity = temp.get("humidity").toString();
+            result.airPressure = temp.get("pressure").toString();
+            
+            //Set sunrise and sunset for current
+            temp = j.getJSONObject("sys");
+            result.sunrise = temp.get("sunrise").toString();
+            result.sunset = temp.get("sunset").toString();
+            
+            //Set windspeed and degree for current
+            temp = j.getJSONObject("wind");
+            result.windSpeed = temp.get("speed").toString();
+            result.windDirection = temp.get("deg").toString();
+            
+        } catch (MalformedURLException ex) {
+            result.error = "Problem with URL.";
+        }
+        
+        return result;
     }
 }
 

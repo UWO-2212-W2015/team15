@@ -1,6 +1,6 @@
 package team15.Weather;
 
-import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.swing.ImageIcon;
 
 /**
@@ -31,8 +31,29 @@ public class Weather {
     //Time
     public String sunrise;
     public String sunset;
-    public Calendar time;
+    public GregorianCalendar time;
     
+    //Error field
+    public String error;
+    
+    public Weather(){
+        temp = 0;
+        minTemp = 0;
+        maxTemp = 0;
+        
+        windSpeed = "";
+        windDirection = "";
+        
+        airPressure = "";
+        humidity = "";
+        skyCondition = "";
+        icon = new ImageIcon();
+        
+        sunrise = "";
+        sunset = "";
+        time = new GregorianCalendar();
+    }
+
     public void setTemp(String t){
         this.temp = Double.valueOf(t);
     }

@@ -104,6 +104,6 @@ public class User implements Serializable {
     }
     
     public ArrayList<Weather> getLongTermWeather(){
-        return currentLocation.getShortTermForecast();
+        return currentLocation.getLongTermForecast();
     }
 }

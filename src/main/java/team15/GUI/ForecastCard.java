@@ -49,7 +49,7 @@ public class ForecastCard extends JPanel{
         layout.putConstraint(SpringLayout.WEST, sky, 20, SpringLayout.WEST, this);
         layout.putConstraint(SpringLayout.NORTH,sky,10,SpringLayout.SOUTH, tempLabel);
         
-        if(w.getMinTemp(units).isEmpty()) return;
+        if(Double.valueOf(w.getMinTemp(units)) < -273) return;
         
         //Set the min/max tempriture label
         JLabel maxt = new JLabel("Maximum Temperature: " + w.getMaxTemp(units));

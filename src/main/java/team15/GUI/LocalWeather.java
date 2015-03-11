@@ -232,7 +232,7 @@ public class LocalWeather extends JFrame implements ActionListener{
         STLoc.setText("Location:   " 
                 + user.getCurrentLocation().getHttpLocation());  
         
-        shortTerm = createForecastPanel(user.getShortTermWeather());
+        shortTerm = createForecastPanel(user.getShortTermWeather(), STLoc);
     }
     
     /**
@@ -243,17 +243,17 @@ public class LocalWeather extends JFrame implements ActionListener{
         LTLoc.setBounds(100,100,150,20);
         LTLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
         
-        //updateLongTerm();
+        updateLongTerm();
     }
     
     private void updateLongTerm(){
         LTLoc.setText("Location:   " 
                 + user.getCurrentLocation().getHttpLocation());  
         
-        longTerm = createForecastPanel(user.getLongTermWeather());
+        longTerm = createForecastPanel(user.getLongTermWeather(), LTLoc);
     }
     
-    private JPanel createForecastPanel(ArrayList<Weather> weather){
+    private JPanel createForecastPanel(ArrayList<Weather> weather, JLabel loc){
         JPanel result = new JPanel();
         result.setLayout(new GridBagLayout());
         
@@ -271,7 +271,7 @@ public class LocalWeather extends JFrame implements ActionListener{
         //Add the location label
         gc.gridx = 0;
         gc.gridy = 0;
-        result.add(STLoc, gc);
+        result.add(loc, gc);
         
         //Add each JPanel to the tab
         for(int i = 0; i < 8; i++){
