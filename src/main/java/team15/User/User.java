@@ -1,6 +1,8 @@
-package team15;
+package team15.User;
+
 import java.util.ArrayList;
 import java.io.Serializable;
+import team15.Weather.Weather;
 
 /**
  * The User object provides an api to interact with the underlying
@@ -16,7 +18,7 @@ public class User implements Serializable {
 
     String name;
     Location currentLocation;
-    Preferences userPreferences = new Preferences();
+    public Preferences userPreferences;
     //Use vector if threaded
     ArrayList <Location> locList = new ArrayList<Location>();
 
@@ -27,6 +29,7 @@ public class User implements Serializable {
      */
       
     public User (String userName){
+        this.userPreferences = new Preferences();
     	name = userName;
     }
     
@@ -88,21 +91,7 @@ public class User implements Serializable {
      * @return A Weather object with the most recent weather data for the current location
      */
     public Weather getCurrentWeather(){
-		Weather w = currentLocation.getCurrentForecast();
-		double t = Double.parseDouble(w.temperature);
-		/* Can change the temperature units based on user's preference
-		if (userPreferences.tempUnits == false){
-		    t = t - 273.15;
-		}else{
-		    t = (t - 273.15) *1.8;
-		}
-		*/
-		w.temperature = Double.toString(t-273.15);
-		t = Double.parseDouble(w.minTemp);
-		w.minTemp = Double.toString(t-273.15);
-		t = Double.parseDouble(w.maxTemp);
-		w.maxTemp = Double.toString(t-273.15);
-		return w;
+        return currentLocation.getCurrentForecast();
     }
     
     /** Returns an ArrayList of Weather objects.  The number of Weather objects
@@ -110,20 +99,11 @@ public class User implements Serializable {
      * @param num Number of Weather objects, in 3 hours increment to be returned.
      * @return An ArrayList of Weather objects.
      */
-    public ArrayList <Weather> getShortTermWeather(int num){
-	ArrayList <Weather> weather =  currentLocation.getShortTermForecast(num);
-	double t;
-	for (int i = 0; i < weather.size(); i++){
-	    /* Can change the temperature units based on user's preferences
-	       if (userPreferences.tempUnits == false){
-	       weather.get(i).temperature = Double.toString(Double.parseDouble(weather.get(i).temperature) - 273.15);
-	       }else{
-	       weather.get(i).temperature = Double.toString((Double.parseDouble
-	       (weather.get(i).temperature) - 273.15) * 1.8);
-	       }
-	    */
-	    weather.get(i).temperature = Double.toString(Double.parseDouble(weather.get(i).temperature) - 273.15);
-	}
-	return weather;
+    public ArrayList<Weather> getShortTermWeather(){
+	return currentLocation.getShortTermForecast();
+    }
+    
+    public ArrayList<Weather> getLongTermWeather(){
+        return currentLocation.getShortTermForecast();
     }
 }

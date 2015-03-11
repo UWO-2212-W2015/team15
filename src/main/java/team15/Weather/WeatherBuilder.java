@@ -1,8 +1,5 @@
-package team15;
+package team15.Weather;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -11,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import java.net.URL;
 import java.net.MalformedURLException;
+import team15.JSON.URLToJSON;
 
 /**
  * The WeatherBuilder Class is responsible for extracting the information in the 
@@ -23,42 +21,65 @@ import java.net.MalformedURLException;
  * @version
  */
 
-public class WeatherBuilder extends JSONObject{
+public class WeatherBuilder{
+    //TESTS
+    private final String def = "{\"coord\":{\"lon\":-81.23,\"lat\":42.98},\"sys\":{\"type\":3,\"id\":36456,\"message\":2.1257,\"country\":\"CA\",\"sunrise\":1426074180,\"sunset\":1426116398},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"Sky is Clear\",\"icon\":\"01d\"}],\"base\":\"cmc stations\",\"main\":{\"temp\":276.48,\"pressure\":1018,\"temp_min\":276.48,\"temp_max\":276.48,\"humidity\":90},\"wind\":{\"speed\":2.57,\"gust\":4.11,\"deg\":0},\"clouds\":{\"all\":0},\"dt\":1426088655,\"id\":6058560,\"name\":\"London\",\"cod\":200}";
+    //Number of weather objects in a forcast
+    private static final int NUM_FORCAST = 8;
+    
+    //URL variables
+    private final String localURL;
+    private final String shortTermURL;
+    private final String longTermURL;
+    
     //Weather weather;
     private Object weatherInformation = new Object();
     private static String[] mainKeys = {"temp", "temp_min", "temp_max", "pressure", "humidity"};
 	
-    String location;
+    public WeatherBuilder(String loc){
+        String prefix = "http://api.openweathermap.org/data/2.5/";
 
+        //Make the urls for each type of build;
+        localURL = prefix + "weather?q=" +loc;
+        shortTermURL = prefix + "forecast?q=" + loc + "&mode=json";
+        longTermURL =prefix + "forecast/daily?q=" + loc 
+                +"&mode=json&units=metri&cnt=8";
+    }
+    
     /** Returns the current weather which has the values of temperature, humidity, air pressure,
      * air direction, minimum temperature, maximum temperature, wind speed, condition of the sky, 
      * sunrise, sunset and the icon.
-     * @param location
      * @return  A Weather object.
+     * @throws team15.Weather.WeatherBuilderException
      */
     /* Current Weather */
-    public Weather buildCurrent(String location){
+    public Weather buildCurrent() throws WeatherBuilderException{
         Weather weather = new Weather();
-        JSONObject currentWeather = getJSON(location, "local");
+        JSONObject currentWeather = URLToJSON.makeJSON(localURL);
+        if (currentWeather == null){
+            currentWeather = new JSONObject(def);
+        }
         JSONObject tempJSON;
 
         //Load the values from the JSON into the weather 
         try{
             //Main
             tempJSON = currentWeather.getJSONObject("main");
+            
             //Temperature
-            weather.temperature = tempJSON.get("temp").toString();
+            weather.setTemp(tempJSON.get("temp").toString());
             //Humidity
             weather.humidity = tempJSON.get("humidity").toString();
             //Air pressure
             weather.airPressure = tempJSON.get("pressure").toString();
             //Minimum temperature
-            weather.minTemp = tempJSON.get("temp_min").toString();
+            weather.setMinTemp(tempJSON.get("temp_min").toString());
             //Maximum temperature
-            weather.maxTemp = tempJSON.get("temp_max").toString();
+            weather.setMaxTemp(tempJSON.get("temp_max").toString());
             
             //wind
             tempJSON = currentWeather.getJSONObject("wind");
+            
             //Wind speed
             weather.windSpeed = tempJSON.get("speed").toString();
             //Wind direction
@@ -66,6 +87,7 @@ public class WeatherBuilder extends JSONObject{
             
             //Sunrise/Sunset
             tempJSON = currentWeather.getJSONObject("sys");
+            
             //Sunrise
             weather.sunrise = tempJSON.get("sunrise").toString();
             //Sunset
@@ -73,6 +95,7 @@ public class WeatherBuilder extends JSONObject{
             
             //Weather
             tempJSON = currentWeather.getJSONArray("weather").getJSONObject(0);
+            
             //Weather Description
             weather.skyCondition = tempJSON.get("description").toString();
             //Weather Icon
@@ -94,16 +117,16 @@ public class WeatherBuilder extends JSONObject{
      * and the icon.
      * @return  An array of Weather objects.
      */
-    public ArrayList<Weather> buildShortTerm (String location){
+    public ArrayList<Weather> buildShortTerm (){
         ArrayList<Weather> weather = new ArrayList<Weather>();
-        JSONObject shortTerm = getJSON(location, "shortterm");
+        JSONObject shortTerm = URLToJSON.makeJSON(shortTermURL);
         JSONArray subArray;
         try {
             //Pick out the array list
             subArray = shortTerm.getJSONArray("list");
 
             //Loop through the indices of the array
-            for (int i = 0; i < subArray.length(); i++){
+            for (int i = 0; i < NUM_FORCAST; i++){
                 Weather tempW = new Weather();
                 JSONArray subArray2 = new JSONArray();
                 JSONObject tmpObj;
@@ -125,11 +148,11 @@ public class WeatherBuilder extends JSONObject{
                     weatherInformation = tmpObj.get(mainKeys[key]);
 
                     switch(key) {
-                    case 0: tempW.temperature = weatherInformation.toString();
+                    case 0: tempW.setTemp(weatherInformation.toString());
                         break;
-                    case 1: tempW.minTemp = weatherInformation.toString();
+                    case 1: tempW.setMinTemp(weatherInformation.toString());
                         break;
-                    case 2: tempW.maxTemp = weatherInformation.toString();
+                    case 2: tempW.setMaxTemp(weatherInformation.toString());
                         break;
                     case 3: tempW.airPressure = weatherInformation.toString();
                         break;
@@ -153,59 +176,8 @@ public class WeatherBuilder extends JSONObject{
         return weather;
     }
     
-    /** Returns the json representing either the current weather, a short term
-     * forcast or a long term forcest
-     * @param location The location for the current weather forecast.
-     * @param type "local", "shortterm", "longterm" based on which type of
-     * json object you wish to create
-     * @return  A Json object containing the information or null if there was
-     * an error creating the JSON
-     */
-    private static JSONObject getJSON(String location, String type){
-        String url = "http://api.openweathermap.org/data/2.5/";
-
-        //Makes the url based on the specified type of json object we
-        //wish to fetch
-        if(type.equals("local"))
-            url += "weather?q="+location;
-        else if(type.equals("shortterm"))
-            url += "forecast?q="+location+"&mode=json";
-        else if(type.equals("longterm"))
-            url += "forecast/daily?q="+location
-                    +"&mode=json&units=metri&cnt=8";
-
-        URL in;
-        BufferedReader input;
-
-        //Attempt to open the url connection and creater a reader for the
-        //text in the url
-        try {
-            in = new URL(url); //Create a new url to openweather
-            //create a new input reader to read from the r
-            input = new BufferedReader(
-                    new InputStreamReader(in.openStream()));    
-        } 
-        catch (IOException e) {
-            System.out.println("Error opening connection to URL");
-            e.printStackTrace();
-            return null;
-        } 
-        
-        //Attempt to read from the URL and create the JSON from the given string
-        JSONObject json = null;
-        try{
-            json = new JSONObject(input.readLine());
-            input.close();
-        }
-        catch(JSONException e){
-            System.out.println("Error creating the JSON");
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            System.out.println("Error reading from the URL");
-            e.printStackTrace();
-        }
-        return json;
+    public ArrayList<Weather> buildLongTerm (){
+        return null;
     }
 }
 

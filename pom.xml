@@ -1,7 +1,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>team15</groupId>
-  <artifactId>cs2212-weather</artifactId>
+  <artifactId>15-cs2212-weather</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <dependencies>
@@ -20,7 +20,7 @@
 	<configuration>
 	  <archive>
 	    <manifest>
-	      <mainClass>team15.LocalWeather</mainClass>
+	      <mainClass>team15.WeatherMain</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>
@@ -35,7 +35,7 @@
 	  </descriptorRefs>
 	  <archive>
 	    <manifest>
-              <mainClass>team15.LocalWeather</mainClass>
+              <mainClass>team15.WeatherMain</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>

@@ -1,4 +1,6 @@
-package team15;
+package team15.Forecast;
+
+import team15.Weather.Weather;
 
 /**
  * The CurrentForecast class extends the Forecast and uses the WeatherBuilder
@@ -8,20 +10,17 @@ package team15;
  * @version
  */
 
-public class CurrentForecast extends Forecast{
-    Weather weather;
+public class CurrentForecast{
+    private Weather weather;
 
-    /** Updates the current forecast.
-     * @param loc Location's forecast to be updated.
-     */
-    public void updateForecast (String loc){
-    	weather = wb.buildCurrent(loc);
+    public CurrentForecast(Weather w){
+        this.weather = w;
     }
-
+    
     /** Returns a Weather object with the current forecast.
      * @return A Weather object.
      */
-    public Weather getWeatherObject (){
+    public Weather getWeather (){
     	return weather;
     }
 }
