@@ -10,10 +10,11 @@ package team15.Weather;
  */
 
 //Imports
-import java.util.GregorianCalendar;
+import java.io.Serializable;
+import java.util.Date;
 import javax.swing.ImageIcon;
 
-public class Weather {
+public class Weather implements Serializable{
     //Temperatures
     private double temp, minTemp, maxTemp;
     
@@ -26,7 +27,7 @@ public class Weather {
     
     //Time
     public String sunrise, sunset;
-    public GregorianCalendar time;
+    public Date time;
     
     /**
      * Creates an instance of the Weather, class, setting all values to 0 or
@@ -47,7 +48,7 @@ public class Weather {
         
         sunrise = "";
         sunset = "";
-        time = new GregorianCalendar();
+        time = new Date();
     }
 
     /**

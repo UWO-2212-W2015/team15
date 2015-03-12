@@ -15,12 +15,13 @@ package team15.User;
 //Imports
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import org.json.JSONException;
 
 import team15.Weather.*;
 
-public class Location{
+public class Location implements Serializable{
     String location;
     private final WeatherBuilder wb;
     
@@ -30,7 +31,7 @@ public class Location{
     /**
      * Creates a new location object with the given search string. The search
      * string is input by the user.
-     * @param searchString A string representing the location 
+     * @param location A string representing the location 
      * (city,state,country) that the object represents
      * @throws MalformedURLException thrown if any of the urls are
      * malformed
@@ -38,9 +39,9 @@ public class Location{
      * OpenWeather api
      * @throws JSONException thrown if there is any problem using the json 
      */
-    public Location (String searchString) 
+    public Location (String location) 
                        throws MalformedURLException, IOException, JSONException{
-    	this.location = searchString.replace(" ", ",");
+    	this.location = location;
         wb = new WeatherBuilder(this.location);
         updateForecasts();
     }

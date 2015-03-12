@@ -1,6 +1,11 @@
 package team15.User;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -17,9 +22,9 @@ import team15.Weather.Weather;
  * @version
  */
 
-public class User implements Serializable {
+public class User implements Serializable{
     private int locIndex;
-    public final Preferences pref;
+    public Preferences pref;
     private final ArrayList<Location> locations;
 
     /**
@@ -110,4 +115,20 @@ public class User implements Serializable {
     public ArrayList<Weather> getLongTermWeather(){
         return this.getCurrentLocation().getLongTerm();
     }
+    
+    public void saveUser() 
+                         throws IOException, FileNotFoundException, IOException{
+        ObjectOutputStream out 
+                = new ObjectOutputStream(new FileOutputStream("user.dat"));
+        out.writeObject(this);
+        out.close();
+    }            
+    
+    public static User loadUser() throws IOException, FileNotFoundException, 
+                                            IOException, ClassNotFoundException{
+        ObjectInputStream in 
+                       = new ObjectInputStream(new FileInputStream("user.dat"));
+        User result = (User) in.readObject();
+        return result;
+    }  
 }

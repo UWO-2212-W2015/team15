@@ -22,12 +22,17 @@ public class ForecastCard extends JPanel{
         this.setBackground(Color.WHITE);
         this.layout = new SpringLayout();
         this.setLayout(layout);
+                
+        JLabel time = new JLabel(w.time.toString());
+        this.add(time);
+        layout.putConstraint(SpringLayout.WEST, time, 20, SpringLayout.WEST, this);
         
         //Set up the tempriture label
-        JLabel tempLabel = new JLabel(w.getTemp(units));
-        tempLabel.setFont(new Font("Tahoma",Font.PLAIN,60));
-        this.add(tempLabel);
-        layout.putConstraint(SpringLayout.WEST, tempLabel, 80, SpringLayout.WEST, this);
+        JLabel temp = new JLabel(w.getTemp(units));
+        temp.setFont(new Font("Tahoma",Font.PLAIN,50));
+        this.add(temp);
+        layout.putConstraint(SpringLayout.WEST, temp, 80, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.NORTH, temp,10, SpringLayout.SOUTH, time);
         
         //Set the icon label
         JLabel icon = new JLabel();
@@ -40,14 +45,14 @@ public class ForecastCard extends JPanel{
         JLabel scale = new JLabel(units?"c":"f");
         scale.setFont(new Font("Tahoma",Font.PLAIN,40));
         this.add(scale);
-        layout.putConstraint(SpringLayout.WEST, scale, 5, SpringLayout.EAST, tempLabel);
+        layout.putConstraint(SpringLayout.WEST, scale, 5, SpringLayout.EAST, temp);
         layout.putConstraint(SpringLayout.NORTH,scale, 5,SpringLayout.NORTH, this);
         
         //Set the sky condition label
         JLabel sky = new JLabel("Sky Condition :   " + w.skyCondition);
         this.add(sky);
         layout.putConstraint(SpringLayout.WEST, sky, 20, SpringLayout.WEST, this);
-        layout.putConstraint(SpringLayout.NORTH,sky,10,SpringLayout.SOUTH, tempLabel);
+        layout.putConstraint(SpringLayout.NORTH,sky,10,SpringLayout.SOUTH, temp);
         
         if(Double.valueOf(w.getMinTemp(units)) < -273) return;
         

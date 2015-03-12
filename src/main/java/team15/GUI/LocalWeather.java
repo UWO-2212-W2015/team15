@@ -18,34 +18,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Date;
 import org.json.JSONException;
 
 import team15.Weather.Weather;
 import team15.User.*;
 
-public class LocalWeather extends JFrame implements ActionListener{
+public class LocalWeather extends JFrame{
     //User variable
     private final User user;
     
-    //Checkboxes for preferences menu
-    private JCheckBox tempChk;
-    private JCheckBox iconChk;
-    private JCheckBox windChk;
-    private JCheckBox pressureChk;
-    private JCheckBox humidityChk;
-    private JCheckBox minMaxChk;
-    private JCheckBox sunChk;
-    private JCheckBox skyCondChk;
-    private JCheckBox celChk;
-    private JCheckBox fahChk;
-
-    //Variables for the short term forecast panel
-    private JLabel STLoc;
+    //Error label
+    private JLabel error;
     
-    //Variables for the long term forecast panel
-    private JLabel LTLoc;
+    //Refresh Time Label
+    private JLabel reflabel;
+    
+    //Location labels
+    private JLabel curLoc;
+    private JLabel shortLoc;
+    private JLabel longLoc;
     
     private JTabbedPane tabbedPane;
     private JPanel current;
@@ -56,7 +48,6 @@ public class LocalWeather extends JFrame implements ActionListener{
 
     private JLabel tempNumber = new JLabel();
     private JLabel tempScaleLabel = new JLabel ("c");
-    private JLabel locationLabel_1 = new JLabel();
 
     private JLabel windSpeedLabel = new JLabel();
     private JLabel windDirectionLabel = new JLabel();
@@ -69,21 +60,28 @@ public class LocalWeather extends JFrame implements ActionListener{
     private JLabel sunsetLabel = new JLabel();
     private JLabel iconLabel = new JLabel();
 
-    private JFrame dialogFrame;
-    
-    private JDialog dialog;
-	
     /**
      * Constructor for the local weather class
      */
     public LocalWeather(User u){
+        super();
         this.user = u;
         
-                    /*JOptionPane test = new JOptionPane();
-            nameString = test.showInputDialog("Enter your name");
-            JOptionPane location = new JOptionPane();
-            this.locationName = test.showInputDialog("Enter the city and country");*/
-           
+        error = new JLabel();
+        reflabel = new JLabel();
+        
+        curLoc = new JLabel();
+        curLoc.setBounds(100,100,150,20);
+        curLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
+        
+        shortLoc = new JLabel();
+        shortLoc.setBounds(100,100,150,20);
+        shortLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
+        
+        longLoc = new JLabel();
+        longLoc.setBounds(100,100,150,20);
+        longLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
+                
         setTitle("Team 15 Weather");
         setSize(1200, 800); 
         setLocation(100,50);
@@ -91,9 +89,9 @@ public class LocalWeather extends JFrame implements ActionListener{
         
         //Create the tab pages
         createCurrent();
-        createShortTerm();
-        createLongTerm();
-
+        
+        updatePanels();
+        
         //Create new tabbed pane
         this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(Color.LIGHT_GRAY);
@@ -109,11 +107,19 @@ public class LocalWeather extends JFrame implements ActionListener{
 
         //Add menu bar and menus
         JMenuBar menuBar = new JMenuBar();
+        
         JMenuItem refresh = new JMenuItem("Refresh");
+        refresh.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent event){
+                System.out.println("Refresh " + (refresh()?"failed":"passed"));
+            }
+        });
+        
         JMenuItem preferences = new JMenuItem ("Preferences");
         preferences.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-                prefInit();
+                PreferencesDialog.makeWindow(user);
+                updateCurrent();
             }
         });
 
@@ -125,6 +131,16 @@ public class LocalWeather extends JFrame implements ActionListener{
         menuBar.add(menu);
         menu.add(refresh);
         menu.add(preferences);
+        
+        this.setVisible(true);
+        this.setResizable(false);
+
+        //Close frame
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        refresh();
+        
+        
 }
 	
     /**
@@ -137,22 +153,19 @@ public class LocalWeather extends JFrame implements ActionListener{
         current.setLayout(layout_1);
 
         //Location label
-        locationLabel_1 = new JLabel ("Location :   " + user.getCurrentLocation());
-        locationLabel_1.setBounds(100,100,150,20);
-        locationLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout_1.putConstraint(SpringLayout.WEST, locationLabel_1, 20, SpringLayout.WEST, current);
-        current.add(locationLabel_1);
+        layout_1.putConstraint(SpringLayout.WEST, curLoc, 20, SpringLayout.WEST, current);
+        current.add(curLoc);
 
         //Temperature label
         tempNumber.setFont(new Font("Tahoma", Font.PLAIN, 90));
         current.add(tempNumber);
         layout_1.putConstraint(SpringLayout.WEST, tempNumber, 120, SpringLayout.WEST, current);
-        layout_1.putConstraint(SpringLayout.NORTH, tempNumber, 11, SpringLayout.SOUTH, locationLabel_1);
+        layout_1.putConstraint(SpringLayout.NORTH, tempNumber, 11, SpringLayout.SOUTH, curLoc);
 
         tempScaleLabel.setFont(new Font("Tahoma", Font.PLAIN, 60));
         current.add(this.tempScaleLabel);
         layout_1.putConstraint(SpringLayout.WEST, this.tempScaleLabel, 5, SpringLayout.EAST, tempNumber);
-        layout_1.putConstraint(SpringLayout.NORTH, this.tempScaleLabel, 16, SpringLayout.SOUTH, locationLabel_1);
+        layout_1.putConstraint(SpringLayout.NORTH, this.tempScaleLabel, 16, SpringLayout.SOUTH, curLoc);
 
         //Air pressure label
         airPressureLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
@@ -212,44 +225,8 @@ public class LocalWeather extends JFrame implements ActionListener{
         layout_1.putConstraint(SpringLayout.WEST, iconLabel, 30, SpringLayout.WEST, current);
         layout_1.putConstraint(SpringLayout.NORTH, iconLabel, 60, SpringLayout.NORTH, current);
         current.add(iconLabel);
-        
-        updateCurrent();
     }
-	
-    /**
-     * a method that builds the short term weather panel
-     */
-    private void createShortTerm(){
-        STLoc = new JLabel ();
-        STLoc.setBounds(100,100,150,20);
-        STLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        
-        updateShortTerm();
-    }
-	
-    private void updateShortTerm(){
-        STLoc.setText("Location:   " + user.getCurrentLocation());  
-        
-        shortTerm = createForecastPanel(user.getShortTermWeather(), STLoc);
-    }
-    
-    /**
-     * A method that builds the long term weather panel
-     */
-    private void createLongTerm(){
-        LTLoc = new JLabel ();
-        LTLoc.setBounds(100,100,150,20);
-        LTLoc.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        
-        updateLongTerm();
-    }
-    
-    private void updateLongTerm(){
-        LTLoc.setText("Location:   " + user.getCurrentLocation());  
-        
-        longTerm = createForecastPanel(user.getLongTermWeather(), LTLoc);
-    }
-    
+
     private JPanel createForecastPanel(ArrayList<Weather> weather, JLabel loc){
         JPanel result = new JPanel();
         result.setLayout(new GridBagLayout());
@@ -359,132 +336,44 @@ public class LocalWeather extends JFrame implements ActionListener{
         }
     }  
     
-    /**
-     * 
-     * @param ae
-     */
-    public void actionPerformed(ActionEvent ae) {
-        String action = ae.getActionCommand();
-        if(action.equals("Preferences_Confirm")){
-            user.pref.humidity = humidityChk.isSelected();
-            user.pref.icon = iconChk.isSelected();
-            user.pref.minMaxTemp = minMaxChk.isSelected();
-            user.pref.pressure = pressureChk.isSelected();
-            user.pref.sky = skyCondChk.isSelected();
-            user.pref.sun = sunChk.isSelected();
-            user.pref.temperature = tempChk.isSelected();
-            user.pref.wind = windChk.isSelected();
-            user.pref.tempUnits = celChk.isSelected();
-            
-            updateCurrent();
-            
-            dialog.dispose();
+    private boolean refresh(){
+        try{
+            user.getCurrentLocation().updateForecasts();
+        } catch (IOException ex) {
+            error.setText("Error: problem connecting to OpenWeather.com");
+            return false;
+        } catch (JSONException ex) {
+            error.setText("Error: Unable to get new data from OpenWeather.com");
+            return false;
         }
-        else if(action.equals("Celsius_Click")){
-            fahChk.setSelected(!celChk.isSelected());
+        
+        //Update the last refresh time
+        Date time = new Date(System.currentTimeMillis());
+        reflabel.setText("Last Refresh: " + time);
+        
+        try{
+            user.saveUser();
         }
-        else if(action.equals("Fahrenheit_Click")){
-            celChk.setSelected(!fahChk.isSelected());
+        catch(Exception e){
+            error.setText("Error: Could not save new weather data to disk");
         }
+        
+        updatePanels();
+        
+        return true;
     }
-
-    private void prefInit(){
-        Preferences pref = user.pref;
+    
+    private void updatePanels(){
+        String newLoc = "Location :   " + user.getCurrentLocation();
         
-        SpringLayout prefLayout = new SpringLayout();
-        JPanel dialogPanel = new JPanel();
-        dialogPanel.setLayout(prefLayout);
+        curLoc.setText(newLoc);
+        shortLoc.setText(newLoc);
+        longLoc.setText(newLoc);
         
-        dialog = new 
-                JDialog(this.dialogFrame, "Current Weather Preferences", true);
-        dialog.setResizable(false);
-        dialog.getContentPane().add(dialogPanel);
-        dialog.setSize(350, 300);
-        dialog.setLocation(200, 200);
-
-        tempChk = new JCheckBox("Temperature", pref.temperature);
-        prefLayout.putConstraint(SpringLayout.WEST, tempChk, 10, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, tempChk, 
-                                           10, SpringLayout.NORTH, dialogPanel);
-        dialogPanel.add(tempChk);
-
-        iconChk = new JCheckBox("Icon", pref.icon);
-        prefLayout.putConstraint(SpringLayout.WEST, iconChk, 10, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, iconChk, 40, 
-                                                   SpringLayout.NORTH, tempChk);
-        dialogPanel.add(iconChk);
-
-        windChk = new JCheckBox("Wind Speed/Direction", pref.wind);
-        prefLayout.putConstraint(SpringLayout.WEST, windChk, 10, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, windChk, 40, 
-                                                   SpringLayout.NORTH, iconChk);
-        dialogPanel.add(windChk);
-
-        pressureChk = new JCheckBox("Air Pressure", pref.pressure);
-        prefLayout.putConstraint(SpringLayout.WEST, pressureChk, 10, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, pressureChk, 
-                                               40, SpringLayout.NORTH, windChk);
-        dialogPanel.add(pressureChk);
-
-        celChk = new JCheckBox("Celsius", pref.tempUnits);
-        prefLayout.putConstraint(SpringLayout.WEST, celChk, 10, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, celChk, 40, 
-                                               SpringLayout.NORTH, pressureChk);
-        dialogPanel.add(celChk);
-        celChk.addActionListener(this);
-        celChk.setActionCommand("Celsius_Click");
+        updateCurrent();
+        shortTerm = createForecastPanel(user.getShortTermWeather(), shortLoc);
+        longTerm = createForecastPanel(user.getLongTermWeather(), longLoc);
         
-        humidityChk = new JCheckBox("Humidity", pref.humidity);
-        prefLayout.putConstraint(SpringLayout.WEST, humidityChk, 200, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, humidityChk, 10, 
-                                               SpringLayout.NORTH, dialogPanel);
-        dialogPanel.add(humidityChk);
-
-        minMaxChk = new JCheckBox("Minimum/Maximum", pref.minMaxTemp);
-        prefLayout.putConstraint(SpringLayout.WEST, minMaxChk, 200, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, minMaxChk, 40, 
-                                               SpringLayout.NORTH, humidityChk);
-        dialogPanel.add(minMaxChk);
-
-        sunChk = new JCheckBox("Sunset/Sunrise", pref.sun);
-        prefLayout.putConstraint(SpringLayout.WEST, sunChk, 200, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, sunChk, 40, 
-                                                   SpringLayout.NORTH, minMaxChk);
-        dialogPanel.add(sunChk);
-
-        skyCondChk = new JCheckBox("Sky Condition", pref.sky);
-        prefLayout.putConstraint(SpringLayout.WEST, skyCondChk, 200, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, skyCondChk, 40, 
-                                                    SpringLayout.NORTH, sunChk);
-        dialogPanel.add(skyCondChk);
-        
-        fahChk = new JCheckBox("Fahrenheit", !pref.tempUnits);
-        prefLayout.putConstraint(SpringLayout.WEST, fahChk, 200, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, fahChk, 40, 
-                                                SpringLayout.NORTH, skyCondChk);
-        dialogPanel.add(fahChk);
-        fahChk.addActionListener(this);
-        fahChk.setActionCommand("Fahrenheit_Click");
-        
-        JButton confirm = new JButton("Confirm");
-        prefLayout.putConstraint(SpringLayout.WEST, confirm, 115, 
-                                                SpringLayout.WEST, dialogPanel);
-        prefLayout.putConstraint(SpringLayout.NORTH, confirm, 40, 
-                                                SpringLayout.NORTH, fahChk);
-        dialogPanel.add(confirm);    
-        confirm.addActionListener(this);
-        confirm.setActionCommand("Preferences_Confirm");
-        
-        dialog.setVisible(true);
+                
     }
 }

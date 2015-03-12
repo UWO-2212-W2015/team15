@@ -14,6 +14,7 @@ package team15.Weather;
 
 //Imports
 import java.io.IOException;
+import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -24,7 +25,7 @@ import java.net.MalformedURLException;
 
 import team15.JSON.URLToJSON;
 
-public class WeatherBuilder{
+public class WeatherBuilder  implements Serializable{
     //Number of weather objects in a forecast
     private static final int NUM_FORECAST = 8;
     
@@ -137,7 +138,10 @@ public class WeatherBuilder{
         Weather result = new Weather();
 
         JSONObject temp;
-
+        
+        //Set the time value
+        result.time.setTime((long)1000*Integer.valueOf(j.get("dt").toString()));
+        
         //Set sky condition and sky icon
         temp = j.getJSONArray("weather").getJSONObject(0);
         result.skyCondition = temp.get("description").toString();

@@ -8,7 +8,7 @@ package team15.User;
  */
 import java.io.Serializable;
 
-public class Preferences implements Serializable {
+public class Preferences implements Serializable{
     //Display properties - True = draw
     public boolean 
               temperature, wind, pressure, humidity, sun, icon, minMaxTemp, sky;
