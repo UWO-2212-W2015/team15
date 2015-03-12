@@ -1,7 +1,10 @@
 package team15.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import org.json.JSONException;
 import team15.Weather.Weather;
 
 /**
@@ -15,95 +18,96 @@ import team15.Weather.Weather;
  */
 
 public class User implements Serializable {
+    private int locIndex;
+    public final Preferences pref;
+    private final ArrayList<Location> locations;
 
-    String name;
-    Location currentLocation;
-    public Preferences userPreferences;
-    //Use vector if threaded
-    ArrayList <Location> locList = new ArrayList<Location>();
-
-    /** Main constructor for the user class.  A unique user name
-     * is to be provided (need to implement).
-     *
-     * @param userName  Name of the user
+    /**
+     * Creates a new user object with the given initial location.
+     * @param location 
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json
      */
-      
-    public User (String userName){
-        this.userPreferences = new Preferences();
-    	name = userName;
+    public User (String location)
+                       throws MalformedURLException, IOException, JSONException{
+        locIndex = 0;
+        pref = new Preferences();
+        locations = new ArrayList<Location>();
+        this.addLocation(location);
     }
     
-    /** Returns the current user's name.
-     * @return  A string containing the user's name
+    /**
+     * Returns the list of locations that are saved to this user. When dealing
+     * with this list order should be preserved as the indexes are important
+     * to the add and remove functions
+     * @return the list of locations that are saved to this user
      */
-    public String getName (){
-    	return name;
+    public ArrayList<Location> getLocations(){
+    	return locations;
     }
     
-    /** Returns the user's list of locations as an
-	{@link ArrayList}.
-     * @return ArrayList of the user's locations.
+    /**
+     * Set the current location to the given index
+     * @param i the index of the new current location
      */
-    public ArrayList<Location> getLocationList(){
-    	return locList;
-    }
-    
-    /** Set the current user's preferred location.
-     * @param loc A location object that specifies the user's new preferred location.
-     */
-    public void setCurrentLoc (Location loc){
-    	currentLocation = loc;
+    public void setCurrentLoc (int i){
+    	locIndex = i;
     }
 
-    /** Returns the users preferred location.
-     * @return A location object that represents the user's current preferred location
+    /**
+     * Returns the current location object that the user is viewing
+     * @return the current location object that the user is viewing
      */
     public Location getCurrentLocation(){
-    	return currentLocation;
+    	return locations.get(locIndex);
     }
 
-    /** Add a new location to the list of user's locations.
-     * If the user does not have a current location, the new location added
-     * will be set as the user's current preferred location.
-     * The string should contain at least a city and country, but may also
-     * contain a province/state.
-     * @param location A string specifying the user's location
+    /**
+     * Adds a location to the location list for this user
+     * @param location the string that represents the location 
+     * @return true is the location was added
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json
      */
-    public void addLocation(String location){
-		Location newLoc = new Location(location);
-		if (locList.size() == 0){
-		    currentLocation = newLoc;
-		}
-		locList.add(newLoc);
+    public final boolean addLocation(String location)
+                       throws MalformedURLException, IOException, JSONException{
+        return locations.add(new Location(location));
     }
     
-    /** Allows the user to remove a specified location from their list.
-     * @param loc A location object that specifies the location to remove
+    /**
+     * removes the location at the given index from the list of locations
+     * @param i the index of the location object to be removed
      */
-    public void removeLocation(Location loc){
-    	locList.remove(loc);
+    public void removeLocation(int i){
+    	locations.remove(i);
     }
 
-    /** Returns a single weather object that contains the most recent weather
-     * information for the user's current preferred location.
-     * The method also converts the weather's temperature to celsius.
-     *
-     * @return A Weather object with the most recent weather data for the current location
+    /**
+     * returns the current weather for the current location of this user
+     * @return the current weather for the current location of this user
      */
     public Weather getCurrentWeather(){
-        return currentLocation.getCurrentForecast();
+        return this.getCurrentLocation().getCurrent();
     }
     
-    /** Returns an ArrayList of Weather objects.  The number of Weather objects
-     * returned need to be specified.  The temperature is converted from kelvin to celsius.
-     * @param num Number of Weather objects, in 3 hours increment to be returned.
-     * @return An ArrayList of Weather objects.
+    /**
+     * returns the short term forecast for the current location of the user
+     * @return the short term forecast for the current location of the user
      */
     public ArrayList<Weather> getShortTermWeather(){
-	return currentLocation.getShortTermForecast();
+	return this.getCurrentLocation().getShortTerm();
     }
-    
+    /**
+     * returns the long term forecast for the current location of the user
+     * @return the long term forecast for the current location of the user
+     */
     public ArrayList<Weather> getLongTermWeather(){
-        return currentLocation.getLongTermForecast();
+        return this.getCurrentLocation().getLongTerm();
     }
 }

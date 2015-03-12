@@ -1,43 +1,44 @@
 package team15.Weather;
 
+/**
+ * The WeatherBuilder Class is responsible for extracting the information in the 
+ * json object and building Weather objects. Variables such as temperature, 
+ * humidity, condition of the sky, air direction, air speed and icon are the 
+ * target. 
+ * 
+ * The WeatherBuilder returns a Weather object or an array of Weather objects 
+ * according to the type of forecast.
+ *  
+ * @author Team 15
+ */
+
+//Imports
+import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import team15.JSON.URLToJSON;
 
-/**
- * The WeatherBuilder Class is responsible for extracting the information in the 
- * json object and building a Weather object. Variables such as temperature, humidity,
- * condition of the sky, air direction, air speed and icon are the target. 
- * The WeatherBuilder returns a Weather object or an array of Weather objects according 
- * to the type of forecast.
- *  
- * @author Team 15
- * @version
- */
-
 public class WeatherBuilder{
-    //TESTS
-    private final String def = "{\"coord\":{\"lon\":-81.23,\"lat\":42.98},\"sys\":{\"type\":3,\"id\":36456,\"message\":2.1257,\"country\":\"CA\",\"sunrise\":1426074180,\"sunset\":1426116398},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"Sky is Clear\",\"icon\":\"01d\"}],\"base\":\"cmc stations\",\"main\":{\"temp\":276.48,\"pressure\":1018,\"temp_min\":276.48,\"temp_max\":276.48,\"humidity\":90},\"wind\":{\"speed\":2.57,\"gust\":4.11,\"deg\":0},\"clouds\":{\"all\":0},\"dt\":1426088655,\"id\":6058560,\"name\":\"London\",\"cod\":200}";
-    //Number of weather objects in a forcast
+    //Number of weather objects in a forecast
     private static final int NUM_FORECAST = 8;
     
     //URL variables
     private final String localURL;
     private final String shortTermURL;
     private final String longTermURL;
-    
-    //Weather weather;
-    private Object weatherInformation = new Object();
-    private static String[] mainKeys = {"temp", "temp_min", "temp_max", "pressure", "humidity"};
 	
+    /**
+     * Creates a new weather builder that can poll from OpenWeather each of
+     * the three different forecasts from the given location
+     * @param loc The location that the weather builder is building weather
+     * objects for
+     */
     public WeatherBuilder(String loc){
         String prefix = "http://api.openweathermap.org/data/2.5/";
 
@@ -48,110 +49,136 @@ public class WeatherBuilder{
                 +"&mode=json&units=metri&cnt=8";
     }
     
-    /** Returns the current weather which has the values of temperature, humidity, air pressure,
-     * air direction, minimum temperature, maximum temperature, wind speed, condition of the sky, 
-     * sunrise, sunset and the icon.
-     * @return  A Weather object.
-     * @throws team15.Weather.WeatherBuilderException
+    /**
+     * Builds a single weather object representing the current local weather
+     * for the given location.
+     * @return the weather object representing the local weather
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json 
      */
-    /* Current Weather */
-    public Weather buildCurrent(){
+    public Weather buildCurrent() 
+                       throws MalformedURLException, IOException, JSONException{
         JSONObject currentWeather = URLToJSON.makeJSON(localURL);
         return createWeather(currentWeather, true);
     } 
 
-    /** Returns the short term which has the values of temperature, condition of the sky, 
-     * and the icon.
-     * @return  An array of Weather objects.
+    /**
+     * Builds are array of objects that represents a 24 forecast in 3h
+     * increments. 
+     * @return An array of weather objects representing a short term forecast
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json 
      */
-    public ArrayList<Weather> buildShortTerm (){
-        ArrayList<Weather> weather = new ArrayList(NUM_FORECAST);
-        JSONObject shortTerm = URLToJSON.makeJSON(shortTermURL);
-        
-        try {
-            //Pick out the array list
-            JSONArray subArray;
-            subArray = shortTerm.getJSONArray("list");
-
-            //Loop through the indices of the array
-            for (int i = 0; i < NUM_FORECAST; i++){
-                weather.add(createWeather(subArray.getJSONObject(i), false));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return weather;
+    public ArrayList<Weather> buildShortTerm() 
+                       throws MalformedURLException, IOException, JSONException{
+        return buildForecast(false);
     }
     
-    public ArrayList<Weather> buildLongTerm (){
-        ArrayList<Weather> weather = new ArrayList(NUM_FORECAST);
-        JSONObject longTerm = URLToJSON.makeJSON(longTermURL);
-        
-        try {
-            //Pick out the array list
-            JSONArray subArray;
-            subArray = longTerm.getJSONArray("list");
-
-            //Loop through the indices of the array
-            for (int i = 0; i < NUM_FORECAST; i++){
-                weather.add(createWeather(subArray.getJSONObject(i), false));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return weather;
+    /**
+     * Builds are array of objects that represents a n 8 day forecast. 
+     * @return An array of weather objects representing a long term forecast
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json 
+     */
+    public ArrayList<Weather> buildLongTerm() 
+                       throws MalformedURLException, IOException, JSONException{
+        return buildForecast(true);
     }
     
-    private Weather createWeather(JSONObject j, boolean current){
+    /**
+     * Builds a forecast of the given type.
+     * @param type True = long term, False = short term
+     * @return An array of weather objects representing the given forecast
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json
+     */
+    private ArrayList<Weather> buildForecast(boolean type)
+                       throws MalformedURLException, IOException, JSONException{
+        JSONObject forecast = URLToJSON.makeJSON(type?longTermURL:shortTermURL);
+        ArrayList<Weather> result = new ArrayList(NUM_FORECAST);
+        
+         //Pick out the array list
+        JSONArray subArray = forecast.getJSONArray("list");
+        
+        //Create the requires number of weather objects for the forecast
+        for (int i = 0; i < NUM_FORECAST; i++){
+            result.add(createWeather(subArray.getJSONObject(i), false));
+        }
+        
+        return result;
+    }
+    
+   /**
+    * From a JSON object pulls the values at the specified keys and makes a
+    * weather of object.
+    * @param j The JSON object to pulls values from
+    * @param current True = If the Weather object represents the current
+    * weather, False = if the weather object represents a segment of time in
+    * a forecast
+    * @return a weather object created from the values in the json object
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws JSONException thrown if there is any problem using the json
+    */
+    private Weather createWeather(JSONObject j, boolean current) 
+                                     throws MalformedURLException,JSONException{
         Weather result = new Weather();
-        try {
-            JSONObject temp;
-            
-            //Set sky condition and sky icon
-            temp = j.getJSONArray("weather").getJSONObject(0);
-            result.skyCondition = temp.get("description").toString();
-            result.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
-                    temp.get("icon") + ".png"));
-            
-            //Set tempriture values
-            
-            //Set long term termpriture values
-            if(j.has("temp")){
-                temp = j.getJSONObject("temp");
-                result.setTemp(temp.get("day").toString());
-                result.setMinTemp(temp.get("min").toString());
-                result.setMaxTemp(temp.get("max").toString());
-            }
-            //Set short and current tempriture values
-            else{
-                temp = j.getJSONObject("main");
-                result.setTemp(temp.get("temp").toString());
-            }
 
-            if(!current) return result;
-            
-            //Set current min/max tempriture
-            result.setMinTemp(temp.get("temp_min").toString());
-            result.setMaxTemp(temp.get("temp_max").toString());
-            
-            //Set current pressure and humidity
-            result.humidity = temp.get("humidity").toString();
-            result.airPressure = temp.get("pressure").toString();
-            
-            //Set sunrise and sunset for current
-            temp = j.getJSONObject("sys");
-            result.sunrise = temp.get("sunrise").toString();
-            result.sunset = temp.get("sunset").toString();
-            
-            //Set windspeed and degree for current
-            temp = j.getJSONObject("wind");
-            result.windSpeed = temp.get("speed").toString();
-            result.windDirection = temp.get("deg").toString();
-            
-        } catch (MalformedURLException ex) {
-            result.error = "Problem with URL.";
+        JSONObject temp;
+
+        //Set sky condition and sky icon
+        temp = j.getJSONArray("weather").getJSONObject(0);
+        result.skyCondition = temp.get("description").toString();
+        result.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
+                temp.get("icon") + ".png"));
+
+        //Set temperature values
+
+        //Set long term termpriture values
+        if(j.has("temp")){
+            temp = j.getJSONObject("temp");
+            result.setTemp(temp.get("day").toString());
+            result.setMinTemp(temp.get("min").toString());
+            result.setMaxTemp(temp.get("max").toString());
         }
-        
+        //Set short and current tempriture values
+        else{
+            temp = j.getJSONObject("main");
+            result.setTemp(temp.get("temp").toString());
+        }
+
+        if(!current) return result;
+
+        //Set current min/max tempriture
+        result.setMinTemp(temp.get("temp_min").toString());
+        result.setMaxTemp(temp.get("temp_max").toString());
+
+        //Set current pressure and humidity
+        result.humidity = temp.get("humidity").toString();
+        result.airPressure = temp.get("pressure").toString();
+
+        //Set sunrise and sunset for current
+        temp = j.getJSONObject("sys");
+        result.sunrise = temp.get("sunrise").toString();
+        result.sunset = temp.get("sunset").toString();
+
+        //Set windspeed and degree for current
+        temp = j.getJSONObject("wind");
+        result.windSpeed = temp.get("speed").toString();
+        result.windDirection = temp.get("deg").toString();
+            
         return result;
     }
 }

@@ -1,147 +1,120 @@
 package team15.User;
 
-import java.util.ArrayList;
-import java.io.Serializable;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-
-import team15.Weather.*;
-import team15.Forecast.*;
-
 /**
- * The Location Class is responsible for keeping track of the characteristics of the location. 
- * A Location object contains information such as the city, province, country, latitude, longitude
- * and the url to obtain the forecast. The users have Locations as their attributes (a set of locations).
+ * The Location Class is responsible for keeping track of the characteristics of
+ * the location. 
+ * 
+ * A Location object contains the weather objects representing the current
+ * weather and the short term and long term forecasts. 
+ * 
+ * The users have Locations as their attributes (a set of locations).
+ * 
  * @author Team 15
- * @version
  */
 
-public class Location implements Serializable{
-    String userSearch;
-    String city;
-    String province;
-    String country;
-    String httpLocation;
-    int latitude, longitude;
-    private WeatherBuilder wb;
+//Imports
+import java.util.ArrayList;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.json.JSONException;
+
+import team15.Weather.*;
+
+public class Location{
+    String location;
+    private final WeatherBuilder wb;
     
-    private transient CurrentForecast currentForecast;
-    private transient MultiForecast shortTermForecast;
-    private transient MultiForecast longTermForecast;
+    private Weather current;
+    private ArrayList<Weather> shortTerm, longTerm;
 
-    /** Constructor for the Location class. Receives the location 
-     * and prepares the url. In this case the user/GUI can pass a string
-     * containing the name of the city along with the name of the province 
-     * and country or not. 
-     * @param searchString The location.
+    /**
+     * Creates a new location object with the given search string. The search
+     * string is input by the user.
+     * @param searchString A string representing the location 
+     * (city,state,country) that the object represents
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json 
      */
-    public Location (String searchString){
-    	this.userSearch = searchString;
-    	this.httpLocation = userSearch.replace(" ", ",");
-        wb = new WeatherBuilder(this.httpLocation);
+    public Location (String searchString) 
+                       throws MalformedURLException, IOException, JSONException{
+    	this.location = searchString.replace(" ", ",");
+        wb = new WeatherBuilder(this.location);
+        updateForecasts();
     }
 
-    /** Constructor for the Location class. Receives the location 
-     * and prepares the url. Here the user/GUI passes the name of the 
-     * city and the name of the country separately (two strings).
-     * @param city The name of the city.
-     * @param country The name of the country.
+    /**
+     * Returns the location that the object represents
+     * @return the location that the object represents
      */
-    public Location (String city, String country){
-    	this.city = city;
-    	this.country = country;
-        this.httpLocation = city + "," + country;
+    public String getLocation (){
+    	return location;
     }
 
-    /** Constructor for the Location class. Receives the location 
-     * and prepares the url. Here the user/GUI passes the name of the 
-     * city, province and the name of the country separately (three strings).
-     * @param city The name of the city.
-     * @param province The name of the province.
-     * @param country The name of the country.
+    /**
+     * returns the weather object that represents the current weather at the
+     * given location
+     * @return the weather object that represents the current weather at the
+     * given location
      */
-    public Location (String city, String province, String country){
-    	this.city = city;
-    	this.province = province;
-    	this.country = country;
-        this.httpLocation = city + "," + province + "," + country;
-    } 
-
-    /** Returns the url for the chosen location.
-     * @return httpLocation url for the location.
-     */
-    public String getHttpLocation (){
-    	return httpLocation;
+    public Weather getCurrent(){
+        return current;
     }
 
-    /** Returns the the name of the city.
-     * @return city The name of the city.
+    /**
+     * Returns an array list of weather object that represents the a short term
+     * forecast of the weather at the given location
+     * @return an array list of weather object that represents the a short term
+     * forecast of the weather at the given location
      */
-    public String getCityName(){
-    	return city;
+    public ArrayList<Weather> getShortTerm(){
+        return shortTerm;
     }
-
-    /** Returns the the name of the country.
-     * @return country The name of the country.
+    
+    /**
+     * Returns an array list of weather object that represents the a long term
+     * forecast of the weather at the given location
+     * @return an array list of weather object that represents the a long term
+     * forecast of the weather at the given location 
      */
-    public String getCountry(){
-    	return country;
+    public ArrayList<Weather> getLongTerm(){
+        return longTerm;
     }
-
-    /** Returns the the name of the province.
-     * @return province The name of the province.
+    
+    /**
+     * Updates all the weather objects contained in the object. If any of them
+     * fail to build none of them are updated and an error will be thrown.
+     * @throws MalformedURLException thrown if any of the urls are
+     * malformed
+     * @throws IOException thrown if there is any problem interacting with the
+     * OpenWeather api
+     * @throws JSONException thrown if there is any problem using the json 
      */
-    public String getProvince() {
-    	return province;
-    }
-
-    /** Returns the Current Forecast for the location.
-     * @return currentForecast This represents a Weather object.
-     */
-    public Weather getCurrentForecast (){
-        //Try to build a current weather object
-        CurrentForecast temp;
-        try{
-            temp = new CurrentForecast(wb.buildCurrent());
-            
-            //Update the currentForecast
-            currentForecast = temp;
-        }
-        catch(WeatherBuilderException e){
-            e.printStackTrace();
-        }
-        return currentForecast.getWeather(); 
-    }
-
-    /** Returns the Short Term Forecast for the location.
-     * @return shortTermForecast This represents an array of Weather object.
-     */
-    public ArrayList <Weather> getShortTermForecast(){
-        //Try to build a new short term forecast
-        MultiForecast temp = new MultiForecast(wb.buildShortTerm());
-        //Update the shortTermForecast
-        shortTermForecast = temp;
+    public final void updateForecasts() 
+                       throws MalformedURLException, IOException, JSONException{
+        Weather tempC;
+        ArrayList<Weather> tempS, tempL;
         
-    	return shortTermForecast.getWeather();
-    }
-    
-    /** Returns the long term forecast for the location.
-     * @return longTermForecast This represents an array of Weather object.
-     */
-    public ArrayList<Weather> getLongTermForecast(){
-        //Try to build a new long term forecast
-        MultiForecast temp = new MultiForecast(wb.buildLongTerm());
-        //Update the shortTermForecast
-        longTermForecast = temp;
+        //Attempt to buiild new weather objects for the given location
+        tempC = wb.buildCurrent();
+        tempS = wb.buildShortTerm();
+        tempL = wb.buildLongTerm();
         
-    	return longTermForecast.getWeather();
+        /* If all the weather objects were creatd correctly then update the
+         * local variables*/
+        current = tempC;
+        shortTerm = tempS;
+        longTerm = tempL;
     }
     
-    /** Reads an ObjectInputStream and creates the forecasts.
-     * @param ois The ObjectInputStream
+    /**
+     * Returns the string representation of the object
+     * @return the string representation of the object
      */
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
-    	ois.defaultReadObject();
+    public String toString(){
+        return location;
     }
 }
 

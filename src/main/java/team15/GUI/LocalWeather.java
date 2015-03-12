@@ -16,7 +16,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 
 import team15.Weather.Weather;
 import team15.User.*;
@@ -72,19 +76,14 @@ public class LocalWeather extends JFrame implements ActionListener{
     /**
      * Constructor for the local weather class
      */
-    public LocalWeather(){
-        //Defaults for testing
-        String name = "Team15";
-        String loc = "london,ca";
+    public LocalWeather(User u){
+        this.user = u;
         
-        /*JOptionPane test = new JOptionPane();
-        nameString = test.showInputDialog("Enter your name");
-        JOptionPane location = new JOptionPane();
-        this.locationName = test.showInputDialog("Enter the city and country");*/
-        
-        user = new User(name);
-        user.setCurrentLoc(new Location(loc));
-
+                    /*JOptionPane test = new JOptionPane();
+            nameString = test.showInputDialog("Enter your name");
+            JOptionPane location = new JOptionPane();
+            this.locationName = test.showInputDialog("Enter the city and country");*/
+           
         setTitle("Team 15 Weather");
         setSize(1200, 800); 
         setLocation(100,50);
@@ -138,7 +137,7 @@ public class LocalWeather extends JFrame implements ActionListener{
         current.setLayout(layout_1);
 
         //Location label
-        locationLabel_1 = new JLabel ("Location :   " + user.getCurrentLocation().getHttpLocation());
+        locationLabel_1 = new JLabel ("Location :   " + user.getCurrentLocation());
         locationLabel_1.setBounds(100,100,150,20);
         locationLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 30));
         layout_1.putConstraint(SpringLayout.WEST, locationLabel_1, 20, SpringLayout.WEST, current);
@@ -229,8 +228,7 @@ public class LocalWeather extends JFrame implements ActionListener{
     }
 	
     private void updateShortTerm(){
-        STLoc.setText("Location:   " 
-                + user.getCurrentLocation().getHttpLocation());  
+        STLoc.setText("Location:   " + user.getCurrentLocation());  
         
         shortTerm = createForecastPanel(user.getShortTermWeather(), STLoc);
     }
@@ -247,8 +245,7 @@ public class LocalWeather extends JFrame implements ActionListener{
     }
     
     private void updateLongTerm(){
-        LTLoc.setText("Location:   " 
-                + user.getCurrentLocation().getHttpLocation());  
+        LTLoc.setText("Location:   " + user.getCurrentLocation());  
         
         longTerm = createForecastPanel(user.getLongTermWeather(), LTLoc);
     }
@@ -261,7 +258,7 @@ public class LocalWeather extends JFrame implements ActionListener{
         
         //Create all the cards to add to the tab
         for(Weather w: weather) 
-            cards.add(new ForecastCard(w, user.userPreferences.tempUnits));
+            cards.add(new ForecastCard(w, user.pref.tempUnits));
         
         //Set up the grid bag constraints
         GridBagConstraints gc = new GridBagConstraints();
@@ -290,7 +287,7 @@ public class LocalWeather extends JFrame implements ActionListener{
      */
     private void updateCurrent(){
         Weather w = user.getCurrentWeather();
-        Preferences pref = user.userPreferences;
+        Preferences pref = user.pref;
         
         if(pref.temperature){
             tempNumber.setText("" + w.getTemp(pref.tempUnits));
@@ -369,15 +366,15 @@ public class LocalWeather extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         String action = ae.getActionCommand();
         if(action.equals("Preferences_Confirm")){
-            user.userPreferences.humidity = humidityChk.isSelected();
-            user.userPreferences.icon = iconChk.isSelected();
-            user.userPreferences.minMaxTemp = minMaxChk.isSelected();
-            user.userPreferences.pressure = pressureChk.isSelected();
-            user.userPreferences.sky = skyCondChk.isSelected();
-            user.userPreferences.sun = sunChk.isSelected();
-            user.userPreferences.temperature = tempChk.isSelected();
-            user.userPreferences.wind = windChk.isSelected();
-            user.userPreferences.tempUnits = celChk.isSelected();
+            user.pref.humidity = humidityChk.isSelected();
+            user.pref.icon = iconChk.isSelected();
+            user.pref.minMaxTemp = minMaxChk.isSelected();
+            user.pref.pressure = pressureChk.isSelected();
+            user.pref.sky = skyCondChk.isSelected();
+            user.pref.sun = sunChk.isSelected();
+            user.pref.temperature = tempChk.isSelected();
+            user.pref.wind = windChk.isSelected();
+            user.pref.tempUnits = celChk.isSelected();
             
             updateCurrent();
             
@@ -392,7 +389,7 @@ public class LocalWeather extends JFrame implements ActionListener{
     }
 
     private void prefInit(){
-        Preferences pref = user.userPreferences;
+        Preferences pref = user.pref;
         
         SpringLayout prefLayout = new SpringLayout();
         JPanel dialogPanel = new JPanel();
