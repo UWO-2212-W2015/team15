@@ -1,4 +1,4 @@
-package team15;
+package team15.GUI;
 
 /**
  * A class the creates a single jpanel that will hold the data for a short term
@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.*;
+
+import team15.Weather.Weather;
 
 public class ForecastCard extends JPanel{
     private final SpringLayout layout;

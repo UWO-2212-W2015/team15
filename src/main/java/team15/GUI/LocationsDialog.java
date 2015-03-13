@@ -1,4 +1,4 @@
-package team15;
+package team15.GUI;
 
 /**
  *
@@ -22,6 +22,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import org.json.JSONException;
+import team15.User.Location;
+import team15.User.User;
 
 public class LocationsDialog extends JDialog implements ActionListener{
     private final JList locations;

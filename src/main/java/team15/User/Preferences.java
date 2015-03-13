@@ -1,4 +1,4 @@
-package team15;
+package team15.User;
 
 /**
  * A container for the preference variables the the user keeps and the

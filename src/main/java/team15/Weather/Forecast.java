@@ -1,4 +1,4 @@
-package team15;
+package team15.Weather;
 
 /**
  * This class represents a forecast (either short term or long term).  It will

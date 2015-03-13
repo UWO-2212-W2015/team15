@@ -7,6 +7,8 @@ package team15;
 
 import java.io.IOException;
 import org.json.JSONException;
+import team15.GUI.LocalWeather;
+import team15.User.User;
 
 public class WeatherMain {
     public static void main(String[] args) {

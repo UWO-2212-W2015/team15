@@ -1,4 +1,4 @@
-package team15;
+package team15.JSON;
 
 /**
  * This class takes a URL and creates a JSON object from the data contained

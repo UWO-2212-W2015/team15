@@ -1,4 +1,4 @@
-package team15;
+package team15.Weather;
 
 /**
  * The Weather class is constituted by variables present in the weather forecast
@@ -13,6 +13,7 @@ package team15;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import org.json.JSONException;
@@ -47,8 +48,7 @@ public class Weather implements Serializable{
         airPressure = "";
         humidity = "";
         skyCondition = "";
-        icon = new ImageIcon("icons"+ System.getProperty("file.separator") 
-                                                                   + "01d.png");
+        icon = new ImageIcon();
         
         sunrise = "";
         sunset = "";
@@ -92,9 +92,8 @@ public class Weather implements Serializable{
         //Set sky condition and sky icon
         tempJ = j.getJSONArray("weather").getJSONObject(0);
         this.skyCondition = tempJ.get("description").toString();
-        
-        String dash = System.getProperty("file.separator");
-        this.icon = new ImageIcon("icon"+ dash + tempJ.get("icon") + ".png");
+        this.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
+                tempJ.get("icon") + ".png"));
 
         //Set temperature values
 
