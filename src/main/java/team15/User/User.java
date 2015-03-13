@@ -26,7 +26,6 @@ public class User implements Serializable{
     public Preferences pref;
     private final ArrayList<Location> locations;
     private Location curLocation;
-    public String refresh;
     
     /**
      * Creates a new default user object
@@ -35,7 +34,6 @@ public class User implements Serializable{
         pref = new Preferences();
         locations = new ArrayList();
         curLocation = new Location();
-        refresh = "";
     }
     
     /**

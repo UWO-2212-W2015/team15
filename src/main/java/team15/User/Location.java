@@ -16,6 +16,7 @@ package team15.User;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.util.Date;
 import org.json.JSONException;
 
 import team15.Weather.*;
@@ -31,7 +32,9 @@ public class Location implements Serializable{
     
     private Weather current;
     private Forecast shortTerm, longTerm;
-
+    
+    private long refresh;
+    
     /**
      * Creates a new blank location object
      */
@@ -43,6 +46,7 @@ public class Location implements Serializable{
         current = new Weather();
         shortTerm = new Forecast();
         longTerm = new Forecast();
+        refresh = 0;
     }
     
     /**
@@ -63,6 +67,7 @@ public class Location implements Serializable{
         current = new Weather();
         shortTerm = new Forecast();
         longTerm = new Forecast();
+        refresh = 0;
     }
 
     /**
@@ -106,27 +111,52 @@ public class Location implements Serializable{
     /**
      * Updates all the weather objects contained in the object. If any of them
      * fail to build none of them are updated and an error will be thrown.
+     * @return true if the forecasts were updated, false if the process was
+     * stopped because the last refresh request was less than 10 minutes ago.
      * @throws MalformedURLException thrown if any of the urls are
      * malformed
      * @throws IOException thrown if there is any problem interacting with the
      * OpenWeather api
      * @throws JSONException thrown if there is any problem using the json 
      */
-    public final void updateForecasts() 
+    public final boolean updateForecasts() 
                        throws MalformedURLException, IOException, JSONException{
         Weather tempC;
         Forecast tempS, tempL;
         
+        Long newRef = System.currentTimeMillis();
+        //Make sure at least 10 minutes have passed since last refresh.
+        if((newRef - refresh) <= 600000){
+            return false;
+        }
+        
         //Attempt to buiild new weather objects for the given location
-        tempC = new Weather(URLToJSON.makeJSON(localURL), false);
-        tempS = new Forecast(URLToJSON.makeJSON(shortURL));
-        tempL = new Forecast(URLToJSON.makeJSON(longURL));
+        try{
+            tempC = new Weather(URLToJSON.makeJSON(localURL), false);
+            tempS = new Forecast(URLToJSON.makeJSON(shortURL));
+            tempL = new Forecast(URLToJSON.makeJSON(longURL));
+        } catch(IOException ex){
+            refresh = newRef;
+            throw new IOException();
+        }
         
         /* If all the weather objects were creatd correctly then update the
          * local variables*/
+        refresh = newRef;
         current = tempC;
         shortTerm = tempS;
         longTerm = tempL;
+        
+        return true;
+    }
+    
+    /**
+     * Returns the date of the last time the weather objects were refreshed
+     * @return the date of the last time the weather objects were refreshed
+     */
+    public String getRefresh(){
+        Date time = new Date(System.currentTimeMillis());
+        return time.toString();
     }
     
     /**

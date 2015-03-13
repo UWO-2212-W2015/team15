@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -26,7 +28,7 @@ public class LocalWeather extends JFrame{
     private final User user;
     
     //Strings for error and refresh time
-    String error, refresh;
+    String error;
     
     //Container for tabs
     private final JTabbedPane tabbedPane;
@@ -44,7 +46,6 @@ public class LocalWeather extends JFrame{
         
         this.user = u;
         error = "";
-        refresh = user.refresh;
         
         this.setTitle("Team 15 Weather");
         this.setSize(1200, 800); 
@@ -123,17 +124,14 @@ public class LocalWeather extends JFrame{
     
     private String refreshForecasts(){
         try{
-            user.getCurrentLocation().updateForecasts();
+            if(!user.getCurrentLocation().updateForecasts())
+                return "Please wait at least 10 minutes "
+                                                  + "between refresh requests.";
         } catch (IOException ex) {
             return "Error: problem connecting to OpenWeather.com";
         } catch (JSONException ex) {
             return "Error: Unable to get data from OpenWeather.com";
         }
-        
-        //Update the last refreshForecasts time
-        Date time = new Date(System.currentTimeMillis());
-        refresh = time.toString();
-        user.refresh = refresh;
         
         try{
             user.saveUser();
@@ -147,6 +145,7 @@ public class LocalWeather extends JFrame{
     
     private void updatePanels(){
         String location = user.getCurrentLocation().toString();
+        String refresh = user.getCurrentLocation().getRefresh();
         boolean units = user.pref.tempUnits;
         
         local.update(user.getLocalWeather(), user.pref, location, refresh);
@@ -162,6 +161,12 @@ public class LocalWeather extends JFrame{
     
     private void refresh(){
         error = refreshForecasts();
+        try {
+            user.saveUser();
+        } catch (IOException ex) {
+            System.out.println("LocalWeather.refresh(): Error saving user.in");
+        }
+        
         updateError();
         updatePanels();
     }
