@@ -6,6 +6,8 @@ package team15.User;
  * 
  * @author Team 15
  */
+
+//Imports
 import java.io.Serializable;
 
 public class Preferences implements Serializable{
@@ -14,7 +16,7 @@ public class Preferences implements Serializable{
               temperature, wind, pressure, humidity, sun, icon, minMaxTemp, sky;
         
     //Tempriture preferences - True = Celcius, False = Fahrenheit
-    public boolean tempUnits = true;
+    public boolean tempUnits;
     
     /**
      * Creates a new set of preferences all defaulted with True. For display

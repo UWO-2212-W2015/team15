@@ -22,11 +22,14 @@ public class PreferencesDialog{
     private static JCheckBox tempChk, iconChk, windChk, pressureChk, humidityChk, 
             minMaxChk, sunChk, skyCondChk, celChk, fahChk;
     
+    private static boolean updated;
+    
     public static void makeWindow(final User user){
-        
         JButton confirm;
         final JDialog dialog;
 
+        updated = false;
+        
         Preferences pref = user.pref;
         SpringLayout layout = new SpringLayout();
         JPanel panel = new JPanel();
@@ -136,6 +139,7 @@ public class PreferencesDialog{
                 //Try to save the new user preferences
                 try{
                     user.saveUser();
+                    updated = true;
                 }
                 //If we failed to save the new preferences default to previous
                 catch(Exception e){
@@ -162,5 +166,9 @@ public class PreferencesDialog{
         result.tempUnits = celChk.isSelected();
         
         return result;
+    }
+    
+    public boolean prefUpdated(){
+        return updated;
     }
 }

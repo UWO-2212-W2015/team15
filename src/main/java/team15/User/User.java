@@ -1,5 +1,15 @@
 package team15.User;
 
+/**
+ * The User object provides an api to interact with the underlying
+ * weather application.  Users are identified by a unique name
+ * to be provided when initialized.  Each user's preferences and location
+ * are stored between program runs.
+ *
+ * @author Team 15
+ */
+
+//Imports
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,23 +20,22 @@ import java.util.ArrayList;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import org.json.JSONException;
-import team15.Weather.Weather;
-
-/**
- * The User object provides an api to interact with the underlying
- * weather application.  Users are identified by a unique name
- * to be provided when initialized.  Each user's preferences and location
- * are stored between program runs.
- *
- * @author Team 15
- * @version
- */
+import team15.Weather.*;
 
 public class User implements Serializable{
-    private int locIndex;
     public Preferences pref;
     private final ArrayList<Location> locations;
+    private Location curLocation;
 
+    /**
+     * Creates a new default user object
+     */
+    public User(){
+        pref = new Preferences();
+        locations = new ArrayList();
+        curLocation = new Location();
+    }
+    
     /**
      * Creates a new user object with the given initial location.
      * @param location 
@@ -38,10 +47,10 @@ public class User implements Serializable{
      */
     public User (String location)
                        throws MalformedURLException, IOException, JSONException{
-        locIndex = 0;
         pref = new Preferences();
         locations = new ArrayList<Location>();
-        this.addLocation(location);
+        curLocation = new Location(location);
+        locations.add(curLocation);
     }
     
     /**
@@ -59,7 +68,7 @@ public class User implements Serializable{
      * @param i the index of the new current location
      */
     public void setCurrentLoc (int i){
-    	locIndex = i;
+        curLocation = locations.get(i);
     }
 
     /**
@@ -67,7 +76,7 @@ public class User implements Serializable{
      * @return the current location object that the user is viewing
      */
     public Location getCurrentLocation(){
-    	return locations.get(locIndex);
+    	return curLocation;
     }
 
     /**
@@ -82,7 +91,17 @@ public class User implements Serializable{
      */
     public final boolean addLocation(String location)
                        throws MalformedURLException, IOException, JSONException{
-        return locations.add(new Location(location));
+        //Check if the location is already in the list
+        for(Location l: this.locations){
+            if(location.equals(l.toString())) return false;
+        }
+        
+        //Try to make the new location
+        Location l = new Location(location);
+        
+        locations.add(l);
+        
+        return true;
     }
     
     /**
@@ -97,37 +116,48 @@ public class User implements Serializable{
      * returns the current weather for the current location of this user
      * @return the current weather for the current location of this user
      */
-    public Weather getCurrentWeather(){
-        return this.getCurrentLocation().getCurrent();
+    public Weather getLocalWeather(){
+        return curLocation.getLocal();
     }
     
     /**
      * returns the short term forecast for the current location of the user
      * @return the short term forecast for the current location of the user
      */
-    public ArrayList<Weather> getShortTermWeather(){
-	return this.getCurrentLocation().getShortTerm();
+    public Forecast getShortTermForecast(){
+	return curLocation.getShortTerm();
     }
     /**
      * returns the long term forecast for the current location of the user
      * @return the long term forecast for the current location of the user
      */
-    public ArrayList<Weather> getLongTermWeather(){
-        return this.getCurrentLocation().getLongTerm();
+    public Forecast getLongTermForecast(){
+        return curLocation.getLongTerm();
     }
     
-    public void saveUser() 
-                         throws IOException, FileNotFoundException, IOException{
-        ObjectOutputStream out 
-                = new ObjectOutputStream(new FileOutputStream("user.dat"));
+    /**
+     * Saves the user object to user.dat
+     * @throws IOException thrown if there is a problem loading the object
+     * @throws FileNotFoundException thrown if the file user.dat does not exist
+     */
+    public void saveUser() throws IOException, FileNotFoundException{
+        FileOutputStream fo = new FileOutputStream("user.dat");
+        ObjectOutputStream out = new ObjectOutputStream(fo);
         out.writeObject(this);
         out.close();
     }            
     
+    /**
+     * Loads the user object from the file user.dat
+     * @return a user object loaded from the file user.day
+     * @throws IOException thrown if there is a problem saving the object
+     * @throws FileNotFoundException thrown if the file user.dat does not exist
+     * @throws ClassNotFoundException thrown if the class User is not found
+     */
     public static User loadUser() throws IOException, FileNotFoundException, 
-                                            IOException, ClassNotFoundException{
-        ObjectInputStream in 
-                       = new ObjectInputStream(new FileInputStream("user.dat"));
+                                                         ClassNotFoundException{
+        FileInputStream fi = new FileInputStream("user.dat");
+        ObjectInputStream in = new ObjectInputStream(fi);
         User result = (User) in.readObject();
         return result;
     }  

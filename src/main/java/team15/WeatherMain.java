@@ -5,10 +5,7 @@ package team15;
  * @author Team 15
  */
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import javax.swing.JFrame;
 import org.json.JSONException;
 import team15.GUI.LocalWeather;
 import team15.User.User;
@@ -17,11 +14,14 @@ public class WeatherMain {
     public static void main(String[] args) {
         User u = null;
         
-        try{
+        //Why can't this catch FileNotFoundException if loadUser throws it?
+        try {
             u = User.loadUser();
-        }
-        catch(Exception e){
-            System.out.println("user.dat does not exist or is wrong.");
+        } catch (IOException ex) {
+            System.out.println("Error reading file or file not found.");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Class User not found. Major error");
+            return;
         }
         
         try {

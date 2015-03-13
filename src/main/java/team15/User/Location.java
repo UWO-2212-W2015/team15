@@ -9,25 +9,42 @@ package team15.User;
  * 
  * The users have Locations as their attributes (a set of locations).
  * 
- * @author Team 15
+ * @author Team15
  */
 
 //Imports
-import java.util.ArrayList;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import org.json.JSONException;
 
 import team15.Weather.*;
+import team15.JSON.URLToJSON;
 
 public class Location implements Serializable{
-    String location;
-    private final WeatherBuilder wb;
+    private final String location;
+    
+    //URL variables
+    private final String localURL;
+    private final String shortURL;
+    private final String longURL;
     
     private Weather current;
-    private ArrayList<Weather> shortTerm, longTerm;
+    private Forecast shortTerm, longTerm;
 
+    /**
+     * Creates a new blank location object
+     */
+    public Location(){
+        location = "";
+        localURL = "";
+        shortURL = "";
+        longURL = "";
+        current = new Weather();
+        shortTerm = new Forecast();
+        longTerm = new Forecast();
+    }
+    
     /**
      * Creates a new location object with the given search string. The search
      * string is input by the user.
@@ -42,7 +59,14 @@ public class Location implements Serializable{
     public Location (String location) 
                        throws MalformedURLException, IOException, JSONException{
     	this.location = location;
-        wb = new WeatherBuilder(this.location);
+        
+        //Make the urls for each type of build
+        String prefix = "http://api.openweathermap.org/data/2.5/";
+        this.localURL = prefix + "weather?q=" + location;
+        this.shortURL = prefix + "forecast?q=" + location + "&mode=json";
+        this.longURL = prefix + "forecast/daily?q=" + location 
+                + "&mode=json&units=metri&cnt=8";
+        
         updateForecasts();
     }
 
@@ -60,7 +84,7 @@ public class Location implements Serializable{
      * @return the weather object that represents the current weather at the
      * given location
      */
-    public Weather getCurrent(){
+    public Weather getLocal(){
         return current;
     }
 
@@ -70,7 +94,7 @@ public class Location implements Serializable{
      * @return an array list of weather object that represents the a short term
      * forecast of the weather at the given location
      */
-    public ArrayList<Weather> getShortTerm(){
+    public Forecast getShortTerm(){
         return shortTerm;
     }
     
@@ -80,7 +104,7 @@ public class Location implements Serializable{
      * @return an array list of weather object that represents the a long term
      * forecast of the weather at the given location 
      */
-    public ArrayList<Weather> getLongTerm(){
+    public Forecast getLongTerm(){
         return longTerm;
     }
     
@@ -96,12 +120,12 @@ public class Location implements Serializable{
     public final void updateForecasts() 
                        throws MalformedURLException, IOException, JSONException{
         Weather tempC;
-        ArrayList<Weather> tempS, tempL;
+        Forecast tempS, tempL;
         
         //Attempt to buiild new weather objects for the given location
-        tempC = wb.buildCurrent();
-        tempS = wb.buildShortTerm();
-        tempL = wb.buildLongTerm();
+        tempC = new Weather(URLToJSON.makeJSON(localURL), false);
+        tempS = new Forecast(URLToJSON.makeJSON(shortURL));
+        tempL = new Forecast(URLToJSON.makeJSON(longURL));
         
         /* If all the weather objects were creatd correctly then update the
          * local variables*/
