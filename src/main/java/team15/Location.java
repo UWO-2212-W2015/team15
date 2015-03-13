@@ -1,4 +1,4 @@
-package team15.UserClasses;
+package team15;
 
 /**
  * The Location Class is responsible for keeping track of the characteristics of
@@ -13,15 +13,12 @@ package team15.UserClasses;
  */
 
 //Imports
-import team15.WeatherClasses.Forecast;
-import team15.WeatherClasses.Weather;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.Date;
 import org.json.JSONException;
 
-import team15.JSON.URLToJSON;
 
 public class Location implements Serializable{
     private final String location;

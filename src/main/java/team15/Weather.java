@@ -1,4 +1,4 @@
-package team15.WeatherClasses;
+package team15;
 
 /**
  * The Weather class is constituted by variables present in the weather forecast
@@ -13,7 +13,6 @@ package team15.WeatherClasses;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import org.json.JSONException;

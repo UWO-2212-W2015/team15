@@ -1,4 +1,4 @@
-package team15.GUI;
+package team15;
 
 /**
  * This class represents a Jpanel that will be used to store and display the
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-import team15.WeatherClasses.Forecast;
 
 public class ForecastPanel extends JPanel{
     private final JLabel loc, error, ref;
