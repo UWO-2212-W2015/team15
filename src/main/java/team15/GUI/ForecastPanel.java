@@ -69,7 +69,7 @@ public class ForecastPanel extends JPanel{
     public void update(Forecast f, boolean units, String location, String refresh){
         loc.setText("Location:   " + location);
         ref.setText("Last Refresh: " + refresh);
-        error.setText("");
+
         for(int i = 0; i < Forecast.NUM; i++){
             cards.get(i).update(f.get(i), units);
         }

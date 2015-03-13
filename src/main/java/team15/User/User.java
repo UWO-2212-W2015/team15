@@ -26,7 +26,8 @@ public class User implements Serializable{
     public Preferences pref;
     private final ArrayList<Location> locations;
     private Location curLocation;
-
+    public String refresh;
+    
     /**
      * Creates a new default user object
      */
@@ -34,6 +35,7 @@ public class User implements Serializable{
         pref = new Preferences();
         locations = new ArrayList();
         curLocation = new Location();
+        refresh = "";
     }
     
     /**
@@ -45,7 +47,7 @@ public class User implements Serializable{
      * OpenWeather api
      * @throws JSONException thrown if there is any problem using the json
      */
-    public User (String location)
+    public User(String location)
                        throws MalformedURLException, IOException, JSONException{
         pref = new Preferences();
         locations = new ArrayList<Location>();
@@ -64,11 +66,15 @@ public class User implements Serializable{
     }
     
     /**
-     * Set the current location to the given index
-     * @param i the index of the new current location
+     * Set the current location to the given location object
+     * @param location the location that will be the new current location for
+     * this user.
+     * @return true is the location is changed, false otherwise
      */
-    public void setCurrentLoc (int i){
-        curLocation = locations.get(i);
+    public boolean setCurrentLoc (Location location){
+        if(!locations.contains(location)) return false;
+        curLocation = location;
+        return true;
     }
 
     /**
@@ -105,11 +111,34 @@ public class User implements Serializable{
     }
     
     /**
-     * removes the location at the given index from the list of locations
-     * @param i the index of the location object to be removed
+     * Add the given location to the location list at the given index
+     * @param i the index to add the location
+     * @param location the location object to be added
+     * @return true is the object was added, false otherwise
      */
-    public void removeLocation(int i){
-    	locations.remove(i);
+    public boolean addLocation(int i, Location location){
+        if(locations.contains(location)) return false;
+        
+        locations.add(i, location);
+        return true;
+    }
+    
+    /**
+     * Add the given location to the location list
+     * @param location the location object to be added
+     * @return true is the object was added, false otherwise
+     */
+    public boolean addLocation(Location location){
+        return this.addLocation(locations.size(), location);
+    }
+    
+    /**
+     * removes the location from the list of locations
+     * @param location the location object to be removed
+     * @return true if the object is remove, false otherwise
+     */
+    public boolean removeLocation(Location location){
+    	return locations.remove(location);
     }
 
     /**

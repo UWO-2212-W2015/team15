@@ -24,6 +24,9 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
      */
     public Forecast(){
         super();
+        for(int i = 0; i < NUM; i++){
+            this.add(new Weather());
+        }
     }
     
     /**

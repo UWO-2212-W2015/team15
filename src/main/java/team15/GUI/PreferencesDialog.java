@@ -30,6 +30,7 @@ public class PreferencesDialog extends JDialog{
         updated = false;
         
         Preferences pref = user.pref;
+        
         SpringLayout layout = new SpringLayout();
         JPanel panel = new JPanel();
         panel.setLayout(layout);

@@ -159,7 +159,6 @@ public class LocalPanel extends JPanel{
         icon.setIcon(pref.icon?w.icon:new ImageIcon());
         time.setText(w.time);
         loc.setText("Location:   " + location);
-        error.setText("");
         ref.setText("Last Refresh: " + refresh);
     }
     

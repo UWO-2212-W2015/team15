@@ -50,14 +50,8 @@ public class Location implements Serializable{
      * string is input by the user.
      * @param location A string representing the location 
      * (city,state,country) that the object represents
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
-     * @throws JSONException thrown if there is any problem using the json 
      */
-    public Location (String location) 
-                       throws MalformedURLException, IOException, JSONException{
+    public Location (String location){
     	this.location = location;
         
         //Make the urls for each type of build
@@ -66,8 +60,9 @@ public class Location implements Serializable{
         this.shortURL = prefix + "forecast?q=" + location + "&mode=json";
         this.longURL = prefix + "forecast/daily?q=" + location 
                 + "&mode=json&units=metri&cnt=8";
-        
-        updateForecasts();
+        current = new Weather();
+        shortTerm = new Forecast();
+        longTerm = new Forecast();
     }
 
     /**
@@ -140,6 +135,23 @@ public class Location implements Serializable{
      */
     public String toString(){
         return location;
+    }
+    
+    /**
+     * A method the checks if this Location object is equal to the given object.
+     * Two locations are equal if their location string is the same
+     * @param o the object to check against this location
+     * @return true if o is a Location object and it has the same location
+     * string as this object, false otherwise.
+     */
+    public boolean equals(Object o){
+        if(!(o instanceof Location)) return false;
+        
+        Location l = (Location) o;
+        
+        String s1 = this.location.toUpperCase();
+        String s2 = l.location.toUpperCase();
+        return s1.equals(s2);
     }
 }
 

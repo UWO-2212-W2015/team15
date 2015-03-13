@@ -43,7 +43,9 @@ public class LocalWeather extends JFrame{
         super();
         
         this.user = u;
-
+        error = "";
+        refresh = user.refresh;
+        
         this.setTitle("Team 15 Weather");
         this.setSize(1200, 800); 
         this.setLocation(100,50);
@@ -91,6 +93,13 @@ public class LocalWeather extends JFrame{
                 }
             }
         });
+        
+        JMenuItem locationList = new JMenuItem ("Change/Add Locations");
+        locationList.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent event){
+                LocationsDialog preferences = new LocationsDialog(user);
+            }
+        });
 
         setJMenuBar(menuBar);
 
@@ -98,8 +107,10 @@ public class LocalWeather extends JFrame{
         menu.getAccessibleContext().setAccessibleDescription(
                 "Select difference page");
         menuBar.add(menu);
-        menu.add(ref);
+        
         menu.add(preferences);
+        menu.add(locationList);
+        menu.add(ref);
         
         this.setVisible(true);
         this.setResizable(false);
@@ -110,29 +121,28 @@ public class LocalWeather extends JFrame{
         refresh();       
     }
     
-    private boolean refreshForecasts(){
+    private String refreshForecasts(){
         try{
             user.getCurrentLocation().updateForecasts();
         } catch (IOException ex) {
-            error = "Error: problem connecting to OpenWeather.com";
-            return false;
+            return "Error: problem connecting to OpenWeather.com";
         } catch (JSONException ex) {
-            error = "Error: Unable to get data from OpenWeather.com";
-            return false;
+            return "Error: Unable to get data from OpenWeather.com";
         }
         
         //Update the last refreshForecasts time
         Date time = new Date(System.currentTimeMillis());
         refresh = time.toString();
+        user.refresh = refresh;
         
         try{
             user.saveUser();
         }
         catch(Exception e){
-            error = ("Error: Could not save new weather data to disk");
+            return "Error: Could not save new weather data to disk";
         }
         
-        return true;
+        return "";
     }
     
     private void updatePanels(){
@@ -151,11 +161,8 @@ public class LocalWeather extends JFrame{
     }
     
     private void refresh(){
-        if(refreshForecasts()){
-            updatePanels();
-        }
-        else{
-            updateError();
-        }
+        error = refreshForecasts();
+        updateError();
+        updatePanels();
     }
 }
