@@ -82,8 +82,13 @@ public class LocalWeather extends JFrame{
         JMenuItem preferences = new JMenuItem ("Preferences");
         preferences.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-                PreferencesDialog.makeWindow(user);
-                updatePanels();
+                PreferencesDialog preferences = new PreferencesDialog(user);
+                
+                if(preferences.wasUpdated()) updatePanels();
+                else{
+                    error = "Error saving prefernces to local drive";
+                    updateError();
+                }
             }
         });
 

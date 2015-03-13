@@ -18,15 +18,14 @@ import javax.swing.SpringLayout;
 import team15.User.Preferences;
 import team15.User.User;
 
-public class PreferencesDialog{
+public class PreferencesDialog extends JDialog{
     private static JCheckBox tempChk, iconChk, windChk, pressureChk, humidityChk, 
             minMaxChk, sunChk, skyCondChk, celChk, fahChk;
     
     private static boolean updated;
     
-    public static void makeWindow(final User user){
-        JButton confirm;
-        final JDialog dialog;
+    public PreferencesDialog(final User user){
+        super(new JFrame(), "Current Weather Preferences", true);
 
         updated = false;
         
@@ -36,11 +35,10 @@ public class PreferencesDialog{
         panel.setLayout(layout);
         
         //Set up the dialog parameters
-        dialog = new JDialog(new JFrame(), "Current Weather Preferences", true);
-        dialog.setResizable(false);
-        dialog.getContentPane().add(panel);
-        dialog.setSize(350, 300);
-        dialog.setLocation(200, 200);
+        this.setResizable(false);
+        this.getContentPane().add(panel);
+        this.setSize(350, 300);
+        this.setLocation(200, 200);
 
         //Add all the checkboxes to the dialog
         tempChk = new JCheckBox("Temperature", pref.temperature);
@@ -96,7 +94,7 @@ public class PreferencesDialog{
         layout.putConstraint(SpringLayout.WEST, sunChk, 200, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, sunChk, 40, 
-                                                   SpringLayout.NORTH, minMaxChk);
+                                                 SpringLayout.NORTH, minMaxChk);
         panel.add(sunChk);
 
         skyCondChk = new JCheckBox("Sky Condition", pref.sky);
@@ -124,7 +122,7 @@ public class PreferencesDialog{
             }    
         });
         
-        confirm = new JButton("Confirm");
+        JButton confirm = new JButton("Confirm");
         layout.putConstraint(SpringLayout.WEST, confirm, 115, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, confirm, 40, 
@@ -145,12 +143,11 @@ public class PreferencesDialog{
                 catch(Exception e){
                     user.pref = oldPref;
                 }
-                
-                dialog.dispose();
+                close();
             }    
         });
         
-        dialog.setVisible(true);
+        this.setVisible(true);
     }
     
     private static Preferences getPref(){
@@ -168,7 +165,11 @@ public class PreferencesDialog{
         return result;
     }
     
-    public boolean prefUpdated(){
+    private void close(){
+        this.dispose();
+    }
+    
+    public boolean wasUpdated(){
         return updated;
     }
 }
