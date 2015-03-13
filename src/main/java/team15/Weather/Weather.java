@@ -48,7 +48,8 @@ public class Weather implements Serializable{
         airPressure = "";
         humidity = "";
         skyCondition = "";
-        icon = new ImageIcon();
+        icon = new ImageIcon("icons"+ System.getProperty("file.separator") 
+                                                                   + "01d.png");
         
         sunrise = "";
         sunset = "";
@@ -92,8 +93,9 @@ public class Weather implements Serializable{
         //Set sky condition and sky icon
         tempJ = j.getJSONArray("weather").getJSONObject(0);
         this.skyCondition = tempJ.get("description").toString();
-        this.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
-                tempJ.get("icon") + ".png"));
+        
+        String dash = System.getProperty("file.separator");
+        this.icon = new ImageIcon("icon"+ dash + tempJ.get("icon") + ".png");
 
         //Set temperature values
 
