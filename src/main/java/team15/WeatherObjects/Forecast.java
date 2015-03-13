@@ -1,4 +1,4 @@
-package team15.Weather;
+package team15.WeatherObjects;
 
 /**
  * This class represents a forecast (either short term or long term).  It will

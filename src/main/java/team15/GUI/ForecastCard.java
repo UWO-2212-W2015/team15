@@ -13,7 +13,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.*;
 
-import team15.Weather.Weather;
+import team15.WeatherObjects.Weather;
 
 public class ForecastCard extends JPanel{
     private final SpringLayout layout;

@@ -1,4 +1,4 @@
-package team15.User;
+package team15.UserOjects;
 
 /**
  * The User object provides an api to interact with the underlying
@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import org.json.JSONException;
-import team15.Weather.*;
+import team15.WeatherObjects.Forecast;
+import team15.WeatherObjects.Weather;
 
 public class User implements Serializable{
     public Preferences pref;

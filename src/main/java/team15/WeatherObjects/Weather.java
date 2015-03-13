@@ -1,4 +1,4 @@
-package team15.Weather;
+package team15.WeatherObjects;
 
 /**
  * The Weather class is constituted by variables present in the weather forecast
