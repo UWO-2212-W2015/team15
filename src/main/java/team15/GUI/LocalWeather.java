@@ -21,7 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import org.json.JSONException;
 
-import team15.User.User;
+import team15.UserClasses.User;
 
 public class LocalWeather extends JFrame{
     //User variable

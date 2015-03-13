@@ -15,8 +15,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-import team15.User.Preferences;
-import team15.User.User;
+import team15.UserClasses.Preferences;
+import team15.UserClasses.User;
 
 public class PreferencesDialog extends JDialog{
     private static JCheckBox tempChk, iconChk, windChk, pressureChk, humidityChk, 

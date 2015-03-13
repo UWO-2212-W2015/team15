@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-import team15.Weather.Forecast;
+import team15.WeatherClasses.Forecast;
 
 public class ForecastPanel extends JPanel{
     private final JLabel loc, error, ref;
