@@ -6,9 +6,12 @@ package team15;
  */
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import team15.GUI.LocalWeather;
@@ -17,6 +20,7 @@ import team15.UserOjects.User;
 
 public class WeatherMain {
     private static TreeMap<String, ArrayList<Location>> locations;
+    private static InputStream in = File.class.getResourceAsStream("/citylist.txt");
     
     public static void main(String[] args) {
         User u = null;
@@ -25,6 +29,7 @@ public class WeatherMain {
             loadLocations();
         } catch (IOException ex) {
             System.out.println("Error loading locations list.");
+            System.out.println(ex.getMessage());
             return;
         }
         
@@ -51,8 +56,8 @@ public class WeatherMain {
      */
     private static void loadLocations() throws FileNotFoundException, IOException{
         locations = new TreeMap();
-        
-        BufferedReader input =  new BufferedReader(new FileReader("citylist.txt"));
+ 
+        BufferedReader input =  new BufferedReader(new InputStreamReader(in));
         
         ArrayList<Location> locs = new ArrayList();
         String key = "";
