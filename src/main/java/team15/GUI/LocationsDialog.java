@@ -48,6 +48,9 @@ public class LocationsDialog extends JDialog{
     
     //User
     private final User user;
+    
+    //List of all possible locations
+    private static TreeMap<String, ArrayList<Location>> loc;
 
     /**
      * Creates the dialog that allows the user to interact with their location
@@ -62,7 +65,9 @@ public class LocationsDialog extends JDialog{
         super(new JFrame(), "Location List", true);
         
         this.user = u;
-        final TreeMap<String, ArrayList<Location>> loc = loadLocations();
+        
+        //Load the list of all locations if necessary
+        if(loc == null) loadLocations();
         
         //Set the dialog parameters
         JPanel panel = new JPanel();
@@ -354,9 +359,8 @@ public class LocationsDialog extends JDialog{
      * @throws IOException if there is a problem loading the treemap from
      * citylist.txt
      */
-    private TreeMap<String, ArrayList<Location>> loadLocations() 
-                                      throws FileNotFoundException, IOException{
-        TreeMap<String, ArrayList<Location>> result = new TreeMap();
+    private void loadLocations() throws FileNotFoundException, IOException{
+        loc = new TreeMap();
         
         //Try to open the city list text file
         InputStream in = File.class.getResourceAsStream("/citylist.txt");
@@ -393,7 +397,7 @@ public class LocationsDialog extends JDialog{
             //If we are at a new key
             if(!key.equals(s[0])){
                 //Add the current list under its country key
-                result.put(key, locs);
+                loc.put(key, locs);
                 key = s[0];
                 
                 locs = new ArrayList();
@@ -404,11 +408,9 @@ public class LocationsDialog extends JDialog{
         }
         
         //Add the last list
-        result.put(key, locs);
+        loc.put(key, locs);
         
         //Close the input file
         input.close();
-        
-        return result;
     }
 }
