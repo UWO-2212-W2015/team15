@@ -4,7 +4,7 @@ package team15.UserOjects;
  * A container for the preference variables the the user keeps and the
  * weather program will use to change how data is displayed.
  * 
- * @author Team 15
+ * @author team15
  */
 
 //Imports

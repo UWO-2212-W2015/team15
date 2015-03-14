@@ -6,7 +6,7 @@ package team15.WeatherObjects;
  * Even though it is a small class, it is necessary in order to have a 
  * unified class which supports all kinds of weather forecast.
  *
- * @author Team 15
+ * @author team15
  */
 
 //Imports
@@ -54,6 +54,7 @@ public class Weather implements Serializable{
         sunset = "";
         time = "";
     }
+    
     /**
      * Creates new weather object from the given json object
      * @param j the json object containing the weather data
@@ -96,7 +97,6 @@ public class Weather implements Serializable{
                 tempJ.get("icon") + ".png"));
 
         //Set temperature values
-
         //Set long term termpriture values
         if(j.has("temp")){
             tempJ = j.getJSONObject("temp");
@@ -123,10 +123,12 @@ public class Weather implements Serializable{
         //Set sunrise and sunset for current
         tempJ = j.getJSONObject("sys");
         
-        tempT.setTime((long)1000*Integer.valueOf(tempJ.get("sunrise").toString()));
+        tempT.setTime((long)1000 
+                            * Integer.valueOf(tempJ.get("sunrise").toString()));
         this.sunrise = tempT.toString().split(" ")[3];
         
-        tempT.setTime((long)1000*Integer.valueOf(tempJ.get("sunset").toString()));
+        tempT.setTime((long)1000 
+                * Integer.valueOf(tempJ.get("sunset").toString()));
         this.sunset = tempT.toString().split(" ")[3];
 
         //Set windspeed and degree for current
@@ -212,4 +214,3 @@ public class Weather implements Serializable{
         return "" + result;
     }
 }
-

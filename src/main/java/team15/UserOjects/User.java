@@ -6,7 +6,7 @@ package team15.UserOjects;
  * to be provided when initialized.  Each user's preferences and location
  * are stored between program runs.
  *
- * @author Team 15
+ * @author team15
  */
 
 //Imports
@@ -18,8 +18,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import org.json.JSONException;
 import team15.WeatherObjects.Forecast;
 import team15.WeatherObjects.Weather;
 

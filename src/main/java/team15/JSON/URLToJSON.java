@@ -3,6 +3,7 @@ package team15.JSON;
 /**
  * This class takes a URL and creates a JSON object from the data contained
  * at that URL
+ * 
  * @author team15
  */
 

@@ -9,7 +9,7 @@ package team15.UserOjects;
  * 
  * The users have Locations as their attributes (a set of locations).
  * 
- * @author Team15
+ * @author team15
  */
 
 //Imports
@@ -19,12 +19,12 @@ import java.net.MalformedURLException;
 import java.util.Date;
 import org.json.JSONException;
 import team15.WeatherObjects.Forecast;
-
 import team15.JSON.URLToJSON;
 import team15.WeatherObjects.Weather;
 
 public class Location implements Serializable{
-    private final String location, id, coord, country;
+    //Local fields
+    private final String location, id, coord;
     
     //URL variables
     private final String localURL, shortURL, longURL;
@@ -32,14 +32,13 @@ public class Location implements Serializable{
     private Weather current;
     private Forecast shortTerm, longTerm;
     
-    private long refresh;
+    private long lastRefresh, lastPoll;
     
     /**
      * Creates a new blank location object
      */
     public Location(){
         location = "";
-        country = "";
         id = "";
         coord="";
         localURL = "";
@@ -48,19 +47,24 @@ public class Location implements Serializable{
         current = new Weather();
         shortTerm = new Forecast();
         longTerm = new Forecast();
-        refresh = 0;
+        lastRefresh = 0;
+        lastPoll = 0;
     }
     
     /**
      * Creates a new location object with the given search string. The search
      * string is input by the user.
-     * @param location A string representing the location (city,country) that 
-     * the object represents
+     * @param country The country of the location
+     * @param city the city/state/province of the location
+     * @param lat the latitude of the location (blank if location has a unique
+     * name.
+     * @param lng the longitude of the location (blank if location has a unique
+     * name.
      * @param id the openweather id of the current weather location
      */
-    public Location (String country, String prov,  String id, String lat, String lng){
-    	this.location = prov + ", " + country;
-        this.country = country;
+    public Location 
+              (String country, String city,  String id, String lat, String lng){
+    	this.location = city + ", " + country;
         this.id = id;
         this.coord = lat.isEmpty()?"":" (" + lat +", " + lng + ")";
         
@@ -73,7 +77,8 @@ public class Location implements Serializable{
         current = new Weather();
         shortTerm = new Forecast();
         longTerm = new Forecast();
-        refresh = 0;
+        lastRefresh = 0;
+        lastPoll = 0;
     }
 
     /**
@@ -84,13 +89,6 @@ public class Location implements Serializable{
     	return location;
     }
 
-    /**
-     * Returns the country value of this location
-     * @return the country value of this location
-     */
-    public String getCountry(){
-        return country;
-    }
     /**
      * returns the weather object that represents the current weather at the
      * given location
@@ -124,47 +122,47 @@ public class Location implements Serializable{
     /**
      * Updates all the weather objects contained in the object. If any of them
      * fail to build none of them are updated and an error will be thrown.
-     * @return true if the forecasts were updated, false if the process was
-     * stopped because the last refresh request was less than 1h ago.
-     * 
-     * (this is the time that openweather expects a single location to be 
-     * polled)
-     * 
+     * @return A blank string if the weather was updated successfully. An error
+     * message telling.
+
      * @throws MalformedURLException thrown if any of the urls are
      * malformed
      * @throws IOException thrown if there is any problem interacting with the
      * OpenWeather api
      * @throws JSONException thrown if there is any problem using the json 
      */
-    public final boolean updateForecasts() 
+    public final String updateForecasts() 
                        throws MalformedURLException, IOException, JSONException{
         Weather tempC;
         Forecast tempS, tempL;
         
         Long newRef = System.currentTimeMillis();
         //Make sure at least one hour has passed since last refresh.
-        if((newRef - refresh) <= 3600000){
-            return false;
-        }
+        if((newRef - lastRefresh) <= 3600000) 
+            return "Please wait at least an hour before refresing the weather.";
+        
+        //Make sure the at least 10 minutes have passed since the last poll
+        if((newRef - lastPoll) <= 600000){
+            return "Please wait "+ (newRef - lastPoll)/10000 + " more minutes "
+                    + "before trying to refresh the weather.";
+        };
+        
+        lastPoll = newRef;
         
         //Attempt to buiild new weather objects for the given location
-        try{
-            tempC = new Weather(URLToJSON.makeJSON(localURL), false);
-            tempS = new Forecast(URLToJSON.makeJSON(shortURL));
-            tempL = new Forecast(URLToJSON.makeJSON(longURL));
-        } catch(IOException ex){
-            refresh = newRef;
-            throw new IOException();
-        }
+        tempC = new Weather(URLToJSON.makeJSON(localURL), false);
+        tempS = new Forecast(URLToJSON.makeJSON(shortURL));
+        tempL = new Forecast(URLToJSON.makeJSON(longURL));
         
         /* If all the weather objects were creatd correctly then update the
          * local variables*/
-        refresh = newRef;
+        lastRefresh = newRef;
+        
         current = tempC;
         shortTerm = tempS;
         longTerm = tempL;
         
-        return true;
+        return "";
     }
     
     /**
@@ -172,7 +170,7 @@ public class Location implements Serializable{
      * @return the date of the last time the weather objects were refreshed
      */
     public String getRefresh(){
-        Date time = new Date(System.currentTimeMillis());
+        Date time = new Date(lastRefresh);
         return time.toString();
     }
     
@@ -199,8 +197,5 @@ public class Location implements Serializable{
         String s1 = this.id;
         String s2 = l.id;
         return s1.equals(s2);
-    }
-    
-    
+    }   
 }
-

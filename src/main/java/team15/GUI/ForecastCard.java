@@ -26,6 +26,7 @@ public class ForecastCard extends JPanel{
     public ForecastCard(){
         super();
         
+        //Initialize the labels
         time = new JLabel();
         temp = new JLabel();
         icon = new JLabel();
@@ -39,12 +40,13 @@ public class ForecastCard extends JPanel{
         this.setBackground(Color.WHITE);
         this.layout = new SpringLayout();
         this.setLayout(layout);
-                
+        
+        //Time label
         this.add(time);
         layout.putConstraint
                          (SpringLayout.WEST, time, 20, SpringLayout.WEST, this);
         
-        //Set up the tempriture label
+        //Tempriture label
         temp.setFont(new Font("Tahoma",Font.PLAIN,50));
         this.add(temp);
         layout.putConstraint
@@ -52,14 +54,14 @@ public class ForecastCard extends JPanel{
         layout.putConstraint
                         (SpringLayout.NORTH, temp,10, SpringLayout.NORTH, this);
         
-        //Set the icon label
+        //Icon label
         this.add(icon);
         layout.putConstraint
                          (SpringLayout.WEST, icon, 10, SpringLayout.WEST, this);
         layout.putConstraint
                        (SpringLayout.NORTH, icon, 20, SpringLayout.NORTH, this);
         
-        //Set the tempriture scale label
+        //Tempriture scale label
         scale.setFont(new Font("Tahoma",Font.PLAIN,40));
         this.add(scale);
         layout.putConstraint
@@ -67,14 +69,14 @@ public class ForecastCard extends JPanel{
         layout.putConstraint
                          (SpringLayout.NORTH,scale, 5,SpringLayout.NORTH, this);
         
-        //Set the sky condition label
+        //Sky condition label
         this.add(sky);
         layout.putConstraint
                           (SpringLayout.WEST, sky, 20, SpringLayout.WEST, this);
         layout.putConstraint
                            (SpringLayout.NORTH,sky,10,SpringLayout.SOUTH, temp);
         
-        //Set the min/max tempriture label
+        //Min/Max tempriture label
         this.add(maxt);
         this.add(mint);
         layout.putConstraint
@@ -96,12 +98,15 @@ public class ForecastCard extends JPanel{
      * is Celsius and false is Fahrenheit
      */
     public void update(Weather w, boolean units){
+        //Update all the labels containing weather data
         time.setText(w.time);
         temp.setText(w.getTemp(units));
         icon.setIcon(w.icon);
         scale.setText(units?"c":"f");
         sky.setText("Sky Condition :   " + w.skyCondition);
         
+        /* This will be true is min temp is 0, which will happen in a short
+         * term forecst and not a long term forecast */
         if(Double.valueOf(w.getMinTemp(units)) < -273) return;
         
         maxt.setText("Maximum Temperature: " + w.getMaxTemp(units));
