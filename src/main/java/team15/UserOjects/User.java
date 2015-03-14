@@ -38,23 +38,6 @@ public class User implements Serializable{
     }
     
     /**
-     * Creates a new user object with the given initial location.
-     * @param location 
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
-     * @throws JSONException thrown if there is any problem using the json
-     */
-    public User(String location)
-                       throws MalformedURLException, IOException, JSONException{
-        pref = new Preferences();
-        locations = new ArrayList<Location>();
-        curLocation = new Location(location);
-        locations.add(curLocation);
-    }
-    
-    /**
      * Returns the list of locations that are saved to this user. When dealing
      * with this list order should be preserved as the indexes are important
      * to the add and remove functions
@@ -88,24 +71,14 @@ public class User implements Serializable{
      * Adds a location to the location list for this user
      * @param location the string that represents the location 
      * @return true is the location was added
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
-     * @throws JSONException thrown if there is any problem using the json
      */
-    public final boolean addLocation(String location)
-                       throws MalformedURLException, IOException, JSONException{
+    public final boolean addLocation(Location location){
         //Check if the location is already in the list
         for(Location l: this.locations){
-            if(location.equals(l.toString())) return false;
+            if(location.equals(l)) return false;
         }
-        
-        //Try to make the new location
-        Location l = new Location(location);
-        
-        locations.add(l);
-        
+
+        locations.add(location); 
         return true;
     }
     
@@ -120,15 +93,6 @@ public class User implements Serializable{
         
         locations.add(i, location);
         return true;
-    }
-    
-    /**
-     * Add the given location to the location list
-     * @param location the location object to be added
-     * @return true is the object was added, false otherwise
-     */
-    public boolean addLocation(Location location){
-        return this.addLocation(locations.size(), location);
     }
     
     /**

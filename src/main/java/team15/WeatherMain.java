@@ -5,14 +5,28 @@ package team15;
  * @author Team 15
  */
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import org.json.JSONException;
+import java.util.ArrayList;
+import java.util.TreeMap;
 import team15.GUI.LocalWeather;
+import team15.UserOjects.Location;
 import team15.UserOjects.User;
 
 public class WeatherMain {
+    private static TreeMap<String, ArrayList<Location>> locations;
+    
     public static void main(String[] args) {
         User u = null;
+        
+        try {
+            loadLocations();
+        } catch (IOException ex) {
+            System.out.println("Error loading locations list.");
+            return;
+        }
         
         //Why can't this catch FileNotFoundException if loadUser throws it?
         try {
@@ -20,23 +34,55 @@ public class WeatherMain {
         } catch (IOException ex) {
             System.out.println("Error reading file or file not found.");
         } catch (ClassNotFoundException ex) {
-            System.out.println("Class User not found. Major error");
+            System.out.println("Class User not found. Major error (try deleting user.in if in beta)");
             return;
         }
         
-        try {
-            if(u == null){
-                u = new User("london,ca");
-            }
-        } catch (IOException ex) {
-            System.out.println("URL wrong, internet error, or open weather "
-                    + "failed to return a json string");
-            return;
-        } catch (JSONException ex) {
-            System.out.println("json string failed to parse");
-            return;
-        }
+        if(u == null) u = new User();
  
-        LocalWeather frame = new LocalWeather(u);
+        LocalWeather frame = new LocalWeather(u, locations);
+    }
+    
+    /**
+     * Loads the list of all valid openweather locations from citylist.txt
+     * @throws FileNotFoundException if citylist.txt is not found
+     * @throws IOException if there is a problem loading the treemap from
+     * citylist.txt
+     */
+    private static void loadLocations() throws FileNotFoundException, IOException{
+        locations = new TreeMap();
+        
+        BufferedReader input =  new BufferedReader(new FileReader("citylist.txt"));
+        
+        ArrayList<Location> locs = new ArrayList();
+        String key = "";
+        
+        while(input.ready()){
+            String in = input.readLine();
+            String[] s = in.split("\t");
+            String lat = "";
+            String lng = "";
+            
+            if(s.length == 5){
+                lat = s[3];
+                lng = s[4];
+            }
+            
+            Location l = new Location(s[0], s[1], s[2], lat, lng);
+            if(key.isEmpty()) key = s[0];
+            
+            if(!key.equals(s[0])){
+                locations.put(key, locs);
+                key = s[0];
+                
+                locs = new ArrayList();
+            }
+            
+            locs.add(l);
+        }
+        locations.put(key, locs);
+        
+        //output.close();
+        input.close(); 
     }
 }

@@ -57,3 +57,8 @@ target/
 
 #gedit temp files
 *~
+
+#Vinces files
+citylist_*
+src/main/java/team15/script.java
+user.dat

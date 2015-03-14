@@ -24,12 +24,10 @@ import team15.JSON.URLToJSON;
 import team15.WeatherObjects.Weather;
 
 public class Location implements Serializable{
-    private final String location;
+    private final String location, id, coord, country;
     
     //URL variables
-    private final String localURL;
-    private final String shortURL;
-    private final String longURL;
+    private final String localURL, shortURL, longURL;
     
     private Weather current;
     private Forecast shortTerm, longTerm;
@@ -41,6 +39,9 @@ public class Location implements Serializable{
      */
     public Location(){
         location = "";
+        country = "";
+        id = "";
+        coord="";
         localURL = "";
         shortURL = "";
         longURL = "";
@@ -53,17 +54,21 @@ public class Location implements Serializable{
     /**
      * Creates a new location object with the given search string. The search
      * string is input by the user.
-     * @param location A string representing the location 
-     * (city,state,country) that the object represents
+     * @param location A string representing the location (city,country) that 
+     * the object represents
+     * @param id the openweather id of the current weather location
      */
-    public Location (String location){
-    	this.location = location;
+    public Location (String country, String prov,  String id, String lat, String lng){
+    	this.location = prov + ", " + country;
+        this.country = country;
+        this.id = id;
+        this.coord = lat.isEmpty()?"":" (" + lat +", " + lng + ")";
         
         //Make the urls for each type of build
         String prefix = "http://api.openweathermap.org/data/2.5/";
-        this.localURL = prefix + "weather?q=" + location;
-        this.shortURL = prefix + "forecast?q=" + location + "&mode=json";
-        this.longURL = prefix + "forecast/daily?q=" + location 
+        this.localURL = prefix + "weather?id=" + id;
+        this.shortURL = prefix + "forecast?id=" + id + "&mode=json";
+        this.longURL = prefix + "forecast/daily?id=" + id + location 
                 + "&mode=json&units=metri&cnt=8";
         current = new Weather();
         shortTerm = new Forecast();
@@ -79,6 +84,13 @@ public class Location implements Serializable{
     	return location;
     }
 
+    /**
+     * Returns the country value of this location
+     * @return the country value of this location
+     */
+    public String getCountry(){
+        return country;
+    }
     /**
      * returns the weather object that represents the current weather at the
      * given location
@@ -113,7 +125,11 @@ public class Location implements Serializable{
      * Updates all the weather objects contained in the object. If any of them
      * fail to build none of them are updated and an error will be thrown.
      * @return true if the forecasts were updated, false if the process was
-     * stopped because the last refresh request was less than 10 minutes ago.
+     * stopped because the last refresh request was less than 1h ago.
+     * 
+     * (this is the time that openweather expects a single location to be 
+     * polled)
+     * 
      * @throws MalformedURLException thrown if any of the urls are
      * malformed
      * @throws IOException thrown if there is any problem interacting with the
@@ -126,8 +142,8 @@ public class Location implements Serializable{
         Forecast tempS, tempL;
         
         Long newRef = System.currentTimeMillis();
-        //Make sure at least 10 minutes have passed since last refresh.
-        if((newRef - refresh) <= 600000){
+        //Make sure at least one hour has passed since last refresh.
+        if((newRef - refresh) <= 3600000){
             return false;
         }
         
@@ -165,7 +181,7 @@ public class Location implements Serializable{
      * @return the string representation of the object
      */
     public String toString(){
-        return location;
+        return location + coord;
     }
     
     /**
@@ -180,9 +196,11 @@ public class Location implements Serializable{
         
         Location l = (Location) o;
         
-        String s1 = this.location.toUpperCase();
-        String s2 = l.location.toUpperCase();
+        String s1 = this.id;
+        String s2 = l.id;
         return s1.equals(s2);
     }
+    
+    
 }
 
