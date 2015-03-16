@@ -206,7 +206,7 @@ public class LocalPanel extends JPanel{
         sunR.setText(pref.sun?"Sunrise: " + w.sunrise:"");
         sunS.setText(pref.sun?"Sunset: " + w.sunset:"");
         icon.setIcon(pref.icon?w.icon:new ImageIcon());
-        time.setText(w.time);
+        time.setText(w.time.value);
         loc.setText("Location:   " + location);
         ref.setText("Last Refresh: " + refresh);
     }

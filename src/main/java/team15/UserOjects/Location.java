@@ -21,10 +21,16 @@ import org.json.JSONException;
 import team15.WeatherObjects.Forecast;
 import team15.JSON.URLToJSON;
 import team15.WeatherObjects.Weather;
+import team15.WeatherObjects.Weather.WeatherType;
 
 public class Location implements Serializable{
+    //Update weather data constraints
+    private final static long REFRESH = 600000;
+    private final static long POLL = 300000;
+    
     //Local fields
-    private final String location, id, coord;
+    private String location;
+    private final String id;
     
     //URL variables
     private final String localURL, shortURL, longURL;
@@ -32,7 +38,7 @@ public class Location implements Serializable{
     private Weather current;
     private Forecast shortTerm, longTerm;
     
-    private long lastRefresh, lastPoll;
+    private long lastRefresh;
     
     /**
      * Creates a new blank location object
@@ -40,15 +46,13 @@ public class Location implements Serializable{
     public Location(){
         location = "";
         id = "";
-        coord="";
         localURL = "";
         shortURL = "";
         longURL = "";
-        current = new Weather();
-        shortTerm = new Forecast();
-        longTerm = new Forecast();
+        current = new Weather(WeatherType.LOCAL);
+        shortTerm = new Forecast(WeatherType.SHORTTERM);
+        longTerm = new Forecast(WeatherType.LONGTERM);
         lastRefresh = 0;
-        lastPoll = 0;
     }
     
     /**
@@ -65,8 +69,8 @@ public class Location implements Serializable{
     public Location 
               (String country, String city,  String id, String lat, String lng){
     	this.location = city + ", " + country;
+        this.location += lat.isEmpty()?"":" (" + lat +", " + lng + ")";
         this.id = id;
-        this.coord = lat.isEmpty()?"":" (" + lat +", " + lng + ")";
         
         //Make the urls for each type of build
         String prefix = "http://api.openweathermap.org/data/2.5/";
@@ -74,19 +78,12 @@ public class Location implements Serializable{
         this.shortURL = prefix + "forecast?id=" + id + "&mode=json";
         this.longURL = prefix + "forecast/daily?id=" + id + location 
                 + "&mode=json&units=metri&cnt=8";
-        current = new Weather();
-        shortTerm = new Forecast();
-        longTerm = new Forecast();
+        
+        current = new Weather(WeatherType.LOCAL);
+        shortTerm = new Forecast(WeatherType.SHORTTERM);
+        longTerm = new Forecast(WeatherType.LONGTERM);
+        
         lastRefresh = 0;
-        lastPoll = 0;
-    }
-
-    /**
-     * Returns the location that the object represents
-     * @return the location that the object represents
-     */
-    public String getLocation (){
-    	return location;
     }
 
     /**
@@ -137,30 +134,29 @@ public class Location implements Serializable{
         Forecast tempS, tempL;
         
         Long newRef = System.currentTimeMillis();
-        //Make sure at least one hour has passed since last refresh.
-        if((newRef - lastRefresh) <= 3600000) 
-            return "Please wait at least an hour before refresing the weather.";
-        
-        //Make sure the at least 10 minutes have passed since the last poll
-        if((newRef - lastPoll) <= 600000){
-            return "Please wait "+ (newRef - lastPoll)/10000 + " more minutes "
-                    + "before trying to refresh the weather.";
-        };
-        
-        lastPoll = newRef;
+        //Make sure enough time has passed sine the last refresh
+        if((newRef - lastRefresh) <= REFRESH) 
+            return "Please wait at least 10 minutes before refresing.";
         
         //Attempt to buiild new weather objects for the given location
-        tempC = new Weather(URLToJSON.makeJSON(localURL), false);
-        tempS = new Forecast(URLToJSON.makeJSON(shortURL));
-        tempL = new Forecast(URLToJSON.makeJSON(longURL));
+        if((newRef - current.created) > POLL){
+            tempC = new Weather(URLToJSON.makeJSON(localURL), 
+                    WeatherType.LOCAL);
+            current = tempC;
+        }
+        if((newRef - shortTerm.created) > POLL){
+            tempS = new Forecast(URLToJSON.makeJSON(shortURL), 
+                    WeatherType.SHORTTERM);
+            shortTerm = tempS;
+        }
+        if((newRef - longTerm.created) > POLL){
+            tempL = new Forecast(URLToJSON.makeJSON(longURL), 
+                    WeatherType.LONGTERM);
+            longTerm = tempL;
+        }
         
-        /* If all the weather objects were creatd correctly then update the
-         * local variables*/
+        //Updated the refresh time tracker
         lastRefresh = newRef;
-        
-        current = tempC;
-        shortTerm = tempS;
-        longTerm = tempL;
         
         return "";
     }
@@ -179,7 +175,7 @@ public class Location implements Serializable{
      * @return the string representation of the object
      */
     public String toString(){
-        return location + coord;
+        return location;
     }
     
     /**

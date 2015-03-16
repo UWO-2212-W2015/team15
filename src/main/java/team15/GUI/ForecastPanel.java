@@ -96,7 +96,7 @@ public class ForecastPanel extends JPanel{
         ref.setText("Last Refresh: " + refresh);
 
         for(int i = 0; i < Forecast.NUM; i++){
-            cards.get(i).update(f.get(i), units);
+            cards.get(i).update(f.get(i), units, f.type);
         }
     }
     

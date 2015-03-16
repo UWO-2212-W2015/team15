@@ -8,16 +8,17 @@ package team15.WeatherObjects;
  */
 
 //Imports
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import team15.WeatherObjects.Weather.WeatherType;
 
 public class Forecast extends ArrayList<Weather> implements Serializable{
     public final static int NUM = 8;
+    public final WeatherType type;
+    public long created;
     
     /**
      * Creates a blank forecast object
@@ -25,27 +26,41 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
     public Forecast(){
         super();
         for(int i = 0; i < NUM; i++){
-            this.add(new Weather());
+            this.add(new Weather(WeatherType.SHORTTERM));
         }
+        type = WeatherType.SHORTTERM;
+        created = 0;
+    }
+    
+    /**
+     * Creates a new default forecast object with weather objects of the
+     * specified type
+     * @param t the type of weather objects contained in the forecast
+     */
+    public Forecast(WeatherType t){
+        super();
+        for(int i = 0; i < NUM; i++){
+            this.add(new Weather(t));
+        }
+        type = t;
+        created = 0;
     }
     
     /**
      * Creates a new forecast from the given json object
      * @param j the json that contains all the data for the weather objects
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
+     * @param t the type of weather objects contained in this forecast
      * @throws JSONException thrown if there is any problem using the json 
      */
-    public Forecast(JSONObject j)
-                       throws JSONException, MalformedURLException, IOException{
+    public Forecast(JSONObject j, WeatherType t) throws JSONException{
         super();
         
         JSONArray forecast = j.getJSONArray("list");
         
         for(int i = 0; i < NUM; i++){
-            this.add(new Weather(forecast.getJSONObject(i), true));
+            this.add(new Weather(forecast.getJSONObject(i), t));
         }
+        type = t;
+        created = System.currentTimeMillis();
     }
 }

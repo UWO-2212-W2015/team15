@@ -14,6 +14,7 @@ import java.awt.Font;
 import javax.swing.*;
 
 import team15.WeatherObjects.Weather;
+import team15.WeatherObjects.Weather.WeatherType;
 
 public class ForecastCard extends JPanel{
     private final SpringLayout layout;
@@ -97,9 +98,9 @@ public class ForecastCard extends JPanel{
      * @param units the units that the temperatures will be displayed in. True
      * is Celsius and false is Fahrenheit
      */
-    public void update(Weather w, boolean units){
+    public void update(Weather w, boolean units, WeatherType t){
         //Update all the labels containing weather data
-        time.setText(w.time);
+        time.setText(w.time.value);
         temp.setText(w.getTemp(units));
         icon.setIcon(w.icon);
         scale.setText(units?"c":"f");
@@ -107,7 +108,7 @@ public class ForecastCard extends JPanel{
         
         /* This will be true is min temp is 0, which will happen in a short
          * term forecst and not a long term forecast */
-        if(Double.valueOf(w.getMinTemp(units)) < -273) return;
+        if(t.equals(WeatherType.SHORTTERM)) return;
         
         maxt.setText("Maximum Temperature: " + w.getMaxTemp(units));
         mint.setText("Minmum Temperature: " + w.getMinTemp(units));

@@ -162,10 +162,8 @@ public class PreferencesDialog extends JDialog{
                 //Try to save the new user preferences
                 try{
                     user.saveUser();
-                    
                     updated = true;
                 }
-                
                 //If we failed to save the new preferences default to previous
                 catch(Exception e){
                     user.pref = oldPref;

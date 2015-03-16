@@ -10,155 +10,90 @@ package team15.WeatherObjects;
  */
 
 //Imports
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Weather implements Serializable{
+    //JSON key arrays
+    private static final String[] localKeys = {"dt", "weather-description", 
+                    "weather-icon", "main-temp", "main-temp_min", 
+                    "main-temp_max", "main-humidity", "main-pressure", 
+                    "sys-sunrise", "sys-sunset", "wind-speed", "wind-deg"}; 
+    private static final String[] shortKeys = {"dt", "weather-description", 
+                    "weather-icon", "main-temp"};
+    private static final String[] longKeys = {"dt", "weather-description", 
+                    "weather-icon", "temp-day", "temp-min", "temp-max"};
+
+    //Enumeration of all the different types of weather objects
+    public static enum WeatherType{LOCAL, SHORTTERM, LONGTERM;}
+    
     //Temperatures
-    private double temp, minTemp, maxTemp;
+    private WeatherValue temp, minTemp, maxTemp;
     
     //Wind
-    public String windSpeed, windDirection;
+    public WeatherValue windSpeed, windDirection;
     
     //Sky
-    public String airPressure, humidity, skyCondition;
+    public WeatherValue airPressure, humidity, skyCondition, iconPath;
     public ImageIcon icon;
     
     //Time
-    public String sunrise, sunset, time;
+    public WeatherValue sunrise, sunset, time;
+    
+    //Type of weather object this represents
+    public WeatherType type;
+    
+    //Time this object was created at
+    public long created;
     
     /**
      * Creates an instance of the Weather, class, setting all values to 0 or
      * a default object.
      */
     public Weather(){
-        temp = 0;
-        minTemp = 0;
-        maxTemp = 0;
-        
-        windSpeed = "";
-        windDirection = "";
-        
-        airPressure = "";
-        humidity = "";
-        skyCondition = "";
-        icon = new ImageIcon();
-        
-        sunrise = "";
-        sunset = "";
-        time = "";
+        loadDefaults(WeatherType.LOCAL);
+    }
+    
+    public Weather(WeatherType t){
+        loadDefaults(t);
     }
     
     /**
      * Creates new weather object from the given json object
-     * @param j the json object containing the weather data
-     * @param forecast true if the weather object is in a forecast, false is not
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
+     * @param json the json object containing the weather data
+     * @param t The type of the Weather object.  Taken from values in the
+ WeatherType enumeration
      * @throws JSONException thrown if there is any problem using the json 
      */
-    public Weather(JSONObject j, boolean forecast) 
-                       throws JSONException, MalformedURLException, IOException{
-        temp = 0;
-        minTemp = 0;
-        maxTemp = 0;
+    public Weather(JSONObject json, WeatherType t) throws JSONException{
+        loadDefaults(t);
         
-        windSpeed = "";
-        windDirection = "";
+        WeatherValue[] values = this.valueArray();
+        String[] keys = this.keyArray();
         
-        airPressure = "";
-        humidity = "";
-        skyCondition = "";
-        icon = new ImageIcon();
-        
-        sunrise = "";
-        sunset = "";
-        time = "";
-        
-        JSONObject tempJ;
-        
-        //Set the time value
-        Date tempT = new Date();
-        tempT.setTime((long)1000*Integer.valueOf(j.get("dt").toString()));
-        this.time = tempT.toString();
-        
-        //Set sky condition and sky icon
-        tempJ = j.getJSONArray("weather").getJSONObject(0);
-        this.skyCondition = tempJ.get("description").toString();
-        this.icon = new ImageIcon(new URL("http://openweathermap.org/img/w/" +
-                tempJ.get("icon") + ".png"));
+        for(int i = 0; i < values.length; i++){
+            String[] key = keys[i].split("-");
 
-        //Set temperature values
-        //Set long term termpriture values
-        if(j.has("temp")){
-            tempJ = j.getJSONObject("temp");
-            this.setTemp(tempJ.get("day").toString());
-            this.setMinTemp(tempJ.get("min").toString());
-            this.setMaxTemp(tempJ.get("max").toString());
+            JSONObject tempJson = json;
+            int j = 0;
+            while(j < (key.length - 1)){
+                if(key[j].equals("weather"))
+                    tempJson = tempJson.getJSONArray("weather").getJSONObject(0);
+                else tempJson = tempJson.getJSONObject(key[j]);
+                j++;
+            }
+
+            values[i].setValue(tempJson.get(key[j]).toString());
         }
-        //Set short and current tempriture values
-        else{
-            tempJ = j.getJSONObject("main");
-            this.setTemp(tempJ.get("temp").toString());
-        }
-
-        if(forecast) return;
-
-        //Set current min/max tempriture
-        this.setMinTemp(tempJ.get("temp_min").toString());
-        this.setMaxTemp(tempJ.get("temp_max").toString());
-
-        //Set current pressure and humidity
-        this.humidity = tempJ.get("humidity").toString();
-        this.airPressure = tempJ.get("pressure").toString();
         
-        //Set sunrise and sunset for current
-        tempJ = j.getJSONObject("sys");
-        
-        tempT.setTime((long)1000 
-                            * Integer.valueOf(tempJ.get("sunrise").toString()));
-        this.sunrise = tempT.toString().split(" ")[3];
-        
-        tempT.setTime((long)1000 
-                * Integer.valueOf(tempJ.get("sunset").toString()));
-        this.sunset = tempT.toString().split(" ")[3];
-
-        //Set windspeed and degree for current
-        tempJ = j.getJSONObject("wind");
-        this.windSpeed = tempJ.get("speed").toString();
-        this.windDirection = tempJ.get("deg").toString();
-    }
-    
-    /**
-     * Set the temperature value of the weather object  
-     * @param t the new temperature for the weather object
-     */
-    public final void setTemp(String t){
-        this.temp = Double.valueOf(t);
-    }
-    
-    /**
-     * Set the minimum temperature value of the weather object  
-     * @param t the new minimum temperature for the weather object
-     */
-    public final void setMinTemp(String t){
-        this.minTemp = Double.valueOf(t);
-    }
-
-    /**
-     * Set the maximum temperature value of the weather object  
-     * @param t the new maximum temperature for the weather object
-     */
-    public final void setMaxTemp(String t){
-        this.maxTemp = Double.valueOf(t);
+        time.setValue(convertTime(time.value, true));
+        sunrise.setValue(convertTime(sunrise.value, false));
+        sunset.setValue(convertTime(sunset.value, false));
+        icon = new ImageIcon(iconPath + ".png");
+        created = System.currentTimeMillis();
     }
     
     /**
@@ -169,7 +104,8 @@ public class Weather implements Serializable{
      * @return a string representing the temperature value of the weather
      */
     public String getTemp(boolean system){
-        return convertTemp(temp, system);
+        String s = temp.value;
+        return (s.equals("N/A"))?s:convertTemp(s, system);
     }
     
     /**
@@ -181,7 +117,8 @@ public class Weather implements Serializable{
      * weather
      */
     public String getMinTemp(boolean system){
-        return convertTemp(minTemp, system);
+        String s = minTemp.value;
+        return (s.equals("N/A"))?s:convertTemp(s, system);
     }
     
     /**
@@ -193,7 +130,8 @@ public class Weather implements Serializable{
      * weather
      */
     public String getMaxTemp(boolean system){
-        return convertTemp(maxTemp, system);
+        String s = maxTemp.value;
+        return (s.equals("N/A"))?s:convertTemp(s, system);
     }
     
     /**
@@ -204,13 +142,111 @@ public class Weather implements Serializable{
      * @return a string representing the Kelvin temperature after it has been
      * converted
      */
-    private String convertTemp(double t, boolean system){
-        double result = t - 273.15;
+    private String convertTemp(String t, boolean system){
+        Double result = Double.valueOf(t) - 273.15;
         
         //Check if we need to display tempriture in fahrenheit
         if(!system) result = 32+(result*9)/5;
         
         result = (Math.round(result*100)/100.0);
-        return "" + result;
+        return result.toString();
+    }
+    
+    /**
+     * Converts a time value returned from OpenWeather into a Date object
+     * @param t the time value from OpenWeather
+     * @param full if true return the full date, otherwise return just the time
+     * @return the full date or time that the given value t represents
+     */
+    private String convertTime(String t, boolean full){
+        String result;
+        Date date = new Date();
+        
+        date.setTime((long)1000*Integer.valueOf(t));
+        result = date.toString();
+        if(!full) result = result.split(" ")[3];
+        
+        return result;
+    }
+    
+    /**
+     * Loads a new weather object with all default values and a type t
+     * @param t the type of the Weather object. Taken from the WeatherType
+ enumeration
+     */
+    private void loadDefaults(WeatherType t){
+        temp = new WeatherValue("N/A");
+        minTemp = new WeatherValue("N/A");
+        maxTemp = new WeatherValue("N/A");
+        
+        windSpeed = new WeatherValue("N/A");
+        windDirection = new WeatherValue("N/A");
+        
+        airPressure = new WeatherValue("N/A");
+        humidity = new WeatherValue("N/A");
+        skyCondition = new WeatherValue("N/A");
+        iconPath = new WeatherValue("01d");
+        icon = new ImageIcon("01d.png");
+        
+        sunrise = new WeatherValue("0");
+        sunset = new WeatherValue("0");
+        time = new WeatherValue("0");
+        
+        type = t;
+        created = 0;
+    }
+    
+    /**
+     * Returns an array of pointers to the fields of the weather object that
+     * will be used to hold the data from the JSON object passed in the 
+     * constructor of the class.
+     * 
+     * The order of these pointers should match the order of their respective 
+     * keys that are returned in valueArray()
+     * @return an array of pointers to weather values that are not default in
+     * the weather object
+     */
+    public final WeatherValue[] valueArray(){
+        WeatherValue[] localValues = {time, skyCondition, iconPath, temp, 
+        minTemp, maxTemp, humidity, airPressure, sunrise, sunset, windSpeed, 
+        windDirection}; 
+        WeatherValue[] shortValues = {time, skyCondition, iconPath, temp};
+        WeatherValue[] longValues = {time, skyCondition, iconPath, temp, 
+            minTemp, maxTemp};
+        
+        WeatherValue[] result = null;
+    
+        switch (this.type) {
+            case LOCAL:  
+                result = localValues;
+                break;
+            case SHORTTERM:  
+                result = shortValues;
+                break;
+            case LONGTERM:  
+                result = longValues;
+                break;
+        }
+        return result;
+    }
+    
+    /**
+     * Returns an array of key values that will be used to extract values from
+     * the JSON object passed in the constructor of the class.
+     * 
+     * The order of these keys should match the order of their respective 
+     * destinations that are returned in valueArray()
+     * @return an array of key values for use in getting data from a JSON obect
+     */
+    private String[] keyArray(){
+        switch (this.type) {
+            case LOCAL: 
+                return localKeys;
+            case SHORTTERM: 
+                return shortKeys;
+            case LONGTERM:
+                return longKeys;
+        }
+        return null;
     }
 }
