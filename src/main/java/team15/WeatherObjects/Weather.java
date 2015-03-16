@@ -10,8 +10,12 @@ package team15.WeatherObjects;
  */
 
 //Imports
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +31,9 @@ public class Weather implements Serializable{
     private static final String[] longKeys = {"dt", "weather-description", 
                     "weather-icon", "temp-day", "temp-min", "temp-max"};
 
+    //List of Weather Icons
+    private static HashMap<String, ImageIcon> iconList;
+    
     //Enumeration of all the different types of weather objects
     public static enum WeatherType{LOCAL, SHORTTERM, LONGTERM;}
     
@@ -92,7 +99,7 @@ public class Weather implements Serializable{
         time.setValue(convertTime(time.value, true));
         sunrise.setValue(convertTime(sunrise.value, false));
         sunset.setValue(convertTime(sunset.value, false));
-        icon = new ImageIcon(iconPath + ".png");
+        icon = iconList.get(iconPath.toString());
         created = System.currentTimeMillis();
     }
     
@@ -175,6 +182,8 @@ public class Weather implements Serializable{
  enumeration
      */
     private void loadDefaults(WeatherType t){
+        if(iconList == null) loadIcons();
+        
         temp = new WeatherValue("N/A");
         minTemp = new WeatherValue("N/A");
         maxTemp = new WeatherValue("N/A");
@@ -186,7 +195,7 @@ public class Weather implements Serializable{
         humidity = new WeatherValue("N/A");
         skyCondition = new WeatherValue("N/A");
         iconPath = new WeatherValue("01d");
-        icon = new ImageIcon("01d.png");
+        icon = iconList.get(iconPath.toString());
         
         sunrise = new WeatherValue("0");
         sunset = new WeatherValue("0");
@@ -248,5 +257,16 @@ public class Weather implements Serializable{
                 return longKeys;
         }
         return null;
+    }
+   
+    private void loadIcons(){
+        try{
+            InputStream fi = ImageIcon.class.getResourceAsStream("/icon.dat");
+            ObjectInputStream in = new ObjectInputStream(fi);
+            iconList = (HashMap) in.readObject();
+        } catch(Exception ex){
+            System.out.println("Error loading icons from icon.dat");
+            System.exit(1);
+        }
     }
 }
