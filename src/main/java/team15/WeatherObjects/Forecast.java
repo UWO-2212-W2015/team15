@@ -50,9 +50,8 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
      * Creates a new forecast from the given json object
      * @param j the json that contains all the data for the weather objects
      * @param t the type of weather objects contained in this forecast
-     * @throws JSONException thrown if there is any problem using the json 
      */
-    public Forecast(JSONObject j, WeatherType t) throws JSONException{
+    public Forecast(JSONObject j, WeatherType t){
         super();
         
         JSONArray forecast = j.getJSONArray("list");

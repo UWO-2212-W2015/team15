@@ -93,11 +93,13 @@ public class OpenWeatherGUI extends JFrame{
         JMenuItem ref = new JMenuItem("Refresh");
         JMenuItem preferences = new JMenuItem ("Preferences");
         JMenuItem locationList = new JMenuItem ("Locations Menu");
+        JMenuItem exit = new JMenuItem ("Exit");
         
         //Add the menu items
         menu.add(preferences);
         menu.add(locationList);
         menu.add(ref);
+        menu.add(exit);
         
         //Add the menu item action listeners
         //Refresh action listener
@@ -126,6 +128,13 @@ public class OpenWeatherGUI extends JFrame{
         locationList.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
                 startLoactionDialog();
+            }
+        });
+        
+        //Exit button action listener
+        exit.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent event){
+                System.exit(0);
             }
         });
            

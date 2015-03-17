@@ -72,28 +72,36 @@ public class Weather implements Serializable{
      * Creates new weather object from the given json object
      * @param json the json object containing the weather data
      * @param t The type of the Weather object.  Taken from values in the
- WeatherType enumeration
-     * @throws JSONException thrown if there is any problem using the json 
+     * WeatherType enumeration
      */
-    public Weather(JSONObject json, WeatherType t) throws JSONException{
+    public Weather(JSONObject json, WeatherType t){
         loadDefaults(t);
         
         WeatherValue[] values = this.valueArray();
         String[] keys = this.keyArray();
         
+        /*Try to load the value of each key into ot's respective variable. If
+         *there is a problem loading the value leave the variable as a default*/
         for(int i = 0; i < values.length; i++){
-            String[] key = keys[i].split("-");
+            try{
+                String[] key = keys[i].split("-");
 
-            JSONObject tempJson = json;
-            int j = 0;
-            while(j < (key.length - 1)){
-                if(key[j].equals("weather"))
-                    tempJson = tempJson.getJSONArray("weather").getJSONObject(0);
-                else tempJson = tempJson.getJSONObject(key[j]);
-                j++;
+                JSONObject tempJson = json;
+                int j = 0;
+                while(j < (key.length - 1)){
+                    if(key[j].equals("weather"))
+                        tempJson = tempJson.getJSONArray("weather")
+                                .getJSONObject(0);
+                    else tempJson = tempJson.getJSONObject(key[j]);
+                    j++;
+                }
+
+                values[i].setValue(tempJson.get(key[j]).toString());
             }
-
-            values[i].setValue(tempJson.get(key[j]).toString());
+            catch(JSONException ex){
+                System.err.println(ex.getMessage());
+            }
+            
         }
         
         time.setValue(convertTime(time.value, true));
