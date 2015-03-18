@@ -2,9 +2,6 @@ package team15.WeatherObjects;
 
 /**
  * The Weather class is constituted by variables present in the weather forecast
- * 
- * Even though it is a small class, it is necessary in order to have a 
- * unified class which supports all kinds of weather forecast.
  *
  * @author team15
  */
@@ -52,8 +49,8 @@ public class Weather implements Serializable{
     //Type of weather object this represents
     public WeatherType type;
     
-    //Time this object was created at
-    public long created;
+    //Time this object was lastPoll at
+    public long lastPoll;
     
     /**
      * Creates an instance of the Weather, class, setting all values to 0 or
@@ -63,6 +60,10 @@ public class Weather implements Serializable{
         loadDefaults(WeatherType.LOCAL);
     }
     
+    /**
+     * Creates a weather object with default values and the given type
+     * @param t the type of the weather object
+     */
     public Weather(WeatherType t){
         loadDefaults(t);
     }
@@ -104,11 +105,15 @@ public class Weather implements Serializable{
         }
         
         windDirection.setValue(convertDegree(windDirection.value));
-        time.setValue(convertTime(time.value, true));
-        sunrise.setValue(convertTime(sunrise.value, false));
-        sunset.setValue(convertTime(sunset.value, false));
+        
+        time.setValue(convertTime(time.value, false));
+        
+        sunrise.setValue(convertTime(sunrise.value, true));
+        sunset.setValue(convertTime(sunset.value, true));
+        
         icon = iconList.get(iconPath.toString());
-        created = System.currentTimeMillis();
+        
+        lastPoll = System.currentTimeMillis();
     }
     
     /**
@@ -158,7 +163,7 @@ public class Weather implements Serializable{
      * converted
      */
     private static String convertTemp(String t, boolean system){
-        double temp = Double.valueOf(t) - 273.15;
+        double temp = Double.valueOf(t);
         
         //Check if we need to temp tempriture in fahrenheit
         if(!system) temp = 32+(temp*9)/5;
@@ -173,21 +178,20 @@ public class Weather implements Serializable{
      * @param full if true return the full date, otherwise return just the time
      * @return the full date or time that the given value t represents
      */
-    private static String convertTime(String t, boolean full){
-        String result;
+    private static String convertTime(String t, boolean time){
+        if(t.equals("N/A")) return "N/A";
         Date date = new Date();
-        
+        String result;
         date.setTime((long)1000*Integer.valueOf(t));
         result = date.toString();
-        if(!full) result = result.split(" ")[3];
-        
+        if(time) result = result.split(" ")[3];
         return result;
     }
     
     /**
      * Loads a new weather object with all default values and a type t
      * @param t the type of the Weather object. Taken from the WeatherType
- enumeration
+     * enumeration
      */
     private void loadDefaults(WeatherType t){
         if(iconList == null) loadIcons();
@@ -205,12 +209,12 @@ public class Weather implements Serializable{
         iconPath = new WeatherValue("01d");
         icon = iconList.get(iconPath.toString());
         
-        sunrise = new WeatherValue("0");
-        sunset = new WeatherValue("0");
-        time = new WeatherValue("0");
+        sunrise = new WeatherValue("N/A");
+        sunset = new WeatherValue("N/A");
+        time = new WeatherValue("N/A");
         
         type = t;
-        created = 0;
+        lastPoll = 0;
     }
     
     /**
@@ -267,6 +271,13 @@ public class Weather implements Serializable{
         return null;
     }
    
+    /**
+     * Converts the given wind direction degree into a cardinal direction or
+     * sub cardinal direct
+     * @param d a string representing the direction of the wind in degrees
+     * @return a label N, NNE, NE, etc representing the direction the wind is
+     * blowing
+     */
     private static String convertDegree(String d){
         if(d.equals("N/A")) return "N/A";
         Double degree = Double.valueOf(d);
@@ -290,11 +301,15 @@ public class Weather implements Serializable{
         else return "N";
     }
     
+    /**
+     * Loads the icons that will be used to display the sky state.
+     */
     private static void loadIcons(){
         try{
             InputStream fi = ImageIcon.class.getResourceAsStream("/icon.dat");
             ObjectInputStream in = new ObjectInputStream(fi);
             iconList = (HashMap) in.readObject();
+            in.close();
         } catch(Exception ex){
             System.out.println("Error loading icons from icon.dat");
             System.exit(1);

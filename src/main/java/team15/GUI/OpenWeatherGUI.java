@@ -29,10 +29,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import org.json.JSONException;
 import team15.UserOjects.User;
+import team15.WeatherObjects.LocationWeather;
 
 public class OpenWeatherGUI extends JFrame{
     //User variable
     private static User user;
+    private static LocationWeather locWeather;
     
     //Container for tabs
     private final JTabbedPane tabbedPane;
@@ -168,7 +170,7 @@ public class OpenWeatherGUI extends JFrame{
         /* Try to update the weather and forecast data for the user's current
          * location */
         try{
-            error = user.getCurrentLocation().updateForecasts();
+            error = locWeather.updateForecasts();
         //An internet error has occured
         } catch (IOException ex) {
             this.updateError("Error: problem connecting to OpenWeather.com");
@@ -205,12 +207,12 @@ public class OpenWeatherGUI extends JFrame{
      */
     private void updatePanels(){
         String location = user.getCurrentLocation().toString();
-        String refresh = user.getCurrentLocation().getRefresh();
+        String refresh = locWeather.getRefresh();
         boolean units = user.pref.tempUnits;
         
-        local.update(user.getLocalWeather(), user.pref, location, refresh);
-        shortTerm.update(user.getShortTermForecast(), units, location, refresh);
-        longTerm.update(user.getLongTermForecast(), units, location, refresh);
+        local.update(locWeather.getLocal(), user.pref, location, refresh);
+        shortTerm.update(locWeather.getShortTerm(), units, location, refresh);
+        longTerm.update(locWeather.getLongTerm(), units, location, refresh);
     }
     
     /**
@@ -233,14 +235,14 @@ public class OpenWeatherGUI extends JFrame{
         try{
             window = new LocationsDialog(user);
         } catch (IOException ex) {
-            updateError("Failed to load OpenWeather possible "
-                                       + "location list from citylist.txt");
+            updateError("Failed to load list of locations.");
         }
         
         if(window != null) window.dispose();
         
         //Update the panels
-        this.updatePanels();
+        locWeather = new LocationWeather(user.getCurrentLocation());
+        refresh();
     }
     
     /**
@@ -252,6 +254,16 @@ public class OpenWeatherGUI extends JFrame{
      */
     public static void main(String args[]){
         user = null;
+        
+        //Make sure the cache folder exists, and if not create it.
+        try{
+            File cache = new File("Weather Cache");
+            if(!cache.isDirectory()) cache.mkdir();
+        }
+        catch(Exception ex){
+            System.out.println("Fatal Error: Could not create cache folder");
+            System.exit(1);
+        }
         
         //Try to load the previously saved user file from user.dat
         try {
@@ -282,6 +294,7 @@ public class OpenWeatherGUI extends JFrame{
             }
         }
         
+        locWeather = new LocationWeather(user.getCurrentLocation());
         new OpenWeatherGUI();
     }
 }

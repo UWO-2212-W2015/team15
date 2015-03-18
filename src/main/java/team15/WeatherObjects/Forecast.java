@@ -11,14 +11,13 @@ package team15.WeatherObjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import team15.WeatherObjects.Weather.WeatherType;
 
 public class Forecast extends ArrayList<Weather> implements Serializable{
     public final static int NUM = 8;
     public final WeatherType type;
-    public long created;
+    public long lastPoll;
     
     /**
      * Creates a blank forecast object
@@ -29,7 +28,7 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
             this.add(new Weather(WeatherType.SHORTTERM));
         }
         type = WeatherType.SHORTTERM;
-        created = 0;
+        lastPoll = 0;
     }
     
     /**
@@ -43,7 +42,7 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
             this.add(new Weather(t));
         }
         type = t;
-        created = 0;
+        lastPoll = 0;
     }
     
     /**
@@ -60,6 +59,6 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
             this.add(new Weather(forecast.getJSONObject(i), t));
         }
         type = t;
-        created = System.currentTimeMillis();
+        lastPoll = System.currentTimeMillis();
     }
 }

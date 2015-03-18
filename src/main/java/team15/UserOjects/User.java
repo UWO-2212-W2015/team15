@@ -18,8 +18,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.io.Serializable;
-import team15.WeatherObjects.Forecast;
-import team15.WeatherObjects.Weather;
 
 public class User implements Serializable{
     public Preferences pref;
@@ -102,29 +100,6 @@ public class User implements Serializable{
     	return locations.remove(location);
     }
 
-    /**
-     * returns the current weather for the current location of this user
-     * @return the current weather for the current location of this user
-     */
-    public Weather getLocalWeather(){
-        return curLocation.getLocal();
-    }
-    
-    /**
-     * returns the short term forecast for the current location of the user
-     * @return the short term forecast for the current location of the user
-     */
-    public Forecast getShortTermForecast(){
-	return curLocation.getShortTerm();
-    }
-    /**
-     * returns the long term forecast for the current location of the user
-     * @return the long term forecast for the current location of the user
-     */
-    public Forecast getLongTermForecast(){
-        return curLocation.getLongTerm();
-    }
-    
     /**
      * Saves the user object to user.dat
      * @throws IOException thrown if there is a problem loading the object
