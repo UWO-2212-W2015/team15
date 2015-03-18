@@ -10,7 +10,6 @@ package team15.WeatherObjects;
  */
 
 //Imports
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -104,6 +103,7 @@ public class Weather implements Serializable{
             
         }
         
+        windDirection.setValue(convertDegree(windDirection.value));
         time.setValue(convertTime(time.value, true));
         sunrise.setValue(convertTime(sunrise.value, false));
         sunset.setValue(convertTime(sunset.value, false));
@@ -157,14 +157,14 @@ public class Weather implements Serializable{
      * @return a string representing the Kelvin temperature after it has been
      * converted
      */
-    private String convertTemp(String t, boolean system){
-        Double result = Double.valueOf(t) - 273.15;
+    private static String convertTemp(String t, boolean system){
+        double temp = Double.valueOf(t) - 273.15;
         
-        //Check if we need to display tempriture in fahrenheit
-        if(!system) result = 32+(result*9)/5;
+        //Check if we need to temp tempriture in fahrenheit
+        if(!system) temp = 32+(temp*9)/5;
         
-        result = (Math.round(result*100)/100.0);
-        return result.toString();
+        int result = (int) Math.round(temp);
+        return result + "°" + (system?"C":"F");
     }
     
     /**
@@ -173,7 +173,7 @@ public class Weather implements Serializable{
      * @param full if true return the full date, otherwise return just the time
      * @return the full date or time that the given value t represents
      */
-    private String convertTime(String t, boolean full){
+    private static String convertTime(String t, boolean full){
         String result;
         Date date = new Date();
         
@@ -267,7 +267,30 @@ public class Weather implements Serializable{
         return null;
     }
    
-    private void loadIcons(){
+    private static String convertDegree(String d){
+        if(d.equals("N/A")) return "N/A";
+        Double degree = Double.valueOf(d);
+        
+        if(degree < 11.25) return "N";
+        else if (degree < 33.75) return "NNE";
+        else if (degree < 56.25) return "NE";
+        else if (degree < 78.75) return "ENE";
+        else if (degree < 101.25) return "E";
+        else if (degree < 123.75) return "ESE";
+        else if (degree < 146.25) return "SE";
+        else if (degree < 168.75) return "SSE";
+        else if (degree < 191.25) return "S";
+        else if (degree < 213.75) return "SSW";
+        else if (degree < 236.25) return "SW";
+        else if (degree < 258.75) return "WSW";
+        else if (degree < 281.25) return "W";
+        else if (degree < 303.75) return "WNW";
+        else if (degree < 326.25) return "NW";
+        else if (degree < 348.75) return "NNW";
+        else return "N";
+    }
+    
+    private static void loadIcons(){
         try{
             InputStream fi = ImageIcon.class.getResourceAsStream("/icon.dat");
             ObjectInputStream in = new ObjectInputStream(fi);
