@@ -58,6 +58,7 @@ public class Forecast extends ArrayList<Weather> implements Serializable{
         for(int i = 0; i < NUM; i++){
             this.add(new Weather(forecast.getJSONObject(i), t));
         }
+        
         type = t;
         lastPoll = System.currentTimeMillis();
     }

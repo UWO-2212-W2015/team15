@@ -98,10 +98,7 @@ public class Weather implements Serializable{
 
                 values[i].setValue(tempJson.get(key[j]).toString());
             }
-            catch(JSONException ex){
-                System.err.println(ex.getMessage());
-            }
-            
+            catch(JSONException ex){}
         }
         
         windDirection.setValue(convertDegree(windDirection.value));

@@ -56,10 +56,8 @@ public class LocationsDialog extends JDialog{
      * from their location list or change which location is their current
      * location
      * @param u the user object
-     * @throws java.io.IOException thrown if there is a problem loading the
-     * list of all possible OpenWeather locations from "/citylist.txt"
      */
-    public LocationsDialog(User u) throws IOException{
+    public LocationsDialog(User u){
         super(new JFrame(), "Location List", true);
         
         this.user = u;

@@ -181,21 +181,6 @@ public class OpenWeatherGUI extends JFrame{
             return;
         }
         
-        /* It the weather was not polled because it has been too long since
-         * the last refresh or OpenWeather Api poll */
-        if(!error.isEmpty()){
-            this.updateError(error);
-            return;
-        }
-        
-        //Try to save the new user object with the updated forecasts
-        try{
-            user.saveUser();
-        }
-        catch(Exception e){
-            error = "Error: failed to save user data to the local drive.";
-        }
-        
         //Update the panels with the new weather data and the error message
         this.updateError(error);
         this.updatePanels();
@@ -232,13 +217,8 @@ public class OpenWeatherGUI extends JFrame{
     private void startLoactionDialog(){
         LocationsDialog window = null;
         
-        try{
-            window = new LocationsDialog(user);
-        } catch (IOException ex) {
-            updateError("Failed to load list of locations.");
-        }
-        
-        if(window != null) window.dispose();
+        window = new LocationsDialog(user);
+        window.dispose();
         
         //Update the panels
         locWeather = new LocationWeather(user.getCurrentLocation());
@@ -257,7 +237,7 @@ public class OpenWeatherGUI extends JFrame{
         
         //Make sure the cache folder exists, and if not create it.
         try{
-            File cache = new File("Weather Cache");
+            File cache = new File("WeatherCache");
             if(!cache.isDirectory()) cache.mkdir();
         }
         catch(Exception ex){

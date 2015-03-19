@@ -1,7 +1,8 @@
 package team15.WeatherObjects;
 
 /**
- *
+ * Holds the forecast data for a given location.
+ * 
  * @author team15
  */
 
@@ -36,6 +37,9 @@ public class LocationWeather implements Serializable{
     //Time of last refresh
     private long lastRefresh;
     
+    /**
+     * Makes a new default object with filler forecast variables.
+     */
     public LocationWeather(){
         localURL = "";
         shortURL = "";
@@ -47,6 +51,11 @@ public class LocationWeather implements Serializable{
         loc = new Location();
     }
     
+    /**
+     * Makes a new LocationWeather object for the given location.
+     * @param location the location that the data contained in this object
+     * references
+     */
     public LocationWeather(Location location){
         this.loc = location;
         
