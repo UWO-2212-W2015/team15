@@ -165,8 +165,10 @@ public class Weather implements Serializable{
         //Check if we need to temp tempriture in fahrenheit
         if(!system) temp = 32+(temp*9)/5;
         
+        char degree = 176 ;
+        
         int result = (int) Math.round(temp);
-        return result + "°" + (system?"C":"F");
+        return result + degree + (system?"C":"F");
     }
     
     /**
