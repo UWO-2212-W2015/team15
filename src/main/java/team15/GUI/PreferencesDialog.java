@@ -21,7 +21,7 @@ import team15.UserOjects.User;
 
 public class PreferencesDialog extends JDialog{
     //Check boxes
-    private static JCheckBox tempChk, iconChk, windChk, pressureChk, 
+    private static JCheckBox tempChk, windChk, pressureChk, 
                      humidityChk, minMaxChk, sunChk, skyCondChk, celChk, fahChk;
     
     //A field to track if the dialog successfully updates the settings
@@ -59,20 +59,12 @@ public class PreferencesDialog extends JDialog{
                                            10, SpringLayout.NORTH, panel);
         panel.add(tempChk);
 
-        //Icon check box
-        iconChk = new JCheckBox("Icon", pref.icon);
-        layout.putConstraint(SpringLayout.WEST, iconChk, 10, 
-                                                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, iconChk, 40, 
-                                                   SpringLayout.NORTH, tempChk);
-        panel.add(iconChk);
-
         //Wind check box
         windChk = new JCheckBox("Wind Speed/Direction", pref.wind);
         layout.putConstraint(SpringLayout.WEST, windChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, windChk, 40, 
-                                                   SpringLayout.NORTH, iconChk);
+                                                   SpringLayout.NORTH, tempChk);
         panel.add(windChk);
         
         //Pressure check box
@@ -83,12 +75,20 @@ public class PreferencesDialog extends JDialog{
                                                40, SpringLayout.NORTH, windChk);
         panel.add(pressureChk);
 
+        //Sky condition check box
+        skyCondChk = new JCheckBox("Sky Condition", pref.sky);
+        layout.putConstraint(SpringLayout.WEST, skyCondChk, 10, 
+                                                SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, skyCondChk, 40, 
+                                                    SpringLayout.NORTH, pressureChk);
+        panel.add(skyCondChk);
+        
         //Celsius check box
         celChk = new JCheckBox("Celsius", pref.tempUnits);
         layout.putConstraint(SpringLayout.WEST, celChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, celChk, 40, 
-                                               SpringLayout.NORTH, pressureChk);
+                                               SpringLayout.NORTH, skyCondChk);
         panel.add(celChk);
 
         //Humidty check box
@@ -114,21 +114,13 @@ public class PreferencesDialog extends JDialog{
         layout.putConstraint(SpringLayout.NORTH, sunChk, 40, 
                                                  SpringLayout.NORTH, minMaxChk);
         panel.add(sunChk);
-
-        //Sky condition check box
-        skyCondChk = new JCheckBox("Sky Condition", pref.sky);
-        layout.putConstraint(SpringLayout.WEST, skyCondChk, 200, 
-                                                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, skyCondChk, 40, 
-                                                    SpringLayout.NORTH, sunChk);
-        panel.add(skyCondChk);
         
         //Fahrenheit check box
         fahChk = new JCheckBox("Fahrenheit", !pref.tempUnits);
         layout.putConstraint(SpringLayout.WEST, fahChk, 200, 
                                                 SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, fahChk, 40, 
-                                                SpringLayout.NORTH, skyCondChk);
+        layout.putConstraint(SpringLayout.NORTH, fahChk, 0, 
+                                                SpringLayout.NORTH, celChk);
         panel.add(fahChk);
         
         /*Add action listeners to make sure only one of Celsius or Fahrenheit
@@ -184,7 +176,6 @@ public class PreferencesDialog extends JDialog{
     private static Preferences getPref(){
         Preferences result = new Preferences();
         result.humidity = humidityChk.isSelected();
-        result.icon = iconChk.isSelected();
         result.minMaxTemp = minMaxChk.isSelected();
         result.pressure = pressureChk.isSelected();
         result.sky = skyCondChk.isSelected();

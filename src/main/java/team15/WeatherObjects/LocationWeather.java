@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONException;
 import team15.JSON.URLToJSON;
 import team15.UserOjects.Location;
@@ -116,17 +118,11 @@ public class LocationWeather implements Serializable{
      * fail to build none of them are updated and an error will be thrown.
      * @return A blank string if the weather was updated successfully. An error
      * message telling.
-
-     * @throws MalformedURLException thrown if any of the urls are
-     * malformed
-     * @throws IOException thrown if there is any problem interacting with the
-     * OpenWeather api
-     * @throws JSONException thrown if there is any problem using the json 
      */
-    public final String updateForecasts() 
-                       throws MalformedURLException, IOException, JSONException{        
+    public final String updateForecasts(){        
         Long newRef = System.currentTimeMillis();
-
+        String result = "";
+        
         //Attempt to buiild new weather objects for the given location
         if((newRef - current.lastPoll) > REFRESH){
             try{
@@ -136,6 +132,7 @@ public class LocationWeather implements Serializable{
             }
             catch(Exception ex){
                 current.lastPoll = newRef - (REFRESH/2);
+                result = "Error updating weather data.";
             }
         }
         if((newRef - shortTerm.lastPoll) > REFRESH){
@@ -146,6 +143,7 @@ public class LocationWeather implements Serializable{
             }
             catch(Exception ex){
                 shortTerm.lastPoll = newRef - (REFRESH/2);
+                result = "Error updating weather data.";
             }
         }
         if((newRef - longTerm.lastPoll) > REFRESH){
@@ -156,13 +154,19 @@ public class LocationWeather implements Serializable{
             }
             catch(Exception ex){
                 longTerm.lastPoll = newRef - (REFRESH/2);
+                result = "Error updating weather data.";
             }
         }
         
         //Updated the refresh time tracker
         lastRefresh = newRef;
-        this.save();
-        return "";
+        
+        //Try to cache the new data
+        try {
+            this.save();
+        } catch (IOException ex) {}           
+        
+        return result;
     }
     
     /**

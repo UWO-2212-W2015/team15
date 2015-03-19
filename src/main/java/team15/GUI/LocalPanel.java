@@ -8,214 +8,395 @@ package team15.GUI;
  */
 
 //Imports
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import team15.UserOjects.Preferences;
 import team15.WeatherObjects.Weather;
+import team15.WeatherObjects.LocationWeather;
 
 public class LocalPanel extends JPanel{
-    //Display labels
-    private final JLabel loc, temp, tempScale, airP, hum, sky, minT, maxT, 
-                               windS, windD, sunR, sunS, icon, error, ref, time;
+    private final LocalPanelConfig LPC;
+    private final Preferences pref;
+    private final Weather w;
+    private final String name;
+    
+    public LocalPanel(){
+        super();
+        LPC = new LocalPanelConfig();
+        w = new Weather();
+        pref = new Preferences();
+        name = "";
+    }
     
     /**
      * Creates a new panel that will display the weather located in a single
      * weather object representing a local forecast
+     * @param locW
+     * @param p
      */
-    public LocalPanel(){
+    public LocalPanel(LocationWeather locW, Preferences p){
         super();
         
-        //Initialize the labels
-        loc = new JLabel();
-        temp = new JLabel();
-        tempScale = new JLabel();
-        airP = new JLabel();
-        hum = new JLabel();
-        sky = new JLabel();
-        minT = new JLabel();
-        maxT = new JLabel();
-        windS = new JLabel();
-        windD = new JLabel();
-        sunR = new JLabel();
-        sunS = new JLabel();
-        icon = new JLabel();
-        error = new JLabel();
-        ref = new JLabel();
-        time = new JLabel();
+        this.LPC = new LocalPanelConfig();
+        this.w = locW.getLocal();
+        this.name = locW.toString();
+        this.pref = p;
+    
+        //Set up panel parameters
+        this.setBackground(LPC.BGCOLOR);
         
         //Set layout
         SpringLayout layout = new SpringLayout();
         this.setLayout(layout);
-
-        //Location label
-        loc.setBounds(100,100,150,20);
-        loc.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                          (SpringLayout.WEST, loc, 20, SpringLayout.WEST, this);
-        this.add(loc);
         
-        //Error label
-        error.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        layout.putConstraint
-                        (SpringLayout.WEST, error, 20, SpringLayout.WEST, this);
-        layout.putConstraint
-                     (SpringLayout.SOUTH, error, -20, SpringLayout.SOUTH, this);
-        this.add(error);
+        //Header panel
+        JPanel header = makeHeader();
+        layout.putConstraint(SpringLayout.WEST, header, 34, SpringLayout.WEST, 
+                this);
+        layout.putConstraint(SpringLayout.NORTH, header, 17, SpringLayout.NORTH, 
+                this);
+        this.add(header);
         
-        //Refresh Label
-        ref.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        layout.putConstraint
-                         (SpringLayout.EAST, ref, -20, SpringLayout.EAST, this);
-        layout.putConstraint
-                       (SpringLayout.SOUTH, ref, -20, SpringLayout.SOUTH, this);
-        this.add(ref);
+        //Temperature panels
+        JPanel temp = makeTemp();
         
-        //Time label
-        time.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                         (SpringLayout.WEST, time, 20, SpringLayout.WEST, this);
-        layout.putConstraint
-                        (SpringLayout.NORTH, time, 11, SpringLayout.SOUTH, loc);
-        this.add(time);
-        
-        //Temperature labels
-        temp.setFont(new Font("Tahoma", Font.PLAIN, 90));
+        layout.putConstraint(SpringLayout.WEST, temp, 10, SpringLayout.WEST, header);
+        layout.putConstraint(SpringLayout.NORTH, temp, 0, SpringLayout.SOUTH, header);
         this.add(temp);
-        layout.putConstraint
-                        (SpringLayout.WEST, temp, 120, SpringLayout.WEST, this);
-        layout.putConstraint
-                       (SpringLayout.NORTH, temp, 11, SpringLayout.SOUTH, time);
-
-        tempScale.setFont(new Font("Tahoma", Font.PLAIN, 60));
-        this.add(this.tempScale);
-        layout.putConstraint
-                     (SpringLayout.WEST, tempScale, 5, SpringLayout.EAST, temp);
-        layout.putConstraint
-                  (SpringLayout.NORTH, tempScale, 16, SpringLayout.SOUTH, time);
-
-        //Air pressure label
-        airP.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                    (SpringLayout.WEST, airP, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                       (SpringLayout.NORTH, airP, 80, SpringLayout.NORTH, this);
-        this.add(airP);
-
-        //Humidity label
-        hum.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                     (SpringLayout.WEST, hum, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                        (SpringLayout.NORTH, hum, 10, SpringLayout.SOUTH, airP);
-        this.add(hum);
-
-        //Sky condition label
-        sky.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                     (SpringLayout.WEST, sky, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                         (SpringLayout.NORTH, sky, 10, SpringLayout.SOUTH, hum);
-        this.add(sky);
-
-        //Expected minimum label
-        minT.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                    (SpringLayout.WEST, minT, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                        (SpringLayout.NORTH, minT, 10, SpringLayout.SOUTH, sky);
-        this.add(minT);
-
-        //Expected maxmimum label
-        maxT.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                    (SpringLayout.WEST, maxT, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                       (SpringLayout.NORTH, maxT, 10, SpringLayout.SOUTH, minT);
-        this.add(maxT);
-
-        //Wind speed label
-        windS.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                   (SpringLayout.WEST, windS, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                      (SpringLayout.NORTH, windS, 10, SpringLayout.SOUTH, maxT);
-        this.add(windS);
-
-        //Wind direction label
-        windD.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                   (SpringLayout.WEST, windD, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                     (SpringLayout.NORTH, windD, 10, SpringLayout.SOUTH, windS);
-        this.add(windD);
-
-        //Sunrise label
-        sunR.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                    (SpringLayout.WEST, sunR, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                      (SpringLayout.NORTH, sunR, 10, SpringLayout.SOUTH, windD);
-        this.add(sunR);
-
-        //Sunset label
-        sunS.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        layout.putConstraint
-                    (SpringLayout.WEST, sunS, 30, SpringLayout.EAST, tempScale);
-        layout.putConstraint
-                       (SpringLayout.NORTH, sunS, 10, SpringLayout.SOUTH, sunR);
-        this.add(sunS);
-
-        //Icon label
-        layout.putConstraint
-                         (SpringLayout.WEST, icon, 30, SpringLayout.WEST, this);
-        layout.putConstraint
-                       (SpringLayout.NORTH, icon, 60, SpringLayout.NORTH, time);
-        this.add(icon);
-    }
-    
-    /**
-     * Updates the panel with the information contained in the given weather 
-     * object. Some fields are not displayed based on the given preferences that
-     * are passed from the user setting.
-     * @param w a weather object representing a local forecast
-     * @param pref a preferences file that contains display setting for the
-     * panel.  For display properties True = Draw, False = Hide. For temperature
-     * units True = Celsius, False = Fahrenheit.
-     * @param location The name of the current location
-     * @param refresh The time of the last refresh of the forecast data
-     */
-    public void 
-           update(Weather w, Preferences pref, String location, String refresh){
-        String u = pref.tempUnits?"c":"f"; //Tempriture system label
         
-        temp.setText(pref.temperature?w.getTemp(pref.tempUnits):"");
-        tempScale.setText(pref.temperature?u:"");
-        airP.setText(pref.pressure?"Air Pressure: " + w.airPressure:"");
-        hum.setText(pref.humidity?"Humidity: " + w.humidity:"");
-        sky.setText(pref.sky?"Condition: " + w.skyCondition:"");
-        minT.setText(pref.minMaxTemp?"Minimum Temperature: " 
-                                         + w.getMinTemp(pref.tempUnits) + u:"");
-        maxT.setText(pref.minMaxTemp?"Maximum Temperature: " 
-                                         + w.getMaxTemp(pref.tempUnits) + u:"");    
-        windS.setText(pref.wind?"WindSpeed: " + w.windSpeed:"");
-        windD.setText(pref.wind?"Wind Direction: " + w.windDirection 
-                                                               + " degrees":"");
-        sunR.setText(pref.sun?"Sunrise: " + w.sunrise:"");
-        sunS.setText(pref.sun?"Sunset: " + w.sunset:"");
-        icon.setIcon(pref.icon?w.icon:new ImageIcon());
-        time.setText(w.time.value);
-        loc.setText("Location:   " + location);
-        ref.setText("Last Refresh: " + refresh);
+        JPanel sec = makeSecondary();
+        
+        layout.putConstraint(SpringLayout.WEST, sec, 50, SpringLayout.EAST, temp);
+        layout.putConstraint(SpringLayout.NORTH, sec, 10, SpringLayout.SOUTH, header);
+        this.add(sec);
     }
-    
+   
     /**
      * Update the error label in the panel with the given string
      * @param err the string to display in the error message label of the panel
      */
     public void setError(String err){
-        error.setText(err);
+        //error.setText(err);
+    }
+    
+    /**
+     * Makes the panel that holds all the secondary weather data. Sunrise/sunset
+     * humidity, pressure, and wind.
+     * @return a JPanel with all the secondary weather data that is set visible
+     */
+    private JPanel makeSecondary(){
+        JPanel result = new JPanel();
+        JPanel prev, right;
+        
+        SpringLayout layout = new SpringLayout();
+        
+        right = null;
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        String sunr = w.sunrise.value;
+        String suns = w.sunset.value;
+        String hum = w.humidity.value + "%";
+        String pre = w.airPressure.value;
+        String wind = w.windSpeed + " m/s " + w.windDirection;
+        int offset = LPC.SECONDARYOFFSET;
+        int size = LPC.SECONDARYFONT;
+        int type = LPC.FONTBOLD;
+        int space = LPC.SECONDARYSPACE;
+        
+        JPanel pnlSunr = makeValueLabel("SUNRISE:", sunr, offset, size, type);
+        JPanel pnlSuns = makeValueLabel("SUNSET:", suns, offset, size, type);
+        JPanel pnlHum = makeValueLabel("HUMIDITY:", hum, offset, size, type);
+        JPanel pnlPre = makeValueLabel("PRESSURE:", pre, offset, size, type);
+        JPanel pnlWind = makeValueLabel("WIND:", wind, offset, size, type);
+        
+        prev = result;
+        
+        JPanel[] panels = {pnlSunr, pnlSuns, pnlHum, pnlPre, pnlWind};
+        boolean[] visible = {pref.sun, pref.sun, pref.humidity, pref.pressure, 
+            pref.wind};
+        
+        int i = 0;
+        for(int j = 0; j < visible.length; j++){
+            if(visible[j]){
+                int n = (i%2);
+                int x = (n==1)?space:0;
+                int y = (n==1)?0:10;
+                String h = (n==1)?SpringLayout.EAST:SpringLayout.WEST;
+                String v = ((n==1)||(prev == result))
+                        ?SpringLayout.NORTH:SpringLayout.SOUTH;
+                
+                layout.putConstraint(SpringLayout.WEST, panels[j], x, h, prev);
+                layout.putConstraint(SpringLayout.NORTH, panels[j], y, v, prev);
+                
+                result.add(panels[j]);
+                
+                if(n==0) prev = panels[j];
+                if((i==0)||(n==1)) right = panels[j];
+                
+                i++;
+            }
+        }
+               
+        if(right != null){
+            layout.putConstraint(SpringLayout.EAST, result, 0, 
+                    SpringLayout.EAST, right);
+            layout.putConstraint(SpringLayout.SOUTH, result, 0, 
+                    SpringLayout.SOUTH, prev);
+        }
+        return result;
+    }
+    
+    /**
+     * Makes the panel that contains the temperatures and sky condition.
+     * @return the panel that contains the temperatures and sky condition.
+     */
+    private JPanel makeTemp(){
+        JPanel result = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        JPanel left = null;
+        JPanel right = null;
+        int lh = 0;
+        int rh = 0;
+        if(pref.temperature){
+            left = new JPanel();
+            left.add(makeLabel(w.getTemp(pref.tempUnits), LPC.TEMPFONT, LPC.FONTPLAIN));
+            left.setBackground(LPC.BGCOLOR);
+            
+            if(pref.sky) right = makeSkyCondition();
+            else if(pref.minMaxTemp){
+                right = largeMinMax();
+                rh = 10;
+            }
+        }
+        else if(pref.minMaxTemp){
+            left = largeMinMax();
+            lh = 20;
+            if(pref.sky) right = makeSkyCondition();
+        }
+        else if(pref.sky) left = makeSkyCondition();
+        
+        if(left == null) return result;
+        
+        layout.putConstraint(SpringLayout.NORTH, left, lh, SpringLayout.NORTH, result);
+        result.add(left);
+        
+        if(right == null){
+            layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, left);
+            layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, left);
+            
+            return result;
+        }
+        
+        layout.putConstraint(SpringLayout.WEST, right, 20, SpringLayout.EAST, left);
+        layout.putConstraint(SpringLayout.NORTH, right, rh, SpringLayout.NORTH, result);
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, right);
+        result.add(right);
+
+        if((pref.temperature)&&(pref.sky)&&(pref.minMaxTemp)){
+            JPanel mm = smallMinMax();
+            
+            layout.putConstraint(SpringLayout.WEST, mm, 20, SpringLayout.WEST, left);
+            layout.putConstraint(SpringLayout.NORTH, mm, 0, SpringLayout.SOUTH, left);
+            layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, mm);
+           
+            result.add(mm);
+        }
+        else layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, left);
+
+        return result;
+    }
+    
+    private JPanel largeMinMax(){
+        JPanel result = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        String min = w.getMinTemp(pref.tempUnits);
+        String max = w.getMaxTemp(pref.tempUnits);
+        int offset = LPC.MINMAXOFFSET+110;
+        int size = LPC.MINMAXFONT+24;
+        int type = LPC.FONTPLAIN;
+        JPanel lblMin = makeValueLabel("Low:", min, offset, size, type);
+        JPanel lblMax = makeValueLabel("High:", max, offset, size, type);
+        
+        result.add(lblMax);
+        result.add(lblMin);
+        layout.putConstraint(SpringLayout.WEST, lblMax, 0, SpringLayout.WEST, 
+                lblMin);
+        layout.putConstraint(SpringLayout.NORTH, lblMax, 5, SpringLayout.SOUTH, 
+                lblMin);
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
+                lblMax);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
+                lblMax);
+        
+        return result;
+    }
+    
+    /**
+     * Makes the Panel that displays the min and max temperatures
+     * @return the panel that displays the min and max temperature
+     */
+    private JPanel smallMinMax(){
+        JPanel result = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        String min = w.getMinTemp(pref.tempUnits);
+        String max = w.getMaxTemp(pref.tempUnits);
+        int offset = LPC.MINMAXOFFSET;
+        int size = LPC.MINMAXFONT;
+        int type = LPC.FONTBOLD;
+        JPanel lblMin = makeValueLabel("LOW:", min, offset, size, type);
+        JPanel lblMax = makeValueLabel("HIGH:", max, offset, size, type);
+        
+        result.add(lblMax);
+        result.add(lblMin);
+        layout.putConstraint(SpringLayout.WEST, lblMax, 30, SpringLayout.EAST, 
+                lblMin);
+        layout.putConstraint(SpringLayout.NORTH, lblMax, 0, SpringLayout.NORTH, 
+                lblMin);
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
+                lblMax);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
+                lblMax);
+        
+        return result;
+    }
+    
+    /**
+     * Makes a panel that contains the sky condition description and icon
+     * @param icon the sky condition icon
+     * @param condition the sky condition description
+     * @return the panel containing the sky condition information
+     */
+    private JPanel makeSkyCondition(){
+        JPanel result = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        //Set icon
+        Image img = w.icon.getImage();
+        int size = LPC.ICONSIZE;
+        img = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+        JLabel lblIcon = new JLabel(new ImageIcon(img));
+        result.add(lblIcon);
+        
+        //Set condition
+        JLabel con = makeLabel(w.skyCondition.value, LPC.CONFONT, LPC.FONTBOLD);
+
+        layout.putConstraint(SpringLayout.WEST, con, 14, SpringLayout.WEST, 
+                result);
+        layout.putConstraint(SpringLayout.NORTH, con, -25, SpringLayout.SOUTH, 
+                lblIcon);
+        result.add(con);
+        
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
+                lblIcon);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
+                con);
+        
+        return result;
+    }
+    
+    /**
+     * Makes the header panel that contains the location name and the date
+     * @param location the locations name
+     * @param time the date of the weather object
+     * @return the formated header that displays the location name and the date
+     * of the weather forecast
+     */
+    private JPanel makeHeader(){
+        String time = w.time.toString().substring(4, 10);
+        int font = LPC.FONTPLAIN;
+        
+        JPanel result = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        
+        result.setLayout(layout);
+        result.setBackground(LPC.BGCOLOR);
+        
+        //Location label
+        JLabel loc = makeLabel(this.name, LPC.LOCATIONFONT, font);
+        result.add(loc);
+        
+        //Time label
+        JLabel date = makeLabel(time, LPC.TIMEFONT, font);
+        layout.putConstraint(SpringLayout.WEST, date, 5, SpringLayout.WEST, 
+                result);
+        layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.SOUTH, 
+                loc);
+        result.add(date);
+        
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
+                loc);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
+                date);
+        
+        return result;
+    }
+    
+    /**
+     * Makes a new JLabel with the specified font, with white text of the given
+     * size
+     * @param size the size of the font
+     * @return a JLabel with Tahoma font, of the given size, and white text
+     */
+    private JLabel makeLabel(String lbl, int size, int type){
+        JLabel result = new JLabel(lbl);
+        result.setFont(new Font(LPC.FONTNAME, type, size));
+        result.setForeground(Color.WHITE);
+        return result;
+    }
+    
+    /**
+     * Makes a new Jpanel that has two aligned Jlabels with width offset
+     * @param label The label of the value
+     * @param value the value to be displayed
+     * @param offset the total size of the JPanel
+     * @param size the size of the font
+     * @param type the type of the font: Bold, Plain, etc
+     * @return A JPanel that has the two strings in in the proper font of the
+     * specified size
+     */
+    private JPanel makeValueLabel(String label, String value, int offset, 
+            int size, int type){
+        JPanel result = new JPanel();
+        JLabel l = makeLabel(label, size, type);
+        JLabel v = makeLabel(value, size, type);
+        SpringLayout layout = new SpringLayout();
+        
+        result.setBackground(LPC.BGCOLOR);
+        result.setLayout(layout);
+        result.add(l);
+        
+        layout.putConstraint(SpringLayout.EAST, v, offset, SpringLayout.WEST, 
+                l);
+        layout.putConstraint(SpringLayout.NORTH, v, 0, SpringLayout.NORTH, l);
+        result.add(v);
+        
+        layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
+                v);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
+                v);
+        
+        return result;
     }
 }

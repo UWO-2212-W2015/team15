@@ -101,15 +101,26 @@ public class Weather implements Serializable{
             catch(JSONException ex){}
         }
         
-        windDirection.setValue(convertDegree(windDirection.value));
-        
-        time.setValue(convertTime(time.value, false));
-        
-        sunrise.setValue(convertTime(sunrise.value, true));
-        sunset.setValue(convertTime(sunset.value, true));
-        
         icon = iconList.get(iconPath.toString());
         
+        String date = convertTime(time.value);
+        time.setValue(date);
+        
+        if(type == WeatherType.LOCAL){
+            //Change the wind direct from degree to N, NW etc
+            windDirection.setValue(convertDegree(windDirection.value));
+            
+            //Change the sun rise/set time to just the time
+            date = convertTime(sunrise.value);
+            date = date.substring(11, 16);
+            sunrise.setValue(date);
+            date = convertTime(sunset.value);
+            date = date.substring(11, 16);
+            sunset.setValue(date);
+            convertPressure();
+            convertSkyCondition();
+        }   
+
         lastPoll = System.currentTimeMillis();
     }
     
@@ -177,16 +188,30 @@ public class Weather implements Serializable{
      * @param full if true return the full date, otherwise return just the time
      * @return the full date or time that the given value t represents
      */
-    private static String convertTime(String t, boolean time){
+    private static String convertTime(String t){
         if(t.equals("N/A")) return "N/A";
         Date date = new Date();
-        String result;
         date.setTime((long)1000*Integer.valueOf(t));
-        result = date.toString();
-        if(time) result = result.split(" ")[3];
-        return result;
+        return date.toString();
     }
     
+    /**
+     * Converts the pressure string into its displayable form
+     */
+    private void convertPressure(){
+        Double p = Double.valueOf(this.airPressure.value)/10;
+        this.airPressure.setValue(Math.round(p) + " kPa");
+    }
+    
+    private void convertSkyCondition() {
+        String[] s = skyCondition.value.split(" ");
+        String result = "";
+        for(String word: s){
+            String first = word.substring(0, 1);
+            result += first.toUpperCase() + word.substring(1)+" ";
+        }
+        skyCondition.setValue(result);
+    }
     /**
      * Loads a new weather object with all default values and a type t
      * @param t the type of the Weather object. Taken from the WeatherType

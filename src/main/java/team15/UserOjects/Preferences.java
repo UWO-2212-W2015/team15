@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class Preferences implements Serializable{
     //Display properties - True = draw
     public boolean 
-              temperature, wind, pressure, humidity, sun, icon, minMaxTemp, sky;
+              temperature, wind, pressure, humidity, sun, minMaxTemp, sky;
         
     //Tempriture preferences - True = Celcius, False = Fahrenheit
     public boolean tempUnits;
@@ -30,7 +30,6 @@ public class Preferences implements Serializable{
         minMaxTemp = true;
         sky = true;
         sun = true;
-        icon = true;
         tempUnits = true;
     }
 }

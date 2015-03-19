@@ -27,11 +27,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
-import org.json.JSONException;
 import team15.UserOjects.User;
 import team15.WeatherObjects.LocationWeather;
 
 public class OpenWeatherGUI extends JFrame{
+    //Size constants
+    public final static int frameWIDTH = 1200;
+    
     //User variable
     private static User user;
     private static LocationWeather locWeather;
@@ -40,7 +42,7 @@ public class OpenWeatherGUI extends JFrame{
     private final JTabbedPane tabbedPane;
     
     //Tabs
-    private final LocalPanel local;
+    private LocalPanel local;
     private final ForecastPanel shortTerm, longTerm;
 
     /**
@@ -48,10 +50,12 @@ public class OpenWeatherGUI extends JFrame{
      */
     public OpenWeatherGUI(){
         super();
-
+        
+        
+        
         //Frame settings
         this.setTitle("Team 15 Weather");
-        this.setSize(1200, 800); 
+        this.setSize(frameWIDTH, 800); 
         this.setLocation(100,50);
         this.getContentPane().setLayout(new BoxLayout
                                           (getContentPane(), BoxLayout.X_AXIS));
@@ -62,10 +66,7 @@ public class OpenWeatherGUI extends JFrame{
         this.local = new LocalPanel();
         this.shortTerm = new ForecastPanel();
         this.longTerm = new ForecastPanel();
-        
-        //Populate the panels with weather and forecast data
-        this.updatePanels();
-        
+
         //Create new tabbed pane
         this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(Color.LIGHT_GRAY);
@@ -78,6 +79,21 @@ public class OpenWeatherGUI extends JFrame{
         tabbedPane.addTab("Short Term Forecast", shortTerm);
         tabbedPane.addTab("Longterm Forecast", longTerm);
         this.getContentPane().add(tabbedPane);
+        
+        //If the user has no locations make sure that they add at least one
+        if(user.getLocations().isEmpty()){
+            startLoactionDialog();
+            
+            if(user.getLocations().isEmpty()){
+                System.out.println("Location list can not be empty.");
+                System.exit(1);
+            }
+            
+            locWeather = new LocationWeather(user.getCurrentLocation());
+        }
+        
+        //Populate the panels with weather and forecast data
+        this.updatePanels();
 
         //Create the menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -120,8 +136,7 @@ public class OpenWeatherGUI extends JFrame{
                 //Check if the preferences were saved if no display an error
                 if(preferences.wasUpdated()) updatePanels();
                 else{
-                    updateError("Error: failed to save user "
-                                                  + "data to the local drive.");
+                    //updateError("Error: failed to save user "      + "data to the local drive.");
                 }
             }
         });
@@ -142,17 +157,7 @@ public class OpenWeatherGUI extends JFrame{
            
         //Set the main GUI visible
         this.setVisible(true);
-        
-        //If the user has no locations make sure that they add at least one
-        if(user.getLocations().isEmpty()){
-            startLoactionDialog();
-            
-            if(user.getLocations().isEmpty()){
-                System.out.println("Location list can not be empty.");
-                System.exit(1);
-            }
-        }
-        
+
         //Try and refresh the data
         this.refresh();       
     }
@@ -165,24 +170,9 @@ public class OpenWeatherGUI extends JFrame{
      * then it updates the panels with appropriate error messages.
      */
     private void refresh(){
-        String error = "";
-        
-        /* Try to update the weather and forecast data for the user's current
-         * location */
-        try{
-            error = locWeather.updateForecasts();
-        //An internet error has occured
-        } catch (IOException ex) {
-            this.updateError("Error: problem connecting to OpenWeather.com");
-            return;
-        //The json returned was not created properly
-        } catch (JSONException ex) {
-            this.updateError("Error: Unable to get data from OpenWeather.com");
-            return;
-        }
-        
+        String error = locWeather.updateForecasts();
+
         //Update the panels with the new weather data and the error message
-        this.updateError(error);
         this.updatePanels();
     }
     
@@ -195,29 +185,18 @@ public class OpenWeatherGUI extends JFrame{
         String refresh = locWeather.getRefresh();
         boolean units = user.pref.tempUnits;
         
-        local.update(locWeather.getLocal(), user.pref, location, refresh);
+        local = new LocalPanel(locWeather, user.pref);
+        tabbedPane.setComponentAt(0, local);
         shortTerm.update(locWeather.getShortTerm(), units, location, refresh);
         longTerm.update(locWeather.getLongTerm(), units, location, refresh);
     }
-    
-    /**
-     * Updates all the forecast tabs with the given error string
-     * @param error the error the is to be displayed on each tab
-     */
-    private void updateError(String error){
-        local.setError(error);
-        shortTerm.setError(error);
-        longTerm.setError(error);
-    }
-    
+ 
     /**
      * Creates the location dialog and handles any possible errors it may
      * produce.
      */
     private void startLoactionDialog(){
-        LocationsDialog window = null;
-        
-        window = new LocationsDialog(user);
+        LocationsDialog window = new LocationsDialog(user);
         window.dispose();
         
         //Update the panels
