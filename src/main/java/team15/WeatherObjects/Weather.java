@@ -153,7 +153,7 @@ public class Weather implements Serializable{
     
     /**
      * Converts a given value in Kelvin to either Celsius or Fahrenheit
-     * @param t the temperature in Kelvin
+     * @param t the temperature in Celsius
      * @param system Represents the temperature system to use.
      * False = Fahrenheit, True = Celsius
      * @return a string representing the Kelvin temperature after it has been
@@ -166,7 +166,9 @@ public class Weather implements Serializable{
         if(!system) temp = 32+(temp*9)/5;
         
         int result = (int) Math.round(temp);
-        return result + "Â°" + (system?"C":"F");
+        
+        char deg = '°';
+        return result + (deg + (system?"C":"F"));
     }
     
     /**

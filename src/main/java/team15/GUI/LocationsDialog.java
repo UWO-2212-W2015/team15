@@ -230,24 +230,24 @@ public class LocationsDialog extends JDialog{
         }
         
         //Get the location at the current index
-        Location loc = model.get(i);
+        Location l = model.get(i);
         
         /* Check to see if the user already has this loation as the current 
          * location */
-        if(loc.equals(user.getCurrentLocation())){
+        if(l.equals(user.getCurrentLocation())){
             error.setText("Error: This is already your current location.");
             return;
         }
+        //Save the old location and try to save the new user file
+        Location oldLocation = user.getCurrentLocation();
         
         //Try to set the new location as the current location
-        if(!user.setCurrentLoc(loc)){
-            error.setText("Error: Could not find the "
-                                                + "location in the user file.");
+        if(!user.setCurrentLoc(l)){
+            error.setText("Error: Could not find the location");
+            user.setCurrentLoc(oldLocation);
             return;
         }
         
-        //Save the old location and try to save the new user file
-        Location oldLocation = user.getCurrentLocation();
         try{
             user.saveUser();
         } catch(Exception ex){
@@ -283,12 +283,19 @@ public class LocationsDialog extends JDialog{
 
         //Add the location to the user's location list
         user.addLocation(l);
-
+        
         //Try to save the new user file
         try{
+            //If this is the first location in the list make it the current location
+            if(user.getLocations().size() == 1){
+                user.setCurrentLoc(l);
+                cur.setText("Current location: " + user.getCurrentLocation());
+            }
+            
             user.saveUser();
         } catch(Exception ex){
             user.removeLocation(l);
+            user.setCurrentLoc(new Location());
             error.setText("Error: failed to save user "
                                                   + "data to the local drive.");
         }
@@ -298,12 +305,6 @@ public class LocationsDialog extends JDialog{
         
         //Update the error label
         error.setText("");
-        
-        //If this is the first location in the list make it the current location
-        if(user.getLocations().size() == 1){
-            user.setCurrentLoc(l);
-            cur.setText("Current location: " + user.getCurrentLocation());
-        }
     }
     
     /**
