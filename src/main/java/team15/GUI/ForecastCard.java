@@ -100,11 +100,11 @@ public class ForecastCard extends JPanel{
      */
     public void update(Weather w, boolean units, WeatherType t){
         //Update all the labels containing weather data
-        time.setText(w.time.value);
+        time.setText(w.getDate());
         temp.setText(w.getTemp(units));
         icon.setIcon(w.icon);
         scale.setText(units?"c":"f");
-        sky.setText("Sky Condition :   " + w.skyCondition);
+        sky.setText("Sky Condition :   " + w.getCondition());
         
         /* This will be true is min temp is 0, which will happen in a short
          * term forecst and not a long term forecast */

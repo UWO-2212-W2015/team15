@@ -14,11 +14,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.JSONException;
 import team15.JSON.URLToJSON;
 import team15.UserOjects.Location;
 
@@ -81,6 +77,8 @@ public class LocationWeather implements Serializable{
 
             lastRefresh = 0;
         }
+        
+        this.updateForecasts();
     }
     
     /**
@@ -131,7 +129,7 @@ public class LocationWeather implements Serializable{
                 current = tempC;
             }
             catch(Exception ex){
-                current.lastPoll = newRef - (REFRESH/2);
+                current.lastPoll = newRef;
                 result = "Error updating weather data.";
             }
         }
@@ -142,7 +140,7 @@ public class LocationWeather implements Serializable{
             shortTerm = tempS;
             }
             catch(Exception ex){
-                shortTerm.lastPoll = newRef - (REFRESH/2);
+                shortTerm.lastPoll = newRef;
                 result = "Error updating weather data.";
             }
         }
@@ -153,7 +151,7 @@ public class LocationWeather implements Serializable{
             longTerm = tempL;
             }
             catch(Exception ex){
-                longTerm.lastPoll = newRef - (REFRESH/2);
+                longTerm.lastPoll = newRef;
                 result = "Error updating weather data.";
             }
         }

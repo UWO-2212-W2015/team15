@@ -15,71 +15,35 @@ package team15.GUI;
  */
 
 //Imports
-import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JTabbedPane;
+import javax.swing.JPanel;
+import javax.swing.SpringLayout;
 import team15.UserOjects.User;
 import team15.WeatherObjects.LocationWeather;
 
 public class OpenWeatherGUI extends JFrame{
-    //Size constants
-    public final static int frameWIDTH = 1200;
-    
     //User variable
     private static User user;
-    private static LocationWeather locWeather;
-    
-    //Container for tabs
-    private final JTabbedPane tabbedPane;
-    
-    //Tabs
-    private LocalPanel local;
-    private final ForecastPanel shortTerm, longTerm;
 
     /**
      * The main GUI window class for the OpenWeather API program.
      */
     public OpenWeatherGUI(){
         super();
-        
-        
-        
+
         //Frame settings
-        this.setTitle("Team 15 Weather");
-        this.setSize(frameWIDTH, 800); 
         this.setLocation(100,50);
-        this.getContentPane().setLayout(new BoxLayout
-                                          (getContentPane(), BoxLayout.X_AXIS));
-        this.setResizable(false);
+        this.setSize(750, 750);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        //Create the tab pages
-        this.local = new LocalPanel();
-        this.shortTerm = new ForecastPanel();
-        this.longTerm = new ForecastPanel();
 
-        //Create new tabbed pane
-        this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBackground(Color.LIGHT_GRAY);
-        tabbedPane.setPreferredSize(new Dimension(5, 800));
-        tabbedPane.setMinimumSize(new Dimension(5, 500));
-        tabbedPane.setSize(new Dimension(0, 500));
-
-        //Add the tabs
-        tabbedPane.addTab("Current", local);
-        tabbedPane.addTab("Short Term Forecast", shortTerm);
-        tabbedPane.addTab("Longterm Forecast", longTerm);
-        this.getContentPane().add(tabbedPane);
-        
         //If the user has no locations make sure that they add at least one
         if(user.getLocations().isEmpty()){
             startLoactionDialog();
@@ -87,13 +51,8 @@ public class OpenWeatherGUI extends JFrame{
             if(user.getLocations().isEmpty()){
                 System.out.println("Location list can not be empty.");
                 System.exit(1);
-            }
-            
-            locWeather = new LocationWeather(user.getCurrentLocation());
+            }  
         }
-        
-        //Populate the panels with weather and forecast data
-        this.updatePanels();
 
         //Create the menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -123,7 +82,7 @@ public class OpenWeatherGUI extends JFrame{
         //Refresh action listener
         ref.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-                refresh();
+                updatePanels();
             }
         });
         
@@ -145,6 +104,7 @@ public class OpenWeatherGUI extends JFrame{
         locationList.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
                 startLoactionDialog();
+                updatePanels();
             }
         });
         
@@ -154,26 +114,9 @@ public class OpenWeatherGUI extends JFrame{
                 System.exit(0);
             }
         });
-           
-        //Set the main GUI visible
-        this.setVisible(true);
-
+        
         //Try and refresh the data
-        this.refresh();       
-    }
-    
-    /**
-     * Tries to refresh the weather and forecast data. 
-     * 
-     * If this is not possible due to an internet error, an object construction 
-     * error, or because the previous data refresh or poll was updated recently
-     * then it updates the panels with appropriate error messages.
-     */
-    private void refresh(){
-        String error = locWeather.updateForecasts();
-
-        //Update the panels with the new weather data and the error message
-        this.updatePanels();
+        this.updatePanels();       
     }
     
     /**
@@ -181,14 +124,41 @@ public class OpenWeatherGUI extends JFrame{
      * location data and preferences.
      */
     private void updatePanels(){
+        LocationWeather locWeather = new LocationWeather();//user.getCurrentLocation());
+        
+        this.setTitle(locWeather.toString());
+        
+        SpringLayout layout = new SpringLayout();
+        JPanel view = new JPanel();
+        view.setLayout(layout);
+        view.setBackground(new Color(210, 229, 243));
+        /*String error = locWeather.updateForecasts();
         String location = user.getCurrentLocation().toString();
-        String refresh = locWeather.getRefresh();
+        String refresh = locWeather.getRefresh();*/
         boolean units = user.pref.tempUnits;
         
-        local = new LocalPanel(locWeather, user.pref);
-        tabbedPane.setComponentAt(0, local);
-        shortTerm.update(locWeather.getShortTerm(), units, location, refresh);
-        longTerm.update(locWeather.getLongTerm(), units, location, refresh);
+        JPanel local = new LocalPanel(locWeather, user.pref);
+        //Make Short term panel here
+        JPanel shortTerm = new JPanel();
+        JPanel longTerm = new LongTermPanel(locWeather.getLongTerm(), units);
+        
+        layout.putConstraint(SpringLayout.WEST, local, 0, SpringLayout.WEST, view);
+        layout.putConstraint(SpringLayout.NORTH, local, 0, SpringLayout.NORTH, view);
+ 
+        layout.putConstraint(SpringLayout.WEST, shortTerm, 25, SpringLayout.WEST, view);
+        layout.putConstraint(SpringLayout.NORTH, shortTerm, 35, SpringLayout.SOUTH, local);
+        
+        layout.putConstraint(SpringLayout.WEST, longTerm, 25, SpringLayout.WEST, view);
+        layout.putConstraint(SpringLayout.NORTH, longTerm, 50, SpringLayout.SOUTH, shortTerm);
+        
+        layout.putConstraint(SpringLayout.EAST, view, 0, SpringLayout.EAST, local);
+        layout.putConstraint(SpringLayout.SOUTH, view, 0, SpringLayout.SOUTH, local);
+        
+        view.add(shortTerm);
+        view.add(longTerm);
+        view.add(local);
+        this.add(view);
+        this.setVisible(true);
     }
  
     /**
@@ -198,10 +168,6 @@ public class OpenWeatherGUI extends JFrame{
     private void startLoactionDialog(){
         LocationsDialog window = new LocationsDialog(user);
         window.dispose();
-        
-        //Update the panels
-        locWeather = new LocationWeather(user.getCurrentLocation());
-        refresh();
     }
     
     /**
@@ -252,8 +218,7 @@ public class OpenWeatherGUI extends JFrame{
                 return;
             }
         }
-        
-        locWeather = new LocationWeather(user.getCurrentLocation());
+
         new OpenWeatherGUI();
     }
 }

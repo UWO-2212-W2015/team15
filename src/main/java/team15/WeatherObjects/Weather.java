@@ -37,14 +37,14 @@ public class Weather implements Serializable{
     private WeatherValue temp, minTemp, maxTemp;
     
     //Wind
-    public WeatherValue windSpeed, windDirection;
+    private WeatherValue windSpeed, windDirection;
     
     //Sky
-    public WeatherValue airPressure, humidity, skyCondition, iconPath;
+    private WeatherValue airPressure, humidity, skyCondition, iconPath;
     public ImageIcon icon;
     
     //Time
-    public WeatherValue sunrise, sunset, time;
+    private WeatherValue sunrise, sunset, time;
     
     //Type of weather object this represents
     public WeatherType type;
@@ -103,25 +103,57 @@ public class Weather implements Serializable{
         
         icon = iconList.get(iconPath.toString());
         
-        String date = convertTime(time.value);
-        time.setValue(date);
+        time.setValue(convertTime(time.value));
         
-        if(type == WeatherType.LOCAL){
-            //Change the wind direct from degree to N, NW etc
-            windDirection.setValue(convertDegree(windDirection.value));
-            
-            //Change the sun rise/set time to just the time
-            date = convertTime(sunrise.value);
-            date = date.substring(11, 16);
-            sunrise.setValue(date);
-            date = convertTime(sunset.value);
-            date = date.substring(11, 16);
-            sunset.setValue(date);
-            convertPressure();
-            convertSkyCondition();
-        }   
+        //Capitalize sky condition string
+        convertSkyCondition();
+        
+        //Change pressure to KPA
+        convertPressure();
+        
+        //Change the wind direct from degree to N, NW etc
+        windDirection.setValue(convertDegree(windDirection.value));
+        
+        //Change the sun rise/set time to just the time
+        sunrise.setValue(convertSuntime(sunrise.value));
+        sunset.setValue(convertSuntime(sunset.value));
 
         lastPoll = System.currentTimeMillis();
+    }
+    
+    public String getMonthDay(){
+        if(time.value.equals("N/A")) return "N/A";
+        return this.time.value.substring(4, 10);
+    }
+    
+    public String getCondition(){
+        return this.skyCondition.value;
+    }
+    
+    public String getHumidity(){
+        if(humidity.value.equals("N/A")) return "N/A";
+        return this.humidity.value + "%";
+    }
+    
+    public String getDate(){
+        if(time.value.equals("N/A")) return "N/A";
+        return this.time.value.substring(0, 10);
+    }
+    
+    public String getPressure(){
+        return this.airPressure.value;
+    }
+    
+    public String getSunset(){
+        return this.sunset.value;
+    }
+    
+    public String getSunrise(){
+        return this.sunrise.value;
+    }
+    
+    public String getWind(){
+        return this.windSpeed + " m/s " + this.windDirection;
     }
     
     /**
@@ -199,6 +231,7 @@ public class Weather implements Serializable{
      * Converts the pressure string into its displayable form
      */
     private void convertPressure(){
+        if(airPressure.value.equals("N/A")) return;
         Double p = Double.valueOf(this.airPressure.value)/10;
         this.airPressure.setValue(Math.round(p) + " kPa");
     }
@@ -206,12 +239,23 @@ public class Weather implements Serializable{
     private void convertSkyCondition() {
         String[] s = skyCondition.value.split(" ");
         String result = "";
+        int i = 1;
         for(String word: s){
             String first = word.substring(0, 1);
             result += first.toUpperCase() + word.substring(1)+" ";
+            if((i%2)==0) result += "\n";
+            i++;
         }
         skyCondition.setValue(result);
     }
+    
+    private String convertSuntime(String t){
+        if(t.equals("N/A")) return "N/A";
+        Date date = new Date();
+        date.setTime((long)1000*Integer.valueOf(t));
+        return date.toString().substring(11, 16);
+    }
+    
     /**
      * Loads a new weather object with all default values and a type t
      * @param t the type of the Weather object. Taken from the WeatherType

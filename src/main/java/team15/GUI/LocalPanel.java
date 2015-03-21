@@ -12,9 +12,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import team15.UserOjects.Preferences;
 import team15.WeatherObjects.Weather;
 import team15.WeatherObjects.LocationWeather;
@@ -68,20 +70,17 @@ public class LocalPanel extends JPanel{
         layout.putConstraint(SpringLayout.WEST, temp, 10, SpringLayout.WEST, header);
         layout.putConstraint(SpringLayout.NORTH, temp, 0, SpringLayout.SOUTH, header);
         this.add(temp);
-        
+
         JPanel sec = makeSecondary();
         
-        layout.putConstraint(SpringLayout.WEST, sec, 50, SpringLayout.EAST, temp);
+        layout.putConstraint(SpringLayout.WEST, sec, 30, SpringLayout.EAST, temp);
         layout.putConstraint(SpringLayout.NORTH, sec, 10, SpringLayout.SOUTH, header);
         this.add(sec);
-    }
-   
-    /**
-     * Update the error label in the panel with the given string
-     * @param err the string to display in the error message label of the panel
-     */
-    public void setError(String err){
-        //error.setText(err);
+        
+        layout.putConstraint(SpringLayout.EAST, this, 735, SpringLayout.WEST, 
+                this);
+        layout.putConstraint(SpringLayout.SOUTH, this, 235, SpringLayout.NORTH, 
+                this);
     }
     
     /**
@@ -100,11 +99,11 @@ public class LocalPanel extends JPanel{
         result.setLayout(layout);
         result.setBackground(LPC.BGCOLOR);
         
-        String sunr = w.sunrise.value;
-        String suns = w.sunset.value;
-        String hum = w.humidity.value + "%";
-        String pre = w.airPressure.value;
-        String wind = w.windSpeed + " m/s " + w.windDirection;
+        String sunr = w.getSunrise();
+        String suns = w.getSunset();
+        String hum = w.getHumidity();
+        String pre = w.getPressure();
+        String wind = w.getWind();
         int offset = LPC.SECONDARYOFFSET;
         int size = LPC.SECONDARYFONT;
         int type = LPC.FONTBOLD;
@@ -300,8 +299,8 @@ public class LocalPanel extends JPanel{
         result.add(lblIcon);
         
         //Set condition
-        JLabel con = makeLabel(w.skyCondition.value, LPC.CONFONT, LPC.FONTBOLD);
-
+        JLabel con = makeLabel(w.getCondition(), LPC.CONFONT, LPC.FONTBOLD);
+        con.setHorizontalAlignment(SwingConstants.CENTER);
         layout.putConstraint(SpringLayout.WEST, con, 14, SpringLayout.WEST, 
                 result);
         layout.putConstraint(SpringLayout.NORTH, con, -25, SpringLayout.SOUTH, 
@@ -324,7 +323,6 @@ public class LocalPanel extends JPanel{
      * of the weather forecast
      */
     private JPanel makeHeader(){
-        String time = w.time.toString().substring(4, 10);
         int font = LPC.FONTPLAIN;
         
         JPanel result = new JPanel();
@@ -338,7 +336,7 @@ public class LocalPanel extends JPanel{
         result.add(loc);
         
         //Time label
-        JLabel date = makeLabel(time, LPC.TIMEFONT, font);
+        JLabel date = makeLabel(w.getMonthDay(), LPC.TIMEFONT, font);
         layout.putConstraint(SpringLayout.WEST, date, 5, SpringLayout.WEST, 
                 result);
         layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.SOUTH, 
