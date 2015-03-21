@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package team15.GUI;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
@@ -17,26 +14,24 @@ import team15.WeatherObjects.Weather;
  *
  * @author vsippola
  */
-public class LongTermPanel extends JPanel{
+public class ShortTermPanel extends JPanel{
     private final boolean units;
     private final String fn = "Tahoma";
     private final Color txtC = new Color(1, 61, 134);
     private final Color bgC = new Color(210, 229, 243);
-    private final int NUM = 5;
+    private final int NUM = 8;
     
-    public LongTermPanel(){
+    public ShortTermPanel(){
         super();
         units = true;
     }
     
-    public LongTermPanel(Forecast f, boolean u){
+    public ShortTermPanel(Forecast f, boolean u){
         super();
         units = u;
         
-        JPanel prev = this;
         SpringLayout layout = new SpringLayout();
         this.setLayout(layout);
-        int width = 32;
         
         this.setBackground(bgC);
         JPanel[] cards = new JPanel[NUM];
@@ -47,7 +42,7 @@ public class LongTermPanel extends JPanel{
         }
         
         for(int i = 1; i < NUM; i++){
-            layout.putConstraint(SpringLayout.WEST, cards[i], 143, SpringLayout.WEST, cards[i-1]);
+            layout.putConstraint(SpringLayout.WEST, cards[i], 85, SpringLayout.WEST, cards[i-1]);
             layout.putConstraint(SpringLayout.NORTH, cards[i], 0, SpringLayout.NORTH, cards[i-1]);
             
         }
@@ -62,21 +57,23 @@ public class LongTermPanel extends JPanel{
         result.setBackground(bgC);
         result.setLayout(layout);
         
-        int fSize = 12;
+        int fSize = 10;
         int type = Font.PLAIN;
         
-        JLabel date = makeLabel(w.getDate(), fSize+3, Font.BOLD);
+        JLabel date = makeLabel(w.getDayTime(), 13, Font.BOLD);
         layout.putConstraint(SpringLayout.WEST, date, 0, SpringLayout.WEST, result);
         layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.NORTH, result);
-        layout.putConstraint(SpringLayout.EAST, result, 90, SpringLayout.WEST, date);
+        layout.putConstraint(SpringLayout.EAST, result, 65, SpringLayout.WEST, date);
         result.add(date);
         
-        JLabel temp = makeLabel(w.getTemp(this.units), 20, type);
+        JLabel temp = makeLabel(w.getTemp(this.units), 15, type);
         layout.putConstraint(SpringLayout.WEST, temp, 0, SpringLayout.WEST, result);
-        layout.putConstraint(SpringLayout.NORTH, temp, 13, SpringLayout.SOUTH, date);
+        layout.putConstraint(SpringLayout.NORTH, temp, 3, SpringLayout.SOUTH, date);
         result.add(temp);
         
-        JLabel icon = new JLabel(w.icon);
+        Image img = w.icon.getImage();
+        img = img.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+        JLabel icon = new JLabel(new ImageIcon(img));
         layout.putConstraint(SpringLayout.EAST, icon, 0, SpringLayout.EAST, result);
         layout.putConstraint(SpringLayout.NORTH, icon, 0, SpringLayout.SOUTH, date);
         result.add(icon);
@@ -86,27 +83,7 @@ public class LongTermPanel extends JPanel{
         layout.putConstraint(SpringLayout.NORTH, sky, 0, SpringLayout.SOUTH, icon);
         result.add(sky);
         
-        JLabel lblL = makeLabel("Low:", fSize, type);
-        layout.putConstraint(SpringLayout.WEST, lblL, 0, SpringLayout.WEST, sky);
-        layout.putConstraint(SpringLayout.NORTH, lblL, 5, SpringLayout.SOUTH, sky);
-        result.add(lblL);
-        
-        JLabel low = makeLabel(w.getMinTemp(units), fSize, type);
-        layout.putConstraint(SpringLayout.EAST, low, 75, SpringLayout.WEST, lblL);
-        layout.putConstraint(SpringLayout.NORTH, low, 0, SpringLayout.NORTH, lblL);
-        result.add(low);
-        
-        JLabel lblH = makeLabel("High:", fSize, type);
-        layout.putConstraint(SpringLayout.WEST, lblH, 0, SpringLayout.WEST, sky);
-        layout.putConstraint(SpringLayout.NORTH, lblH, 5, SpringLayout.SOUTH, lblL);
-        result.add(lblH);
-        
-        JLabel high = makeLabel(w.getMaxTemp(units), fSize, type);
-        layout.putConstraint(SpringLayout.EAST, high, 0, SpringLayout.EAST, low);
-        layout.putConstraint(SpringLayout.NORTH, high, 0, SpringLayout.NORTH, lblH);
-        result.add(high);
-        
-        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, lblH);
+        layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, sky);
         
         return result;
     }

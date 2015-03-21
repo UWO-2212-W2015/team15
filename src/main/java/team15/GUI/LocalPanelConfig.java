@@ -28,7 +28,7 @@ public class LocalPanelConfig {
     public final int CONFONT = 10;
     
     public final int MINMAXOFFSET = 85;
-    public final int SECONDARYOFFSET = 150;
+    public final int SECONDARYOFFSET = 137;
     public final int SECONDARYSPACE = 40;
     
     public final int ICONSIZE = 100;

@@ -126,6 +126,11 @@ public class Weather implements Serializable{
         return this.time.value.substring(4, 10);
     }
     
+    public String getDayTime(){
+        if(time.equals("N/A")) return "N/A";
+        return time.value.substring(0,4)+time.value.substring(11,16);
+    }
+    
     public String getCondition(){
         return this.skyCondition.value;
     }
@@ -239,11 +244,13 @@ public class Weather implements Serializable{
     private void convertSkyCondition() {
         String[] s = skyCondition.value.split(" ");
         String result = "";
-        int i = 1;
+        int i = 0;
         for(String word: s){
             String first = word.substring(0, 1);
             result += first.toUpperCase() + word.substring(1)+" ";
-            if((i%2)==0) result += "\n";
+            if((i%2)==1){
+                result += "\n";
+            }
             i++;
         }
         skyCondition.setValue(result);

@@ -16,11 +16,13 @@ package team15.GUI;
 
 //Imports
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -32,7 +34,8 @@ import team15.WeatherObjects.LocationWeather;
 public class OpenWeatherGUI extends JFrame{
     //User variable
     private static User user;
-
+    private static LocationWeather locWeather;
+    
     /**
      * The main GUI window class for the OpenWeather API program.
      */
@@ -41,7 +44,7 @@ public class OpenWeatherGUI extends JFrame{
 
         //Frame settings
         this.setLocation(100,50);
-        this.setSize(750, 750);
+        this.setSize(730, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //If the user has no locations make sure that they add at least one
@@ -124,7 +127,8 @@ public class OpenWeatherGUI extends JFrame{
      * location data and preferences.
      */
     private void updatePanels(){
-        LocationWeather locWeather = new LocationWeather();//user.getCurrentLocation());
+        String refresh = locWeather.getRefresh();
+        String error = locWeather.updateForecasts();
         
         this.setTitle(locWeather.toString());
         
@@ -132,31 +136,44 @@ public class OpenWeatherGUI extends JFrame{
         JPanel view = new JPanel();
         view.setLayout(layout);
         view.setBackground(new Color(210, 229, 243));
-        /*String error = locWeather.updateForecasts();
-        String location = user.getCurrentLocation().toString();
-        String refresh = locWeather.getRefresh();*/
+
         boolean units = user.pref.tempUnits;
         
         JPanel local = new LocalPanel(locWeather, user.pref);
-        //Make Short term panel here
-        JPanel shortTerm = new JPanel();
+        JPanel shortTerm = new ShortTermPanel(locWeather.getShortTerm(), units);
         JPanel longTerm = new LongTermPanel(locWeather.getLongTerm(), units);
         
         layout.putConstraint(SpringLayout.WEST, local, 0, SpringLayout.WEST, view);
         layout.putConstraint(SpringLayout.NORTH, local, 0, SpringLayout.NORTH, view);
  
-        layout.putConstraint(SpringLayout.WEST, shortTerm, 25, SpringLayout.WEST, view);
+        layout.putConstraint(SpringLayout.WEST, shortTerm, 20, SpringLayout.WEST, view);
         layout.putConstraint(SpringLayout.NORTH, shortTerm, 35, SpringLayout.SOUTH, local);
         
-        layout.putConstraint(SpringLayout.WEST, longTerm, 25, SpringLayout.WEST, view);
+        layout.putConstraint(SpringLayout.WEST, longTerm, 0, SpringLayout.WEST, shortTerm);
         layout.putConstraint(SpringLayout.NORTH, longTerm, 50, SpringLayout.SOUTH, shortTerm);
         
-        layout.putConstraint(SpringLayout.EAST, view, 0, SpringLayout.EAST, local);
-        layout.putConstraint(SpringLayout.SOUTH, view, 0, SpringLayout.SOUTH, local);
+        layout.putConstraint(SpringLayout.EAST, view, 712, SpringLayout.WEST, local);
+        
+        JLabel lblRef = new JLabel("LATEST UPDATE: ");
+        lblRef.setForeground(new Color(1, 61, 134));
+        lblRef.setFont(new Font("Tahoma", Font.PLAIN, 8));
+        JLabel ref = new JLabel(locWeather.getRefresh().substring(0,16));
+        ref.setFont(new Font("Tahoma", Font.PLAIN, 8));
+        
+        layout.putConstraint(SpringLayout.EAST, ref, -3, SpringLayout.EAST, view);
+        layout.putConstraint(SpringLayout.NORTH, ref, 25, SpringLayout.SOUTH, longTerm);
+        
+        layout.putConstraint(SpringLayout.EAST, lblRef, 0, SpringLayout.WEST, ref);
+        layout.putConstraint(SpringLayout.NORTH, lblRef, 0, SpringLayout.NORTH, ref);
+        
+        
+        layout.putConstraint(SpringLayout.SOUTH, view, 0, SpringLayout.SOUTH, lblRef);
         
         view.add(shortTerm);
         view.add(longTerm);
         view.add(local);
+        view.add(lblRef);
+        view.add(ref);
         this.add(view);
         this.setVisible(true);
     }
@@ -168,6 +185,7 @@ public class OpenWeatherGUI extends JFrame{
     private void startLoactionDialog(){
         LocationsDialog window = new LocationsDialog(user);
         window.dispose();
+        locWeather = new LocationWeather(user.getCurrentLocation());
     }
     
     /**
@@ -219,6 +237,7 @@ public class OpenWeatherGUI extends JFrame{
             }
         }
 
+        locWeather = new LocationWeather(user.getCurrentLocation());
         new OpenWeatherGUI();
     }
 }
