@@ -47,6 +47,8 @@ public class LocationsDialog extends JDialog{
     //User
     private final User user;
     
+    //Dimension
+    private final Dimension dim;
     //List of all possible locations
     private static TreeMap<String, ArrayList<Location>> loc;
 
@@ -69,7 +71,8 @@ public class LocationsDialog extends JDialog{
         JPanel panel = new JPanel();
         this.setResizable(false);
         this.getContentPane().add(panel);
-        this.setSize(500, 450);
+	dim = new Dimension (500,450);
+        this.setSize(dim);
         this.setLocation(200, 200);
         
         //Set the list parameters
@@ -109,6 +112,7 @@ public class LocationsDialog extends JDialog{
         JButton set = new JButton("Change Current");
         JButton add = new JButton("Add Location");
         JButton remove = new JButton("Remove Location");
+	JButton ok = new JButton("OK");
         
         //Add location settings
         layout.putConstraint
@@ -148,6 +152,8 @@ public class LocationsDialog extends JDialog{
                (SpringLayout.NORTH, lblLoc, 20, SpringLayout.SOUTH, lblCountry);
         panel.add(lblLoc);
         
+	panel.add(ok);
+
         //Combo boxes
         country = new JComboBox(loc.keySet().toArray());
         cmbLocation = new JComboBox();
@@ -163,6 +169,12 @@ public class LocationsDialog extends JDialog{
                  (SpringLayout.WEST, cmbLocation, 90, SpringLayout.WEST, panel);
         layout.putConstraint
           (SpringLayout.NORTH, cmbLocation, 20, SpringLayout.SOUTH, lblCountry);
+	
+	//Ok Button location
+	layout.putConstraint 
+	    (SpringLayout.HORIZONTAL_CENTER, ok, 0, SpringLayout.HORIZONTAL_CENTER, panel);
+	layout.putConstraint 
+	    (SpringLayout.NORTH, ok, 20, SpringLayout.SOUTH, cmbLocation);
         
         panel.add(country);
         panel.add(cmbLocation);
@@ -211,7 +223,15 @@ public class LocationsDialog extends JDialog{
                 set();
             }    
         });
-              
+         
+	//OK button
+	ok.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent event){
+		    dispose();
+		}
+	    }
+	    );
+		    
         this.setVisible(true);
     }
 
