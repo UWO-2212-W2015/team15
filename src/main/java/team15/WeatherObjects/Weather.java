@@ -215,8 +215,8 @@ public class Weather implements Serializable{
         
         int result = (int) Math.round(temp);
         
-        char deg = '°';
-        return result + (deg + (system?"C":"F"));
+	//u00B0 unicode for the degree sign
+        return result + (String.valueOf('\u00B0') + (system?"C":"F"));
     }
     
     /**
