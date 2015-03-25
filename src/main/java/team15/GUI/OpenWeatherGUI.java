@@ -35,7 +35,7 @@ public class OpenWeatherGUI extends JFrame{
     //User variable
     private static User user;
     private static LocationWeather locWeather;
-    
+    private static JPanel view;
     /**
      * The main GUI window class for the OpenWeather API program.
      */
@@ -129,11 +129,12 @@ public class OpenWeatherGUI extends JFrame{
     private void updatePanels(){
         String refresh = locWeather.getRefresh();
         String error = locWeather.updateForecasts();
+        if(view != null) this.remove(view);
         
         this.setTitle(locWeather.toString());
         
         SpringLayout layout = new SpringLayout();
-        JPanel view = new JPanel();
+        view = new JPanel();
         view.setLayout(layout);
         view.setBackground(new Color(210, 229, 243));
 
