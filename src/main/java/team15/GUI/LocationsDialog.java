@@ -31,6 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import team15.UserOjects.Location;
 import team15.UserOjects.User;
+import java.awt.Color;
 
 public class LocationsDialog extends JDialog{
     //Lists
@@ -51,6 +52,10 @@ public class LocationsDialog extends JDialog{
     private final Dimension dim;
     //List of all possible locations
     private static TreeMap<String, ArrayList<Location>> loc;
+    
+    //Colour
+    public final Color BGCOLOR = new Color(210, 229, 243); 
+    private final Color txtC = new Color(1, 61, 134);
 
     /**
      * Creates the dialog that allows the user to interact with their location
@@ -74,6 +79,7 @@ public class LocationsDialog extends JDialog{
 	dim = new Dimension (500,450);
         this.setSize(dim);
         this.setLocation(200, 200);
+        panel.setBackground(BGCOLOR);
         
         //Set the list parameters
         locations = new JList();
@@ -102,6 +108,7 @@ public class LocationsDialog extends JDialog{
         
         //Current location
         cur = new JLabel("Current location: " + user.getCurrentLocation());
+        cur.setForeground(this.txtC);
         layout.putConstraint
                          (SpringLayout.WEST, cur, 20, SpringLayout.WEST, panel);
         layout.putConstraint
@@ -138,6 +145,7 @@ public class LocationsDialog extends JDialog{
         //Combo box labels
         //Coutry Label
         JLabel lblCountry = new JLabel("Country: ");
+        lblCountry.setForeground(this.txtC);
         layout.putConstraint
                   (SpringLayout.WEST, lblCountry, 20, SpringLayout.WEST, panel);
         layout.putConstraint
@@ -146,6 +154,7 @@ public class LocationsDialog extends JDialog{
         
         //Location label
         JLabel lblLoc = new JLabel("Location: ");
+        lblLoc.setForeground(this.txtC);
         layout.putConstraint
                       (SpringLayout.WEST, lblLoc, 20, SpringLayout.WEST, panel);
         layout.putConstraint
