@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import team15.UserOjects.Preferences;
 import team15.UserOjects.User;
+import java.awt.Color;
 
 public class PreferencesDialog extends JDialog{
     //Check boxes
@@ -26,6 +27,10 @@ public class PreferencesDialog extends JDialog{
     
     //A field to track if the dialog successfully updates the settings
     private static boolean updated;
+    
+    //Colour
+    public final Color BGCOLOR = new Color(210, 229, 243); 
+    private final Color txtC = new Color(1, 61, 134);
     
     /**
      * Creates a new dialog window from the given users preferences and allows
@@ -49,10 +54,15 @@ public class PreferencesDialog extends JDialog{
         this.getContentPane().add(panel);
         this.setSize(350, 300);
         this.setLocation(200, 200);
+        panel.setBackground(BGCOLOR);
 
         //Add all the checkboxes to the dialog
         //Tempriture check box
         tempChk = new JCheckBox("Temperature", pref.temperature);
+        tempChk.setForeground(txtC);
+        tempChk.setBackground(BGCOLOR);
+        tempChk.setToolTipText("Check or uncheck this box to "
+                + "show/hide the temperature");
         layout.putConstraint(SpringLayout.WEST, tempChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, tempChk, 
@@ -61,6 +71,10 @@ public class PreferencesDialog extends JDialog{
 
         //Wind check box
         windChk = new JCheckBox("Wind Speed/Direction", pref.wind);
+        windChk.setForeground(txtC);
+        windChk.setBackground(BGCOLOR);
+        windChk.setToolTipText("Check or uncheck this box to show/hide "
+                + "the wind speed and direction");
         layout.putConstraint(SpringLayout.WEST, windChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, windChk, 40, 
@@ -69,6 +83,10 @@ public class PreferencesDialog extends JDialog{
         
         //Pressure check box
         pressureChk = new JCheckBox("Air Pressure", pref.pressure);
+        pressureChk.setForeground(txtC);
+        pressureChk.setBackground(BGCOLOR);
+        pressureChk.setToolTipText("Check or uncheck this box to "
+                + "show/hide the pressure");
         layout.putConstraint(SpringLayout.WEST, pressureChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, pressureChk, 
@@ -77,6 +95,10 @@ public class PreferencesDialog extends JDialog{
 
         //Sky condition check box
         skyCondChk = new JCheckBox("Sky Condition", pref.sky);
+        skyCondChk.setForeground(txtC);
+        skyCondChk.setBackground(BGCOLOR);
+        skyCondChk.setToolTipText("Check or uncheck this box to "
+                + "show/hide the sky condition");
         layout.putConstraint(SpringLayout.WEST, skyCondChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, skyCondChk, 40, 
@@ -85,6 +107,10 @@ public class PreferencesDialog extends JDialog{
         
         //Celsius check box
         celChk = new JCheckBox("Celsius", pref.tempUnits);
+        celChk.setForeground(txtC);
+        celChk.setBackground(BGCOLOR);
+        celChk.setToolTipText("Check this box to convert the "
+                + "temperature numbers to celsius");
         layout.putConstraint(SpringLayout.WEST, celChk, 10, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, celChk, 40, 
@@ -93,6 +119,10 @@ public class PreferencesDialog extends JDialog{
 
         //Humidty check box
         humidityChk = new JCheckBox("Humidity", pref.humidity);
+        humidityChk.setForeground(txtC);
+        humidityChk.setBackground(BGCOLOR);
+        humidityChk.setToolTipText("Check or uncheck this box to "
+                + "show/hide the humidity");
         layout.putConstraint(SpringLayout.WEST, humidityChk, 200, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, humidityChk, 10, 
@@ -101,6 +131,10 @@ public class PreferencesDialog extends JDialog{
 
         //Min/max temperature check box
         minMaxChk = new JCheckBox("Minimum/Maximum", pref.minMaxTemp);
+        minMaxChk.setForeground(txtC);
+        minMaxChk.setBackground(BGCOLOR);
+        minMaxChk.setToolTipText("Check or uncheck this box to show/hide "
+                + "the minimum/maximum temperatures of the day");
         layout.putConstraint(SpringLayout.WEST, minMaxChk, 200, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, minMaxChk, 40, 
@@ -109,6 +143,10 @@ public class PreferencesDialog extends JDialog{
 
         //Sunrise/sunset check box
         sunChk = new JCheckBox("Sunset/Sunrise", pref.sun);
+        sunChk.setForeground(txtC);
+        sunChk.setBackground(BGCOLOR);
+        sunChk.setToolTipText("Check or uncheck this box to show/hide "
+                + "the sunset/sunrise times of the day");
         layout.putConstraint(SpringLayout.WEST, sunChk, 200, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, sunChk, 40, 
@@ -117,6 +155,10 @@ public class PreferencesDialog extends JDialog{
         
         //Fahrenheit check box
         fahChk = new JCheckBox("Fahrenheit", !pref.tempUnits);
+        fahChk.setForeground(txtC);
+        fahChk.setBackground(BGCOLOR);
+        fahChk.setToolTipText("Check this box to convert the "
+                + "temperature numbers to fahrenheit");
         layout.putConstraint(SpringLayout.WEST, fahChk, 200, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, fahChk, 0, 
@@ -138,6 +180,7 @@ public class PreferencesDialog extends JDialog{
         
         //Confirm button
         JButton confirm = new JButton("Confirm");
+        confirm.setToolTipText("Click here to save your preferences");
         layout.putConstraint(SpringLayout.WEST, confirm, 115, 
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, confirm, 40, 
