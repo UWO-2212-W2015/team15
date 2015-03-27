@@ -16,9 +16,13 @@ package team15.GUI;
 
 //Imports
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
@@ -132,11 +136,9 @@ public class OpenWeatherGUI extends JFrame{
         if(view != null) this.remove(view);
         
         this.setTitle(locWeather.toString());
-        
-        SpringLayout layout = new SpringLayout();
-        view = new JPanel();
-        view.setLayout(layout);
-        view.setBackground(new Color(210, 229, 243));
+	view = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+	view.setBackground(new Color(210, 229, 243));
 
         boolean units = user.pref.tempUnits;
         
@@ -144,38 +146,47 @@ public class OpenWeatherGUI extends JFrame{
         JPanel shortTerm = new ShortTermPanel(locWeather.getShortTerm(), units);
         JPanel longTerm = new LongTermPanel(locWeather.getLongTerm(), units);
         
-        layout.putConstraint(SpringLayout.WEST, local, 0, SpringLayout.WEST, view);
-        layout.putConstraint(SpringLayout.NORTH, local, 0, SpringLayout.NORTH, view);
- 
-        layout.putConstraint(SpringLayout.WEST, shortTerm, 20, SpringLayout.WEST, view);
-        layout.putConstraint(SpringLayout.NORTH, shortTerm, 35, SpringLayout.SOUTH, local);
-        
-        layout.putConstraint(SpringLayout.WEST, longTerm, 0, SpringLayout.WEST, shortTerm);
-        layout.putConstraint(SpringLayout.NORTH, longTerm, 50, SpringLayout.SOUTH, shortTerm);
-        
-        layout.putConstraint(SpringLayout.EAST, view, 712, SpringLayout.WEST, local);
-        
-        JLabel lblRef = new JLabel("LATEST UPDATE: ");
+        JLabel lblRef = new JLabel("LATEST UPDATE: " + locWeather.getRefresh().substring(0,16));
         lblRef.setForeground(new Color(1, 61, 134));
         lblRef.setFont(new Font("Tahoma", Font.PLAIN, 8));
-        JLabel ref = new JLabel(locWeather.getRefresh().substring(0,16));
-        ref.setFont(new Font("Tahoma", Font.PLAIN, 8));
+        //JLabel ref = new JLabel();
+        //ref.setFont(new Font("Tahoma", Font.PLAIN, 8));
         
-        layout.putConstraint(SpringLayout.EAST, ref, -3, SpringLayout.EAST, view);
-        layout.putConstraint(SpringLayout.NORTH, ref, 25, SpringLayout.SOUTH, longTerm);
-        
-        layout.putConstraint(SpringLayout.EAST, lblRef, 0, SpringLayout.WEST, ref);
-        layout.putConstraint(SpringLayout.NORTH, lblRef, 0, SpringLayout.NORTH, ref);
-        
-        
-        layout.putConstraint(SpringLayout.SOUTH, view, 0, SpringLayout.SOUTH, lblRef);
-        
-        view.add(shortTerm);
-        view.add(longTerm);
-        view.add(local);
-        view.add(lblRef);
-        view.add(ref);
+	constraints.fill = GridBagConstraints.BOTH;
+	constraints.gridwidth = GridBagConstraints.REMAINDER;
+	constraints.gridx = 0;
+	constraints.gridy = 0;
+        view.add(local, constraints);
+	
+
+	constraints.fill = GridBagConstraints.BOTH;
+	constraints.anchor = GridBagConstraints.CENTER;
+ 	constraints.insets = new Insets(30,20, 50,0);
+	constraints.gridwidth = GridBagConstraints.REMAINDER;;
+	constraints.weighty = 0.5;
+	constraints.weightx = 0.5;
+	constraints.gridy = 1;
+        view.add(shortTerm, constraints);
+	
+	constraints.fill = GridBagConstraints.BOTH;
+	constraints.anchor = GridBagConstraints.CENTER;
+	constraints.insets = new Insets(0, 20, 20, 0);
+	constraints.gridwidth = GridBagConstraints.REMAINDER;
+	constraints.weighty = 0.5;
+	constraints.weightx = 0.5;
+	constraints.gridy = 2;
+        view.add(longTerm, constraints);
+
+	constraints.gridy = 3;
+	constraints.gridx = 0;
+	constraints.anchor = GridBagConstraints.LAST_LINE_START;
+	constraints.weighty = 0.0;
+	constraints.weightx = 0.5;
+	constraints.gridwidth = 1;
+        view.add(lblRef, constraints);
+
         this.add(view);
+	this.pack();
         this.setVisible(true);
     }
  
