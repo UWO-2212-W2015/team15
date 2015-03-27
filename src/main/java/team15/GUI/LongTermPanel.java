@@ -47,12 +47,12 @@ public class LongTermPanel extends JPanel{
         }
         
         for(int i = 1; i < NUM; i++){
-            layout.putConstraint(SpringLayout.WEST, cards[i], 143, SpringLayout.WEST, cards[i-1]);
+            layout.putConstraint(SpringLayout.WEST, cards[i], 145, SpringLayout.WEST, cards[i-1]);
             layout.putConstraint(SpringLayout.NORTH, cards[i], 0, SpringLayout.NORTH, cards[i-1]);
             
         }
         
-        layout.putConstraint(SpringLayout.EAST, this, 0, SpringLayout.EAST, cards[NUM - 1]);
+        layout.putConstraint(SpringLayout.EAST, this, 10, SpringLayout.EAST, cards[NUM - 1]);
         layout.putConstraint(SpringLayout.SOUTH, this, 0, SpringLayout.SOUTH, cards[0]);
     }
     
@@ -68,7 +68,7 @@ public class LongTermPanel extends JPanel{
         JLabel date = makeLabel(w.getDate(), fSize+3, Font.BOLD);
         layout.putConstraint(SpringLayout.WEST, date, 0, SpringLayout.WEST, result);
         layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.NORTH, result);
-        layout.putConstraint(SpringLayout.EAST, result, 90, SpringLayout.WEST, date);
+        layout.putConstraint(SpringLayout.EAST, result, 110, SpringLayout.WEST, date);
         result.add(date);
         
         JLabel temp = makeLabel(w.getTemp(this.units), 20, type);
@@ -77,6 +77,7 @@ public class LongTermPanel extends JPanel{
         result.add(temp);
         
         JLabel icon = new JLabel(w.icon);
+	layout.putConstraint(SpringLayout.WEST, icon, 5, SpringLayout.EAST, temp);
         layout.putConstraint(SpringLayout.EAST, icon, 0, SpringLayout.EAST, result);
         layout.putConstraint(SpringLayout.NORTH, icon, 0, SpringLayout.SOUTH, date);
         result.add(icon);
