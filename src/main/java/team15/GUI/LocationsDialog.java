@@ -476,7 +476,6 @@ public class LocationsDialog extends JDialog{
   	  		String name = p.get(i).getName().toString();
   	  		parts = name.toString().split("/");
   	  		String answer = parts[parts.length - 1];
-  	  		System.out.println(answer);
   			if (answer.equals(search)) {
   				index = i;
   			}
