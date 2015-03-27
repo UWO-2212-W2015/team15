@@ -42,7 +42,7 @@ public class ShortTermPanel extends JPanel{
         }
         
         for(int i = 1; i < NUM; i++){
-            layout.putConstraint(SpringLayout.WEST, cards[i], 85, SpringLayout.WEST, cards[i-1]);
+            layout.putConstraint(SpringLayout.WEST, cards[i], 90, SpringLayout.WEST, cards[i-1]);
             layout.putConstraint(SpringLayout.NORTH, cards[i], 0, SpringLayout.NORTH, cards[i-1]);
             
         }
@@ -63,7 +63,7 @@ public class ShortTermPanel extends JPanel{
         JLabel date = makeLabel(w.getDayTime(), 13, Font.BOLD);
         layout.putConstraint(SpringLayout.WEST, date, 0, SpringLayout.WEST, result);
         layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.NORTH, result);
-        layout.putConstraint(SpringLayout.EAST, result, 65, SpringLayout.WEST, date);
+        layout.putConstraint(SpringLayout.EAST, result, 75, SpringLayout.WEST, date);
         result.add(date);
         
         JLabel temp = makeLabel(w.getTemp(this.units), 15, type);
@@ -74,11 +74,11 @@ public class ShortTermPanel extends JPanel{
         Image img = w.icon.getImage();
         img = img.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel icon = new JLabel(new ImageIcon(img));
-        layout.putConstraint(SpringLayout.EAST, icon, 0, SpringLayout.EAST, result);
+        layout.putConstraint(SpringLayout.WEST, icon, 2, SpringLayout.EAST, temp);
         layout.putConstraint(SpringLayout.NORTH, icon, 0, SpringLayout.SOUTH, date);
         result.add(icon);
         
-        JLabel sky = makeLabel(w.getCondition(), fSize, type);
+	JLabel sky = makeLabel("<html><body style='width: 50px'>" + w.getCondition(), fSize, type);
         layout.putConstraint(SpringLayout.WEST, sky, 0, SpringLayout.WEST, result);
         layout.putConstraint(SpringLayout.NORTH, sky, 0, SpringLayout.SOUTH, icon);
         result.add(sky);
