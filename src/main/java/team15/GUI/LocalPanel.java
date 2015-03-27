@@ -299,7 +299,7 @@ public class LocalPanel extends JPanel{
         result.add(lblIcon);
         
         //Set condition
-        JLabel con = makeLabel(w.getCondition(), LPC.CONFONT, LPC.FONTBOLD);
+        JLabel con = makeLabel("<html>"+w.getCondition()+"</html>", LPC.CONFONT, LPC.FONTBOLD);
         con.setHorizontalAlignment(SwingConstants.CENTER);
         layout.putConstraint(SpringLayout.WEST, con, 14, SpringLayout.WEST, 
                 result);
