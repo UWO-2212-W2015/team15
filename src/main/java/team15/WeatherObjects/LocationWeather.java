@@ -63,8 +63,7 @@ public class LocationWeather implements Serializable{
         this.localURL = prefix + "weather?id=" + id +"&units=metric";
         this.shortURL = prefix + "forecast?id=" + id 
                 + "&mode=json&units=metric";
-        this.longURL = prefix + "forecast/daily?id=" + id + location 
-                + "&mode=json&units=metric&cnt=8";
+        this.longURL = prefix + "forecast/daily?id=" + id + "&mode=json&units=metric&cnt=8";
         
         //Try to load previous data from the cache
         try{
