@@ -11,6 +11,7 @@ package team15.GUI;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,7 +67,7 @@ public class LocalPanel extends JPanel{
         //Temperature panels
         JPanel temp = makeTemp();
         
-        layout.putConstraint(SpringLayout.WEST, temp, 10, SpringLayout.WEST, header);
+        layout.putConstraint(SpringLayout.WEST, temp, 20, SpringLayout.WEST, header);
         layout.putConstraint(SpringLayout.NORTH, temp, 0, SpringLayout.SOUTH, header);
         this.add(temp);
 
@@ -76,8 +77,8 @@ public class LocalPanel extends JPanel{
         layout.putConstraint(SpringLayout.NORTH, sec, 10, SpringLayout.SOUTH, header);
         this.add(sec);
         
-        layout.putConstraint(SpringLayout.EAST, this, 735, SpringLayout.WEST, 
-                this);
+        layout.putConstraint(SpringLayout.EAST, this, 20, SpringLayout.EAST, 
+                sec);
         layout.putConstraint(SpringLayout.SOUTH, this, 235, SpringLayout.NORTH, 
                 this);
     }
@@ -185,7 +186,8 @@ public class LocalPanel extends JPanel{
         else if(pref.sky) left = makeSkyCondition();
         
         if(left == null) return result;
-        
+
+        layout.putConstraint(SpringLayout.WEST, left, 0, SpringLayout.WEST, result);
         layout.putConstraint(SpringLayout.NORTH, left, lh, SpringLayout.NORTH, result);
         result.add(left);
         
@@ -204,10 +206,9 @@ public class LocalPanel extends JPanel{
         if((pref.temperature)&&(pref.sky)&&(pref.minMaxTemp)){
             JPanel mm = smallMinMax();
             
-            layout.putConstraint(SpringLayout.WEST, mm, 20, SpringLayout.WEST, left);
+            layout.putConstraint(SpringLayout.WEST, mm, 20, SpringLayout.WEST, result);
             layout.putConstraint(SpringLayout.NORTH, mm, 0, SpringLayout.SOUTH, left);
             layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, mm);
-           
             result.add(mm);
         }
         else layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, left);
