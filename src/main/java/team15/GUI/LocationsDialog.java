@@ -191,7 +191,7 @@ public class LocationsDialog extends JDialog{
 	
 	//Ok Button location
 	layout.putConstraint 
-	    (SpringLayout.HORIZONTAL_CENTER, ok, 0, SpringLayout.HORIZONTAL_CENTER, panel);
+	    (SpringLayout.EAST, ok, -20, SpringLayout.EAST, panel);
 	layout.putConstraint 
 	    (SpringLayout.NORTH, ok, 20, SpringLayout.SOUTH, cmbLocation);
         
