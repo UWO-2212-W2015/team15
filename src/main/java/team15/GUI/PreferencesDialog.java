@@ -185,7 +185,9 @@ public class PreferencesDialog extends JDialog{
                                                 SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, confirm, 40, 
                                                 SpringLayout.NORTH, fahChk);
-        panel.add(confirm);  
+        panel.add(confirm); 
+	layout.putConstraint(SpringLayout.EAST, panel, 10, SpringLayout.EAST, minMaxChk);
+	layout.putConstraint(SpringLayout.SOUTH, panel, 10, SpringLayout.SOUTH, confirm);
         
         //Add action to the button
         confirm.addActionListener(new ActionListener(){
@@ -208,6 +210,7 @@ public class PreferencesDialog extends JDialog{
             }    
         });
         
+	this.pack();
         this.setVisible(true);
     }
     
