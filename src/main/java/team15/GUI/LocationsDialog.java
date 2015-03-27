@@ -11,14 +11,17 @@ package team15.GUI;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.TreeMap;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -29,8 +32,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
+
+import team15.UserOjects.Flag;
 import team15.UserOjects.Location;
 import team15.UserOjects.User;
+
 import java.awt.Color;
 
 public class LocationsDialog extends JDialog{
@@ -48,8 +54,12 @@ public class LocationsDialog extends JDialog{
     //User
     private final User user;
     
+    // Flags
+    JLabel lblIcon = new JLabel();
+    
     //Dimension
     private final Dimension dim;
+    
     //List of all possible locations
     private static TreeMap<String, ArrayList<Location>> loc;
     
@@ -73,7 +83,7 @@ public class LocationsDialog extends JDialog{
         if(loc == null) loadLocations();
         
         //Set the dialog parameters
-        JPanel panel = new JPanel();
+        final JPanel panel = new JPanel();
         this.setResizable(false);
         this.getContentPane().add(panel);
 	dim = new Dimension (500,450);
@@ -96,7 +106,7 @@ public class LocationsDialog extends JDialog{
         }
         
         //Layout settings
-        SpringLayout layout = new SpringLayout();
+        final SpringLayout layout = new SpringLayout();
         panel.setLayout(layout);
         
         //Set the list scroller settings
@@ -205,6 +215,12 @@ public class LocationsDialog extends JDialog{
                 DefaultComboBoxModel<Location> locModel 
                                        = new DefaultComboBoxModel(curLocations);
                 cmbLocation.setModel(locModel);
+                setCI(layout, panel, curCountry);
+                layout.putConstraint
+                				(SpringLayout.WEST, lblIcon, 300, SpringLayout.WEST, country);
+                layout.putConstraint
+                				(SpringLayout.NORTH, lblIcon, -10, SpringLayout.NORTH, country);
+                lblIcon.setPreferredSize(new Dimension(80,50));
             }    
         });
         
@@ -291,6 +307,19 @@ public class LocationsDialog extends JDialog{
         error.setText("");
     }
     
+    // Test Amauri - Country
+    private void setCI(SpringLayout layout, JPanel panel, String curCountry){
+    	StringBuilder builder = new StringBuilder(curCountry);
+    	int i = 1;
+    	do {
+    	  builder.replace(i, i + 1, builder.substring(i,i + 1).toLowerCase());
+    	  i++;
+    	} while (i > 0 && i < builder.length());
+    	
+        ImageIcon icon = loadFlags(builder+".png");
+        lblIcon.setIcon(icon);
+        panel.add(lblIcon);
+    }
     /**
      * Try to add the location selected in the location combo box to the list
      * of locations saved in the user object
@@ -413,5 +442,47 @@ public class LocationsDialog extends JDialog{
             System.out.println("Fatal error loading locations.dat");
             System.exit(1);
         }
+    }
+    @SuppressWarnings("unchecked")
+	private ImageIcon loadFlags(String search){
+
+    	InputStream fi = 
+                ArrayList.class.getResourceAsStream("/flags.dat");
+        ObjectInputStream in = null;
+        
+        ArrayList<Flag> p = null;
+		try {
+			in = new ObjectInputStream(fi);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        try {
+			 p = (ArrayList<Flag>) in.readObject();
+			
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+  	
+  		int searchListLength = p.size();
+  		String[] parts = new String[20];
+  		
+  		int index = 0;
+  		for (int i = 0; i < searchListLength; i++) {
+  	  		String name = p.get(i).getName().toString();
+  	  		parts = name.toString().split("/");
+  	  		String answer = parts[parts.length - 1];
+  	  		System.out.println(answer);
+  			if (answer.equals(search)) {
+  				index = i;
+  			}
+  		}
+
+  		return p.get(index).getImage();
+
     }
 }
