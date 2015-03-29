@@ -113,16 +113,16 @@ public class LocationsDialog extends JDialog{
         JScrollPane scroller = new JScrollPane(locations);
         scroller.setPreferredSize(new Dimension(460, 200));
         layout.putConstraint
-                    (SpringLayout.WEST, scroller, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, scroller, 20, SpringLayout.WEST, panel);
         panel.add(scroller);
         
         //Current location
         cur = new JLabel("Current location: " + user.getCurrentLocation());
         cur.setForeground(this.txtC);
         layout.putConstraint
-                         (SpringLayout.WEST, cur, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, cur, 20, SpringLayout.WEST, panel);
         layout.putConstraint
-                    (SpringLayout.NORTH, cur, 20, SpringLayout.SOUTH, scroller);
+	    (SpringLayout.NORTH, cur, 20, SpringLayout.SOUTH, scroller);
         panel.add(cur);
         
         //Add buttons
@@ -133,23 +133,23 @@ public class LocationsDialog extends JDialog{
         
         //Add location settings
         layout.putConstraint
-                         (SpringLayout.WEST, add, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, add, 20, SpringLayout.WEST, panel);
         layout.putConstraint
-                         (SpringLayout.NORTH, add, 20, SpringLayout.SOUTH, cur);
+	    (SpringLayout.NORTH, add, 20, SpringLayout.SOUTH, cur);
         panel.add(add);
         
         //Remove location settings
         layout.putConstraint
-                        (SpringLayout.WEST, remove, 20, SpringLayout.EAST, add);
+	    (SpringLayout.WEST, remove, 20, SpringLayout.EAST, add);
         layout.putConstraint
-                      (SpringLayout.NORTH, remove, 20, SpringLayout.SOUTH, cur);
+	    (SpringLayout.NORTH, remove, 20, SpringLayout.SOUTH, cur);
         panel.add(remove);
         
         //Set location settings
         layout.putConstraint
-                        (SpringLayout.WEST, set, 20, SpringLayout.EAST, remove);
+	    (SpringLayout.WEST, set, 20, SpringLayout.EAST, remove);
         layout.putConstraint
-                         (SpringLayout.NORTH, set, 20, SpringLayout.SOUTH, cur);
+	    (SpringLayout.NORTH, set, 20, SpringLayout.SOUTH, cur);
         panel.add(set);
         
         //Combo box labels
@@ -157,18 +157,18 @@ public class LocationsDialog extends JDialog{
         JLabel lblCountry = new JLabel("Country: ");
         lblCountry.setForeground(this.txtC);
         layout.putConstraint
-                  (SpringLayout.WEST, lblCountry, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, lblCountry, 20, SpringLayout.WEST, panel);
         layout.putConstraint
-                  (SpringLayout.NORTH, lblCountry, 30, SpringLayout.SOUTH, add);
+	    (SpringLayout.NORTH, lblCountry, 30, SpringLayout.SOUTH, add);
         panel.add(lblCountry);
         
         //Location label
         JLabel lblLoc = new JLabel("Location: ");
         lblLoc.setForeground(this.txtC);
         layout.putConstraint
-                      (SpringLayout.WEST, lblLoc, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, lblLoc, 20, SpringLayout.WEST, panel);
         layout.putConstraint
-               (SpringLayout.NORTH, lblLoc, 20, SpringLayout.SOUTH, lblCountry);
+	    (SpringLayout.NORTH, lblLoc, 20, SpringLayout.SOUTH, lblCountry);
         panel.add(lblLoc);
         
 	panel.add(ok);
@@ -179,15 +179,15 @@ public class LocationsDialog extends JDialog{
         
         //Country combo box
         layout.putConstraint
-                     (SpringLayout.WEST, country, 90, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, country, 90, SpringLayout.WEST, panel);
         layout.putConstraint
-                     (SpringLayout.NORTH, country, 24, SpringLayout.SOUTH, add);
+	    (SpringLayout.NORTH, country, 24, SpringLayout.SOUTH, add);
         
         //Location combo box
         layout.putConstraint
-                 (SpringLayout.WEST, cmbLocation, 90, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, cmbLocation, 90, SpringLayout.WEST, panel);
         layout.putConstraint
-          (SpringLayout.NORTH, cmbLocation, 20, SpringLayout.SOUTH, lblCountry);
+	    (SpringLayout.NORTH, cmbLocation, 20, SpringLayout.SOUTH, lblCountry);
 	
 	//Ok Button location
 	layout.putConstraint 
@@ -201,12 +201,12 @@ public class LocationsDialog extends JDialog{
         //Erros label
         error = new JLabel();
         layout.putConstraint
-                       (SpringLayout.WEST, error, 20, SpringLayout.WEST, panel);
+	    (SpringLayout.WEST, error, 20, SpringLayout.WEST, panel);
         layout.putConstraint
-                    (SpringLayout.NORTH, error, 20, SpringLayout.SOUTH, lblLoc);
+	    (SpringLayout.NORTH, error, 20, SpringLayout.SOUTH, lblLoc);
         panel.add(error);
         
-        //Add an action listener for updating the country combo box
+        
 	flagIcon = new JLabel();
 	layout.putConstraint
 	    (SpringLayout.WEST, flagIcon, 300, SpringLayout.WEST, country);
@@ -214,7 +214,12 @@ public class LocationsDialog extends JDialog{
 	    (SpringLayout.NORTH, flagIcon, -10, SpringLayout.NORTH, country);
 	flagIcon.setPreferredSize(new Dimension(80,50));
 	panel.add(flagIcon);
+
+	//Load the flags from resources
 	loadFlags();
+
+	//Add an action listener for updating the country combo box
+	//and change the flag when a new country is selected
         country.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
 		    String curCountry 
@@ -233,24 +238,24 @@ public class LocationsDialog extends JDialog{
         //Button action listeners
         //Remove button
         remove.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-                remove();
-            }    
-        });
+		public void actionPerformed(ActionEvent event){
+		    remove();
+		}    
+	    });
         
         //Add button
         add.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-                add();
-            }    
-        });
+		public void actionPerformed(ActionEvent event){
+		    add();
+		}    
+	    });
         
         //Set current button
         set.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-                set();
-            }    
-        });
+		public void actionPerformed(ActionEvent event){
+		    set();
+		}    
+	    });
          
 	//OK button
 	ok.addActionListener(new ActionListener(){
@@ -301,7 +306,7 @@ public class LocationsDialog extends JDialog{
         } catch(Exception ex){
             user.setCurrentLoc(oldLocation);
             error.setText("Error: failed to save user "
-                                                  + "data to the local drive.");
+			  + "data to the local drive.");
             return;
         }
         
@@ -384,7 +389,7 @@ public class LocationsDialog extends JDialog{
             user.removeLocation(l);
             user.setCurrentLoc(new Location());
             error.setText("Error: failed to save user "
-                                                  + "data to the local drive.");
+			  + "data to the local drive.");
         }
         
         //Add the new element to location list model
@@ -426,7 +431,7 @@ public class LocationsDialog extends JDialog{
         } catch(Exception ex){
             user.addLocation(i, loc);
             error.setText("Error: failed to save user "
-                                                  + "data to the local drive.");
+			  + "data to the local drive.");
             return;
         }
         
@@ -438,16 +443,13 @@ public class LocationsDialog extends JDialog{
     }
     
     /**
-     * Loads the list of all valid openweather locations from citylist.txt
-     * @throws FileNotFoundException if citylist.txt is not found
-     * @throws IOException if there is a problem loading the treemap from
-     * citylist.txt
+     * Loads the list of all valid openweather locations from the locations data file
      */
     private void loadLocations(){
         //Try to open the city list text file
         try{
             InputStream fi = 
-                    ArrayList.class.getResourceAsStream("/locations.dat");
+		ArrayList.class.getResourceAsStream("/locations.dat");
             ObjectInputStream in = new ObjectInputStream(fi);
             ArrayList<Location> locList = (ArrayList) in.readObject();
             
@@ -473,6 +475,10 @@ public class LocationsDialog extends JDialog{
         }
     }
     @SuppressWarnings("unchecked")
+
+    /**
+     * Loads the list of all flags from the flags data file
+     */
     private void loadFlags(){
 
     	InputStream fi = 
@@ -489,10 +495,8 @@ public class LocationsDialog extends JDialog{
         try {
 	    flags = (ArrayList<Flag>) in.readObject();
 	} catch (ClassNotFoundException e1) {
-	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	} catch (IOException e1) {
-	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	}
     }
