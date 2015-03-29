@@ -64,6 +64,7 @@ public class LongTermPanel extends JPanel{
      * A method for creating a small panel that contains the weather data for
      * a particular time.
      * @param w a weather object that contains the data to be displayed in the panel
+     * @return result a JPanel for the LongTerm forecast.
      * @see Weather
      */
     private JPanel makeCard(Weather w){
@@ -121,7 +122,14 @@ public class LongTermPanel extends JPanel{
         
         return result;
     }
-    
+
+    /**
+     * A method for creating JLabels along with a string.
+     * @param s a string for the label.
+     * @param size the font size.
+     * @param type the font type.
+     * @return result a JLabel for the Long Term panel.
+     */
     private JLabel makeLabel(String s, int size, int type){
         JLabel result = new JLabel(s);
         result.setFont(new Font(fn, type, size));

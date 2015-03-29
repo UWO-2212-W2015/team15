@@ -178,7 +178,7 @@ public class LocationWeather implements Serializable{
     /**
      * Returns the string representation of the object. This is the same as
      * the Location that is contained as a variable in the object.
-     * @return 
+     * @return a string for the location
      */
     public String toString(){
         return loc.toString();
@@ -199,7 +199,6 @@ public class LocationWeather implements Serializable{
     
     /**
      * Loads the LocationWeather object from the cache
-     * @return a user object loaded from the file user.day
      * @throws IOException thrown if there is a problem saving the object
      * @throws FileNotFoundException thrown if the file does not exist
      * @throws ClassNotFoundException thrown if the class LocationWeather is not
