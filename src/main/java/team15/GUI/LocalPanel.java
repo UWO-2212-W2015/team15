@@ -38,8 +38,9 @@ public class LocalPanel extends JPanel{
     /**
      * Creates a new panel that will display the weather located in a single
      * weather object representing a local forecast
-     * @param locW
-     * @param p
+     * @param locW An object containing all of the weather data for a given location
+     * @param p A preference object that governs what information is hidden/shown 
+     * and the preferred temperature units
      */
     public LocalPanel(LocationWeather locW, Preferences p){
         super();
@@ -59,9 +60,9 @@ public class LocalPanel extends JPanel{
         //Header panel
         JPanel header = makeHeader();
         layout.putConstraint(SpringLayout.WEST, header, 34, SpringLayout.WEST, 
-                this);
+			     this);
         layout.putConstraint(SpringLayout.NORTH, header, 17, SpringLayout.NORTH, 
-                this);
+			     this);
         this.add(header);
         
         //Temperature panels
@@ -78,9 +79,9 @@ public class LocalPanel extends JPanel{
         this.add(sec);
         
         layout.putConstraint(SpringLayout.EAST, this, 20, SpringLayout.EAST, 
-                sec);
+			     sec);
         layout.putConstraint(SpringLayout.SOUTH, this, 235, SpringLayout.NORTH, 
-                this);
+			     this);
     }
     
     /**
@@ -119,7 +120,7 @@ public class LocalPanel extends JPanel{
         
         JPanel[] panels = {pnlSunr, pnlSuns, pnlHum, pnlPre, pnlWind};
         boolean[] visible = {pref.sun, pref.sun, pref.humidity, pref.pressure, 
-            pref.wind};
+			     pref.wind};
         
         int i = 0;
         for(int j = 0; j < visible.length; j++){
@@ -129,7 +130,7 @@ public class LocalPanel extends JPanel{
                 int y = (n==1)?0:10;
                 String h = (n==1)?SpringLayout.EAST:SpringLayout.WEST;
                 String v = ((n==1)||(prev == result))
-                        ?SpringLayout.NORTH:SpringLayout.SOUTH;
+		    ?SpringLayout.NORTH:SpringLayout.SOUTH;
                 
                 layout.putConstraint(SpringLayout.WEST, panels[j], x, h, prev);
                 layout.putConstraint(SpringLayout.NORTH, panels[j], y, v, prev);
@@ -145,9 +146,9 @@ public class LocalPanel extends JPanel{
                
         if(right != null){
             layout.putConstraint(SpringLayout.EAST, result, 0, 
-                    SpringLayout.EAST, right);
+				 SpringLayout.EAST, right);
             layout.putConstraint(SpringLayout.SOUTH, result, 0, 
-                    SpringLayout.SOUTH, prev);
+				 SpringLayout.SOUTH, prev);
         }
         return result;
     }
@@ -216,6 +217,10 @@ public class LocalPanel extends JPanel{
         return result;
     }
     
+    /**
+     * Makes the panel that contains the min and max temperatures in a large format.
+     * @return the panel that contains the min and max temperature
+     */
     private JPanel largeMinMax(){
         JPanel result = new JPanel();
         SpringLayout layout = new SpringLayout();
@@ -234,19 +239,19 @@ public class LocalPanel extends JPanel{
         result.add(lblMax);
         result.add(lblMin);
         layout.putConstraint(SpringLayout.WEST, lblMax, 0, SpringLayout.WEST, 
-                lblMin);
+			     lblMin);
         layout.putConstraint(SpringLayout.NORTH, lblMax, 5, SpringLayout.SOUTH, 
-                lblMin);
+			     lblMin);
         layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
-                lblMax);
+			     lblMax);
         layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
-                lblMax);
+			     lblMax);
         
         return result;
     }
     
     /**
-     * Makes the Panel that displays the min and max temperatures
+     * Makes the Panel that displays the min and max temperatures in a small format
      * @return the panel that displays the min and max temperature
      */
     private JPanel smallMinMax(){
@@ -267,21 +272,19 @@ public class LocalPanel extends JPanel{
         result.add(lblMax);
         result.add(lblMin);
         layout.putConstraint(SpringLayout.WEST, lblMax, 30, SpringLayout.EAST, 
-                lblMin);
+			     lblMin);
         layout.putConstraint(SpringLayout.NORTH, lblMax, 0, SpringLayout.NORTH, 
-                lblMin);
+			     lblMin);
         layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
-                lblMax);
+			     lblMax);
         layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
-                lblMax);
+			     lblMax);
         
         return result;
     }
     
     /**
      * Makes a panel that contains the sky condition description and icon
-     * @param icon the sky condition icon
-     * @param condition the sky condition description
      * @return the panel containing the sky condition information
      */
     private JPanel makeSkyCondition(){
@@ -302,25 +305,23 @@ public class LocalPanel extends JPanel{
         JLabel con = makeLabel("<html><body style='width: 50px'>"+w.getCondition(), LPC.CONFONT, LPC.FONTBOLD);
         con.setHorizontalAlignment(SwingConstants.CENTER);
         layout.putConstraint(SpringLayout.WEST, con, 14, SpringLayout.WEST, 
-                result);
+			     result);
         layout.putConstraint(SpringLayout.NORTH, con, -25, SpringLayout.SOUTH, 
-                lblIcon);
+			     lblIcon);
         result.add(con);
         
         layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
-                lblIcon);
+			     lblIcon);
         layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
-                con);
+			     con);
         
         return result;
     }
     
     /**
      * Makes the header panel that contains the location name and the date
-     * @param location the locations name
-     * @param time the date of the weather object
      * @return the formated header that displays the location name and the date
-     * of the weather forecast
+     *         of the weather forecast
      */
     private JPanel makeHeader(){
         int font = LPC.FONTPLAIN;
@@ -338,15 +339,15 @@ public class LocalPanel extends JPanel{
         //Time label
         JLabel date = makeLabel(w.getMonthDay(), LPC.TIMEFONT, font);
         layout.putConstraint(SpringLayout.WEST, date, 5, SpringLayout.WEST, 
-                result);
+			     result);
         layout.putConstraint(SpringLayout.NORTH, date, 0, SpringLayout.SOUTH, 
-                loc);
+			     loc);
         result.add(date);
         
         layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
-                loc);
+			     loc);
         layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
-                date);
+			     date);
         
         return result;
     }
@@ -354,8 +355,10 @@ public class LocalPanel extends JPanel{
     /**
      * Makes a new JLabel with the specified font, with white text of the given
      * size
-     * @param size the size of the font
-     * @return a JLabel with Tahoma font, of the given size, and white text
+     * @param lbl the text to be contained in the JLabel
+     * @param size the font size for the JLabel
+     * @param type the style specified for the font in the JLabel
+     * @return a JLabel in Tahoma font in a format specified by the parameters
      */
     private JLabel makeLabel(String lbl, int size, int type){
         JLabel result = new JLabel(lbl);
@@ -366,16 +369,15 @@ public class LocalPanel extends JPanel{
     
     /**
      * Makes a new Jpanel that has two aligned Jlabels with width offset
-     * @param label The label of the value
+     * @param label the label of the value
      * @param value the value to be displayed
      * @param offset the total size of the JPanel
      * @param size the size of the font
      * @param type the type of the font: Bold, Plain, etc
-     * @return A JPanel that has the two strings in in the proper font of the
-     * specified size
+     * @return a JPanel containing a value and its label in a format specified by the parameters
      */
     private JPanel makeValueLabel(String label, String value, int offset, 
-            int size, int type){
+				  int size, int type){
         JPanel result = new JPanel();
         JLabel l = makeLabel(label, size, type);
         JLabel v = makeLabel(value, size, type);
@@ -386,14 +388,14 @@ public class LocalPanel extends JPanel{
         result.add(l);
         
         layout.putConstraint(SpringLayout.EAST, v, offset, SpringLayout.WEST, 
-                l);
+			     l);
         layout.putConstraint(SpringLayout.NORTH, v, 0, SpringLayout.NORTH, l);
         result.add(v);
         
         layout.putConstraint(SpringLayout.EAST, result, 0, SpringLayout.EAST, 
-                v);
+			     v);
         layout.putConstraint(SpringLayout.SOUTH, result, 0, SpringLayout.SOUTH, 
-                v);
+			     v);
         
         return result;
     }
