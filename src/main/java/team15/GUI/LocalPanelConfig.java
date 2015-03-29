@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package team15.GUI;
 
 import java.awt.Color;
 import java.awt.Font;
 
 /**
- *
+ * Stores constants for configuration in the local panel.
  * @author vsippola
+ * @version 1.0
  */
 public class LocalPanelConfig {
     public final int WIDTH = 1200;
