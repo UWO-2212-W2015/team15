@@ -243,10 +243,9 @@ public class PreferencesDialog extends JDialog{
         
          //Add action to the Cancel button
             cancel.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event){
-				System.out.println("hello");   
-				dispose();
-			}    
+		public void actionPerformed(ActionEvent event){
+			dispose();
+		}    
 	    });
 
 	this.add(root);
