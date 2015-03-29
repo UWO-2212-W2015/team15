@@ -45,7 +45,7 @@ public class LocationsDialog extends JDialog{
     private final DefaultListModel<Location> model;
     
     //Labels
-    private final JLabel error, cur;
+    private final JLabel error, cur, flagIcon;
     
     //Combo boxes
     private JComboBox<Location> cmbLocation;
@@ -54,15 +54,15 @@ public class LocationsDialog extends JDialog{
     //User
     private final User user;
     
-    // Flags
-    JLabel lblIcon = new JLabel();
-    
     //Dimension
     private final Dimension dim;
     
     //List of all possible locations
     private static TreeMap<String, ArrayList<Location>> loc;
-    
+
+    //List of flags
+    private static ArrayList<Flag> flags;
+
     //Colour
     public final Color BGCOLOR = new Color(210, 229, 243); 
     private final Color txtC = new Color(1, 61, 134);
@@ -207,22 +207,25 @@ public class LocationsDialog extends JDialog{
         panel.add(error);
         
         //Add an action listener for updating the country combo box
+	flagIcon = new JLabel();
+	layout.putConstraint
+	    (SpringLayout.WEST, flagIcon, 300, SpringLayout.WEST, country);
+	layout.putConstraint
+	    (SpringLayout.NORTH, flagIcon, -10, SpringLayout.NORTH, country);
+	flagIcon.setPreferredSize(new Dimension(80,50));
+	panel.add(flagIcon);
+	loadFlags();
         country.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-                String curCountry 
-                                = country.getItemAt(country.getSelectedIndex());
-                Object[] curLocations = loc.get(curCountry).toArray();
-                DefaultComboBoxModel<Location> locModel 
-                                       = new DefaultComboBoxModel(curLocations);
-                cmbLocation.setModel(locModel);
-                setCI(layout, panel, curCountry);
-                layout.putConstraint
-                				(SpringLayout.WEST, lblIcon, 300, SpringLayout.WEST, country);
-                layout.putConstraint
-                				(SpringLayout.NORTH, lblIcon, -10, SpringLayout.NORTH, country);
-                lblIcon.setPreferredSize(new Dimension(80,50));
-            }    
-        });
+		public void actionPerformed(ActionEvent event){
+		    String curCountry 
+			= country.getItemAt(country.getSelectedIndex());
+		    Object[] curLocations = loc.get(curCountry).toArray();
+		    DefaultComboBoxModel<Location> locModel 
+			= new DefaultComboBoxModel(curLocations);
+		    cmbLocation.setModel(locModel);
+		    setFlagIcon(curCountry);
+		}    
+	    });
         
         //Set the current country to Canada
         country.setSelectedItem("CANADA");
@@ -307,19 +310,45 @@ public class LocationsDialog extends JDialog{
         error.setText("");
     }
     
-    // Test Amauri - Country
-    private void setCI(SpringLayout layout, JPanel panel, String curCountry){
-    	StringBuilder builder = new StringBuilder(curCountry);
-    	int i = 1;
-    	do {
-    	  builder.replace(i, i + 1, builder.substring(i,i + 1).toLowerCase());
-    	  i++;
-    	} while (i > 0 && i < builder.length());
-    	
-        ImageIcon icon = loadFlags(builder+".png");
-        lblIcon.setIcon(icon);
-        panel.add(lblIcon);
+    /**
+     * Sets the flagIcon to the flag image of the currenty country selected
+     * in the country combobox.  If the country can not be found in the list
+     * of flag images no image is loaded.
+     * @param curCountry The country flag to set the flag icon to
+     */
+    private void setFlagIcon(String curCountry){
+    	StringBuilder builder = new StringBuilder();
+	curCountry = curCountry.toLowerCase();
+	builder.append(Character.toUpperCase(curCountry.charAt(0)));
+    	for (int i = 1; i < curCountry.length(); i++){
+	    if  (curCountry.charAt(i) == ' '){
+		builder.append('_');
+		builder.append(Character.toUpperCase(curCountry.charAt(i+1)));
+		i++;
+	    }else{
+		builder.append(curCountry.charAt(i));
+	    }
+    	}
+	builder.append(".png");
+	int searchListLength = flags.size();
+	String[] parts = new String[20];
+	int index = 0;
+	for (int i = 0; i < searchListLength; i++) {
+	    String name = flags.get(i).getName().toString();
+	    parts = name.toString().split("/");
+	    String answer = parts[parts.length - 1];
+	    if (answer.equals(builder.toString())) {
+		index = i;
+	    }
+	}
+	if (flags.get(index).getName().toString().equals("Afghanistan.png")  &&
+	    !builder.toString().equals("Afghanistan.png"))
+	    this.flagIcon.setIcon(null);
+	else
+	    this.flagIcon.setIcon(flags.get(index).getImage());
     }
+
+
     /**
      * Try to add the location selected in the location combo box to the list
      * of locations saved in the user object
@@ -444,44 +473,27 @@ public class LocationsDialog extends JDialog{
         }
     }
     @SuppressWarnings("unchecked")
-	private ImageIcon loadFlags(String search){
+    private void loadFlags(){
 
     	InputStream fi = 
-                ArrayList.class.getResourceAsStream("/flags.dat");
+	    ArrayList.class.getResourceAsStream("/flags.dat");
         ObjectInputStream in = null;
         
-        ArrayList<Flag> p = null;
-		try {
-			in = new ObjectInputStream(fi);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        flags = new ArrayList<Flag>();
+	try {
+	    in = new ObjectInputStream(fi);
+	} catch (IOException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}
         try {
-			 p = (ArrayList<Flag>) in.readObject();
-			
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-  	
-  		int searchListLength = p.size();
-  		String[] parts = new String[20];
-  		
-  		int index = 0;
-  		for (int i = 0; i < searchListLength; i++) {
-  	  		String name = p.get(i).getName().toString();
-  	  		parts = name.toString().split("/");
-  	  		String answer = parts[parts.length - 1];
-  			if (answer.equals(search)) {
-  				index = i;
-  			}
-  		}
-
-  		return p.get(index).getImage();
-
+	    flags = (ArrayList<Flag>) in.readObject();
+	} catch (ClassNotFoundException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	} catch (IOException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}
     }
 }
