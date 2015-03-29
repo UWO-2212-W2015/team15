@@ -65,15 +65,15 @@ public class LocationWeather implements Serializable{
                 + "&mode=json&units=metric";
         this.longURL = prefix + "forecast/daily?id=" + id + "&mode=json&units=metric&cnt=8";
         
+        current = new Weather(Weather.WeatherType.LOCAL);
+        shortTerm = new Forecast(Weather.WeatherType.SHORTTERM);
+        longTerm = new Forecast(Weather.WeatherType.LONGTERM);
+        
         //Try to load previous data from the cache
         try{
             this.load();
         }
         catch(Exception ex){
-            current = new Weather(Weather.WeatherType.LOCAL);
-            shortTerm = new Forecast(Weather.WeatherType.SHORTTERM);
-            longTerm = new Forecast(Weather.WeatherType.LONGTERM);
-
             lastRefresh = 0;
         }
         

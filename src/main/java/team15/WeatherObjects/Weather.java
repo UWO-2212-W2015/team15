@@ -127,7 +127,7 @@ public class Weather implements Serializable{
     }
     
     public String getDayTime(){
-        if(time.equals("N/A")) return "N/A";
+        if(time.value.equals("N/A")) return "N/A";
         return time.value.substring(0,4)+time.value.substring(11,16);
     }
     
