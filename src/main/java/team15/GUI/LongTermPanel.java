@@ -1,10 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package team15.GUI;
 
+/**
+ * A panel that will be used to display the long term data in the OpenWeatherGUI
+ * @author team15
+ */
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JLabel;
@@ -13,10 +12,7 @@ import javax.swing.SpringLayout;
 import team15.WeatherObjects.Forecast;
 import team15.WeatherObjects.Weather;
 
-/**
- *
- * @author vsippola
- */
+
 public class LongTermPanel extends JPanel{
     private final boolean units;
     private final String fn = "Tahoma";
@@ -29,6 +25,14 @@ public class LongTermPanel extends JPanel{
         units = true;
     }
     
+    /**
+     * Creates a new JPanel that will display the weather for a long term forecast.
+     * @param f a forecast object that contains a list of weather objects containing
+     *        the long term forecast data
+     * @param u a boolean value that determines which temperature units to display.
+     *        True = celsius, False = fahrenheit
+     * @see Forecast
+     */
     public LongTermPanel(Forecast f, boolean u){
         super();
         units = u;
@@ -56,6 +60,12 @@ public class LongTermPanel extends JPanel{
         layout.putConstraint(SpringLayout.SOUTH, this, 0, SpringLayout.SOUTH, cards[0]);
     }
     
+    /**
+     * A method for creating a small panel that contains the weather data for
+     * a particular time.
+     * @param w a weather object that contains the data to be displayed in the panel
+     * @see Weather
+     */
     private JPanel makeCard(Weather w){
         JPanel result = new JPanel();
         SpringLayout layout = new SpringLayout();
