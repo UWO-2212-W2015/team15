@@ -185,17 +185,27 @@ public class PreferencesDialog extends JDialog{
         panel.add(fahChk);
         
 
-        //Confirm button
-        JButton confirm = new JButton("Confirm");
-        confirm.setToolTipText("Click here to save your preferences");
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, confirm, 0, 
-			     SpringLayout.HORIZONTAL_CENTER, panel);
+         //Confirm button
+        JButton confirm = new JButton("Ok");
+        confirm.setToolTipText("Click here to save your preferences.");
+        layout.putConstraint(SpringLayout.WEST, confirm, 230, 
+			     SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, confirm, 40, 
 			     SpringLayout.NORTH, fahChk);
-	layout.putConstraint(SpringLayout.SOUTH, panel, 10, 
+        layout.putConstraint(SpringLayout.SOUTH, panel, 10, 
 			     SpringLayout.SOUTH, confirm);
         panel.add(confirm); 
 
+        //Cancel button
+        JButton cancel = new JButton("Cancel");
+        cancel.setToolTipText("Click here to cancel.");
+        layout.putConstraint(SpringLayout.WEST, cancel, 300, 
+			     SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, cancel, 40, 
+			     SpringLayout.NORTH, fahChk);
+        layout.putConstraint(SpringLayout.SOUTH, panel, 10, 
+			     SpringLayout.SOUTH, cancel);
+        panel.add(cancel); 
         
         /*Add action listeners to make sure only one of Celsius or Fahrenheit
 	  is selected at any one time */
@@ -210,7 +220,7 @@ public class PreferencesDialog extends JDialog{
 		}    
 	    });
         
-        //Add action to the button
+        //Add action to the Ok button
         confirm.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
 		    //Save the old preferences
@@ -231,6 +241,13 @@ public class PreferencesDialog extends JDialog{
 		}    
 	    });
         
+         //Add action to the Cancel button
+            cancel.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent event){
+			dispose();
+		}    
+	    });
+
 	this.add(root);
 	this.pack();
         this.setVisible(true);

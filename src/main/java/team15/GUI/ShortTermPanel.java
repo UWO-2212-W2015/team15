@@ -11,9 +11,10 @@ import team15.WeatherObjects.Forecast;
 import team15.WeatherObjects.Weather;
 
 /**
- *
- * @author vsippola
+ * A panel that will be used to display the short term data in the OpenWeatherGUI
+ * @author team15
  */
+
 public class ShortTermPanel extends JPanel{
     private final boolean units;
     private final String fn = "Tahoma";
@@ -25,6 +26,15 @@ public class ShortTermPanel extends JPanel{
         super();
         units = true;
     }
+    
+    /**
+     * Creates a new JPanel that will display the weather for a long term forecast.
+     * @param f a forecast object that contains a list of weather objects containing
+     *        the short term forecast data
+     * @param u a boolean value that determines which temperature units to display.
+     *        True = celsius, False = fahrenheit
+     * @see Forecast
+     */
     
     public ShortTermPanel(Forecast f, boolean u){
         super();
@@ -51,6 +61,13 @@ public class ShortTermPanel extends JPanel{
         layout.putConstraint(SpringLayout.SOUTH, this, 0, SpringLayout.SOUTH, cards[0]);
     }
     
+    /**
+     * A method for creating a small panel that contains the weather data for
+     * a particular time.
+     * @param w a weather object that contains the data to be displayed in the panel
+     * @return result a Jpanel for the Short term forecast.
+     * @see Weather
+     */
     private JPanel makeCard(Weather w){
         JPanel result = new JPanel();
         SpringLayout layout = new SpringLayout();
@@ -88,6 +105,13 @@ public class ShortTermPanel extends JPanel{
         return result;
     }
     
+    /**
+     * A method for creating JLabels along with a string.
+     * @param s a string for the label.
+     * @param size the font size.
+     * @param type the font type.
+     * @return result a JLabel for the Short Term forecast panel.
+     */
     private JLabel makeLabel(String s, int size, int type){
         JLabel result = new JLabel(s);
         result.setFont(new Font(fn, type, size));

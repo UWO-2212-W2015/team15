@@ -38,7 +38,7 @@ public class WeatherValue implements Serializable{
     /**
      * Displays the WeatherValue as a string. This is the same as the value
      * string that is contained within the object
-     * @return 
+     * @return value
      */
     public String toString(){
         return value;

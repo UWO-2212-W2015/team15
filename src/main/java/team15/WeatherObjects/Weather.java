@@ -222,7 +222,6 @@ public class Weather implements Serializable{
     /**
      * Converts a time value returned from OpenWeather into a Date object
      * @param t the time value from OpenWeather
-     * @param full if true return the full date, otherwise return just the time
      * @return the full date or time that the given value t represents
      */
     private static String convertTime(String t){

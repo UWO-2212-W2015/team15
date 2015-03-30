@@ -180,7 +180,7 @@ public class LocationWeather implements Serializable{
     /**
      * Returns the string representation of the object. This is the same as
      * the Location that is contained as a variable in the object.
-     * @return a string of the location object associated with this forecast
+     * @return returns the toString() of the current Location
      */
     public String toString(){
         return loc.toString();

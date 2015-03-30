@@ -278,7 +278,8 @@ public class LocationsDialog extends JDialog{
         
         //If no index is selected display an error
         if(i == -1){
-            error.setText("Error: Please select a location from the list.");
+           error.setForeground(Color.RED); 
+           error.setText("Error: Please select a location from the list.");
             return;
         }
         
@@ -288,6 +289,7 @@ public class LocationsDialog extends JDialog{
         /* Check to see if the user already has this loation as the current 
          * location */
         if(l.equals(user.getCurrentLocation())){
+            error.setForeground(Color.RED);           
             error.setText("Error: This is already your current location.");
             return;
         }
@@ -296,6 +298,7 @@ public class LocationsDialog extends JDialog{
         
         //Try to set the new location as the current location
         if(!user.setCurrentLoc(l)){
+            error.setForeground(Color.RED);           
             error.setText("Error: Could not find the location");
             user.setCurrentLoc(oldLocation);
             return;
@@ -305,6 +308,7 @@ public class LocationsDialog extends JDialog{
             user.saveUser();
         } catch(Exception ex){
             user.setCurrentLoc(oldLocation);
+            error.setForeground(Color.RED);            
             error.setText("Error: failed to save user "
 			  + "data to the local drive.");
             return;
@@ -312,6 +316,7 @@ public class LocationsDialog extends JDialog{
         
         //Update the current location and error labels
         cur.setText("Current location: " + user.getCurrentLocation());
+        error.setForeground(Color.RED);        
         error.setText("");
     }
     
@@ -364,11 +369,13 @@ public class LocationsDialog extends JDialog{
         
         //If nothign is slected display an error
         if(l == null){
+            error.setForeground(Color.RED);        
             error.setText("Error: Please select a location to add.");
         }
         
         //Check to see if the location is already in the location list
         if(user.getLocations().contains(l)){
+            error.setForeground(Color.RED);           
             error.setText("Error: that location already exists.");
             return;
         }
@@ -388,6 +395,7 @@ public class LocationsDialog extends JDialog{
         } catch(Exception ex){
             user.removeLocation(l);
             user.setCurrentLoc(new Location());
+            error.setForeground(Color.RED);
             error.setText("Error: failed to save user "
 			  + "data to the local drive.");
         }
@@ -396,6 +404,7 @@ public class LocationsDialog extends JDialog{
         model.addElement(l);
         
         //Update the error label
+        error.setForeground(Color.RED);
         error.setText("");
     }
     
@@ -409,6 +418,7 @@ public class LocationsDialog extends JDialog{
         
         //If no index is selected display an error
         if(i == -1){
+            error.setForeground(Color.RED);
             error.setText("Error: Please select a location from the list.");
             return;
         }
@@ -418,6 +428,7 @@ public class LocationsDialog extends JDialog{
         
         //Check if the selected location is the current location
         if(loc.equals(user.getCurrentLocation())){
+            error.setForeground(Color.RED);
             error.setText("Error: You can not delete your current location.");
             return;
         }
@@ -430,6 +441,7 @@ public class LocationsDialog extends JDialog{
             user.saveUser();
         } catch(Exception ex){
             user.addLocation(i, loc);
+            error.setForeground(Color.RED);
             error.setText("Error: failed to save user "
 			  + "data to the local drive.");
             return;
@@ -439,6 +451,7 @@ public class LocationsDialog extends JDialog{
         model.remove(i);
         
         //Update the error label
+        error.setForeground(Color.RED);
         error.setText("");
     }
     
