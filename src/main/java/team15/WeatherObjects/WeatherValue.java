@@ -10,6 +10,9 @@ package team15.WeatherObjects;
 import java.io.Serializable;
 
 public class WeatherValue implements Serializable{
+
+    private static final long serialVersionUID = 424471416597241584L;
+
     public String value;
     
     /**

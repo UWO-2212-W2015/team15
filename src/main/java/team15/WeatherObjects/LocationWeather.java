@@ -19,6 +19,9 @@ import team15.JSON.URLToJSON;
 import team15.UserOjects.Location;
 
 public class LocationWeather implements Serializable{
+
+    private static final long serialVersionUID = -651678696620342392L;
+    
     //Update weather data constraints
     private final static long REFRESH = 600000;
     

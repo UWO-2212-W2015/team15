@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.io.Serializable;
 
 public class User implements Serializable{
+
+    //Version 1 of User
+    private static final long serialVersionUID = -5010634473804816694L;
+
     public Preferences pref;
     private final ArrayList<Location> locations;
     private Location curLocation;

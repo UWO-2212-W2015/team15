@@ -16,6 +16,9 @@ package team15.UserOjects;
 import java.io.Serializable;
 
 public class Location implements Serializable{
+    
+    //Version 1 of Location
+    private static final long serialVersionUID = -6023922766430552215L;
     //Local fields
     private String location;
     private String country;

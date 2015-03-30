@@ -11,6 +11,9 @@ package team15.UserOjects;
 import java.io.Serializable;
 
 public class Preferences implements Serializable{
+
+    private static final long serialVersionUID = 4624299410738972362L;
+    
     //Display properties - True = draw
     public boolean 
               temperature, wind, pressure, humidity, sun, minMaxTemp, sky;
