@@ -146,7 +146,7 @@ public class PreferencesDialog extends JDialog{
         layout.putConstraint(SpringLayout.NORTH, sunChk, 40, 
 			     SpringLayout.NORTH, minMaxChk);
 	layout.putConstraint(SpringLayout.SOUTH, panel, 10, 
-			     SpringLayout.SOUTH, sunChk);
+			     SpringLayout.SOUTH, skyCondChk);
 	layout.putConstraint(SpringLayout.EAST, panel, 10, 
 			     SpringLayout.EAST, sunChk);
         panel.add(sunChk); 
