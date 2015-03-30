@@ -1,8 +1,8 @@
 package team15.WeatherObjects;
 
 /**
- * Holds the forecast data for a given location.
- * 
+ * Container that holds the weather data for a given location. 
+ * The data includes the current weather, and the short and long term forecasts.
  * @author team15
  */
 
@@ -53,6 +53,7 @@ public class LocationWeather implements Serializable{
      * Makes a new LocationWeather object for the given location.
      * @param location the location that the data contained in this object
      * references
+     * @see Location
      */
     public LocationWeather(Location location){
         this.loc = location;
@@ -62,7 +63,7 @@ public class LocationWeather implements Serializable{
         String id = loc.getID();
         this.localURL = prefix + "weather?id=" + id +"&units=metric";
         this.shortURL = prefix + "forecast?id=" + id 
-                + "&mode=json&units=metric";
+	    + "&mode=json&units=metric";
         this.longURL = prefix + "forecast/daily?id=" + id + "&mode=json&units=metric&cnt=8";
         
         current = new Weather(Weather.WeatherType.LOCAL);
@@ -81,10 +82,9 @@ public class LocationWeather implements Serializable{
     }
     
     /**
-     * returns the weather object that represents the current weather at the
-     * given location
-     * @return the weather object that represents the current weather at the
-     * given location
+     * A method to retrieve the current weather based on the Location object
+     * associated with an instance of this class.
+     * @return the weather object that represents the current weather
      */
     public Weather getLocal(){
         return current;
@@ -92,9 +92,10 @@ public class LocationWeather implements Serializable{
     
     /**
      * Returns an array list of weather object that represents the a short term
-     * forecast of the weather at the given location
+     * forecast of the weather for the Location object associated with an instance
+     * of this class.
      * @return an array list of weather object that represents the a short term
-     * forecast of the weather at the given location
+     * forecast
      */
     public Forecast getShortTerm(){
         return shortTerm;
@@ -102,9 +103,10 @@ public class LocationWeather implements Serializable{
     
     /**
      * Returns an array list of weather object that represents the a long term
-     * forecast of the weather at the given location
-     * @return an array list of weather object that represents the a long term
-     * forecast of the weather at the given location 
+     * forecast of the weather for the Location object associated with an instance
+     * of this class.
+     * @return an array list of weather objects that represents the a long term
+     * forecast
      */
     public Forecast getLongTerm(){
         return longTerm;
@@ -112,9 +114,9 @@ public class LocationWeather implements Serializable{
     
     /**
      * Updates all the weather objects contained in the object. If any of them
-     * fail to build none of them are updated and an error will be thrown.
-     * @return A blank string if the weather was updated successfully. An error
-     * message telling.
+     * fail to build none of them are updated.
+     * @return A blank string if the weather was updated successfully otherwise 
+     * an error message describing the error.
      */
     public final String updateForecasts(){        
         Long newRef = System.currentTimeMillis();
@@ -124,7 +126,7 @@ public class LocationWeather implements Serializable{
         if((newRef - current.lastPoll) > REFRESH){
             try{
                 Weather tempC = new Weather(URLToJSON.makeJSON(localURL), 
-                        Weather.WeatherType.LOCAL);
+					    Weather.WeatherType.LOCAL);
                 current = tempC;
             }
             catch(Exception ex){
@@ -135,8 +137,8 @@ public class LocationWeather implements Serializable{
         if((newRef - shortTerm.lastPoll) > REFRESH){
             try{
                 Forecast tempS = new Forecast(URLToJSON.makeJSON(shortURL), 
-                    Weather.WeatherType.SHORTTERM);
-            shortTerm = tempS;
+					      Weather.WeatherType.SHORTTERM);
+		shortTerm = tempS;
             }
             catch(Exception ex){
                 shortTerm.lastPoll = newRef;
@@ -146,8 +148,8 @@ public class LocationWeather implements Serializable{
         if((newRef - longTerm.lastPoll) > REFRESH){
             try{
                 Forecast tempL = new Forecast(URLToJSON.makeJSON(longURL), 
-                    Weather.WeatherType.LONGTERM);
-            longTerm = tempL;
+					      Weather.WeatherType.LONGTERM);
+		longTerm = tempL;
             }
             catch(Exception ex){
                 longTerm.lastPoll = newRef;
@@ -168,7 +170,7 @@ public class LocationWeather implements Serializable{
     
     /**
      * Returns the date of the last time the weather objects were refreshed
-     * @return the date of the last time the weather objects were refreshed
+     * @return a string representing the last time the weather objects were refreshed
      */
     public String getRefresh(){
         Date time = new Date(lastRefresh);
@@ -178,20 +180,20 @@ public class LocationWeather implements Serializable{
     /**
      * Returns the string representation of the object. This is the same as
      * the Location that is contained as a variable in the object.
-     * @return 
+     * @return a string of the location object associated with this forecast
      */
     public String toString(){
         return loc.toString();
     }
     
-     /**
+    /**
      * Saves the LocationWeather object to the cache
      * @throws IOException thrown if there is a problem loading the object
      * @throws FileNotFoundException thrown if the file does not exist
      */
     private void save() throws IOException, FileNotFoundException{
         FileOutputStream fo = 
-                new FileOutputStream("WeatherCache/" + this.loc + ".dat");
+	    new FileOutputStream("WeatherCache/" + this.loc + ".dat");
         ObjectOutputStream out = new ObjectOutputStream(fo);
         out.writeObject(this);
         out.close();
@@ -199,16 +201,15 @@ public class LocationWeather implements Serializable{
     
     /**
      * Loads the LocationWeather object from the cache
-     * @return a user object loaded from the file user.day
      * @throws IOException thrown if there is a problem saving the object
      * @throws FileNotFoundException thrown if the file does not exist
      * @throws ClassNotFoundException thrown if the class LocationWeather is not
      * found
      */
     private void load() throws IOException, FileNotFoundException, 
-                                                         ClassNotFoundException{
+			       ClassNotFoundException{
         FileInputStream fi 
-                = new FileInputStream("WeatherCache/" + this.loc + ".dat");
+	    = new FileInputStream("WeatherCache/" + this.loc + ".dat");
         ObjectInputStream in = new ObjectInputStream(fi);
         LocationWeather cached = (LocationWeather) in.readObject();
         
