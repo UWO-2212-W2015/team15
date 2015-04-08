@@ -121,42 +121,78 @@ public class Weather implements Serializable{
         lastPoll = System.currentTimeMillis();
     }
     
+    /**
+     * Returns the day of the month for this weather object.
+     * @return a string containing the day of the month
+     */
     public String getMonthDay(){
         if(time.value.equals("N/A")) return "N/A";
         return this.time.value.substring(4, 10);
     }
     
+    /**
+     * Returns the time of the day for this weather object.
+     * @return a string containing the time of the day
+     */
     public String getDayTime(){
         if(time.value.equals("N/A")) return "N/A";
         return time.value.substring(0,4)+time.value.substring(11,16);
     }
     
+    /**
+     * Returns the sky condition for this weather object
+     * @return a string containing the sky condition
+     */
     public String getCondition(){
         return this.skyCondition.value;
     }
     
+    /**
+     * Returns the humidity for this weather object
+     * @return a string containing the humidity value
+     */
     public String getHumidity(){
         if(humidity.value.equals("N/A")) return "N/A";
         return this.humidity.value + "%";
     }
     
+    /**
+     * Returns the full date for this weather object
+     * @return a string containing the full date
+     */
     public String getDate(){
         if(time.value.equals("N/A")) return "N/A";
         return this.time.value.substring(0, 10);
     }
     
+    /**
+     * Returns the pressure for this weather object
+     * @return a string containing the pressure value
+     */
     public String getPressure(){
         return this.airPressure.value;
     }
     
+    /**
+     * Returns the sunset time for this weather object
+     * @return a string containing the sunset time
+     */
     public String getSunset(){
         return this.sunset.value;
     }
     
+    /**
+     * Returns the sunrise time for this weather object
+     * @return a string containing the sunrise time
+     */
     public String getSunrise(){
         return this.sunrise.value;
     }
     
+    /**
+     * Returns the wind speed and wind direction for this weather object
+     * @return a string containing the wind speed in m/s and wind direction
+     */
     public String getWind(){
         return this.windSpeed + " m/s " + this.windDirection;
     }
@@ -220,9 +256,9 @@ public class Weather implements Serializable{
     }
     
     /**
-     * Converts a time value returned from OpenWeather into a Date object
+     * Converts the unix time value returned from OpenWeather into a Date object
      * @param t the time value from OpenWeather
-     * @return the full date or time that the given value t represents
+     * @return a string containing the full date or time that the given value t represents
      */
     private static String convertTime(String t){
         if(t.equals("N/A")) return "N/A";
@@ -240,6 +276,9 @@ public class Weather implements Serializable{
         this.airPressure.setValue(Math.round(p) + " kPa");
     }
     
+    /**
+     * Converts the sky condition string into its displayable format
+     */
     private void convertSkyCondition() {
         String[] s = skyCondition.value.split(" ");
         String result = "";
@@ -255,6 +294,9 @@ public class Weather implements Serializable{
         skyCondition.setValue(result);
     }
     
+    /**
+     * Converts the sunrise/sunset time from unix time format to a displayable format
+     */
     private String convertSuntime(String t){
         if(t.equals("N/A")) return "N/A";
         Date date = new Date();
@@ -347,7 +389,7 @@ public class Weather implements Serializable{
    
     /**
      * Converts the given wind direction degree into a cardinal direction or
-     * sub cardinal direct
+     * sub cardinal direction
      * @param d a string representing the direction of the wind in degrees
      * @return a label N, NNE, NE, etc representing the direction the wind is
      * blowing

@@ -39,7 +39,7 @@ public class Location implements Serializable{
      * @param country The country of the location
      * @param city the city/state/province of the location
      * @param id the openweather id of the current weather location
-     * @param gps
+     * @param gps string containing the latitude and longitude of the location
      */
     public Location (String country, String city,  String id, String gps){
     	this.location = city + ", " + country;
@@ -50,7 +50,7 @@ public class Location implements Serializable{
 
     /**
      * Returns the country that the location is in
-     * @return the country that the location is in
+     * @return a string representing the name of the country for this location
      */
     public String getCountry(){
         return this.country;
@@ -58,7 +58,7 @@ public class Location implements Serializable{
     
     /**
      * Returns the OpenWeather location Id for this location
-     * @return the OpenWeather location Id for this location
+     * @return a string representing the OpenWeather location Id for this location
      */
     public String getID(){
         return this.id;

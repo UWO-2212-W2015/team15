@@ -11,7 +11,9 @@ import team15.WeatherObjects.Forecast;
 import team15.WeatherObjects.Weather;
 
 /**
- * A panel that will be used to display the short term data in the OpenWeatherGUI
+ * A panel that will be used to display the short term data in the OpenWeatherGUI.
+ * The short term weather includes 8 panels containing the weather data for the next
+ * 24 hours in 3 hour increments.
  * @author team15
  */
 
@@ -28,12 +30,11 @@ public class ShortTermPanel extends JPanel{
     }
     
     /**
-     * Creates a new JPanel that will display the weather for a long term forecast.
+     * Creates a new JPanel that will display the short term forecast.
      * @param f a forecast object that contains a list of weather objects containing
      *        the short term forecast data
      * @param u a boolean value that determines which temperature units to display.
      *        True = celsius, False = fahrenheit
-     * @see Forecast
      */
     
     public ShortTermPanel(Forecast f, boolean u){
@@ -63,10 +64,9 @@ public class ShortTermPanel extends JPanel{
     
     /**
      * A method for creating a small panel that contains the weather data for
-     * a particular time.
+     * a particular instance of time.
      * @param w a weather object that contains the data to be displayed in the panel
-     * @return result a Jpanel for the Short term forecast.
-     * @see Weather
+     * @return a Jpanel containing the weather data for a particular time.
      */
     private JPanel makeCard(Weather w){
         JPanel result = new JPanel();
@@ -110,7 +110,7 @@ public class ShortTermPanel extends JPanel{
      * @param s a string for the label.
      * @param size the font size.
      * @param type the font type.
-     * @return result a JLabel for the Short Term forecast panel.
+     * @return a JLabel for the Short Term forecast panel.
      */
     private JLabel makeLabel(String s, int size, int type){
         JLabel result = new JLabel(s);

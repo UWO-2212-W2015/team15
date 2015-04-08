@@ -9,7 +9,7 @@ package team15.GUI;
  * 
  * Views supported are a local view with a customizable display, a short term
  * forecast over 24h in 3h increments, and a long term forecast that is daily
- * over 8 days.
+ * over 5 days.
  * 
  * @author team15
  */
@@ -41,7 +41,8 @@ public class OpenWeatherGUI extends JFrame{
     private static LocationWeather locWeather;
     private static JPanel view;
     /**
-     * The main GUI window class for the OpenWeather API program.
+     * Initializesthe main GUI window for the weather application, including the menu bar,
+     * default window size and location, and the panels for the different weather formats.
      */
     public OpenWeatherGUI(){
         super();

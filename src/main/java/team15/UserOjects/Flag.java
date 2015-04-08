@@ -4,8 +4,8 @@ import java.io.Serializable;
 import javax.swing.ImageIcon;
 
 /**
- * The Flag Class specifies the characteristics of a flag object.
- * Through its information is possible to load the flags for each location.
+ * The Flag Class specifies the characteristics of a flag object, including the 
+ * name of the flag (country) and an image of the corresponding flag.
  * 
  * @author team15
  */
@@ -29,7 +29,7 @@ public class Flag implements Serializable{
 	
 	/**
      * Returns the image of the flag. 
-     * @return flagImage the image of the flag.
+     * @return the image of the flag.
      */
 	public ImageIcon getImage(){
 		return flagImage;
@@ -37,7 +37,7 @@ public class Flag implements Serializable{
 	
 	/**
      * Returns the name of the flag. 
-     * @return flagName the name of the flag.
+     * @return the name of the flag.
      */
 	public String getName(){
 		return flagName;

@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class URLToJSON{
     /**
      * Makes a JSON object from the data at the given url
-     * @param url the target url from which to poll data
+     * @param url the target url from which to pull data
      * @return a JSON object made from the data at the target url
      * @throws MalformedURLException thrown if the given url is improperly 
      * constructed

@@ -24,7 +24,7 @@ public class WeatherValue implements Serializable{
     
     /**
      * Makes a new WeatherValue holding the given string v
-     * @param v the string to store in the object
+     * @param the string to store in the object
      */
     public WeatherValue(String v){
         value = v;

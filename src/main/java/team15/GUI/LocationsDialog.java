@@ -72,7 +72,7 @@ public class LocationsDialog extends JDialog{
      * list and their current location.  The user can add or remove locations
      * from their location list or change which location is their current
      * location
-     * @param u the user object
+     * @param u The user object, containing their persistent list of locations.
      */
     public LocationsDialog(User u){
         super(new JFrame(), "Location List", true);

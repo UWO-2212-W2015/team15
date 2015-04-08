@@ -369,7 +369,7 @@ public class LocalPanel extends JPanel{
     
     /**
      * Makes a new Jpanel that has two aligned Jlabels with width offset
-     * @param label the label of the value
+     * @param label text to be contained in the JLabel
      * @param value the value to be displayed
      * @param offset the total size of the JPanel
      * @param size the size of the font

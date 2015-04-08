@@ -31,7 +31,6 @@ public class LongTermPanel extends JPanel{
      *        the long term forecast data
      * @param u a boolean value that determines which temperature units to display.
      *        True = celsius, False = fahrenheit
-     * @see Forecast
      */
     public LongTermPanel(Forecast f, boolean u){
         super();
@@ -64,8 +63,7 @@ public class LongTermPanel extends JPanel{
      * A method for creating a small panel that contains the weather data for
      * a particular time.
      * @param w a weather object that contains the data to be displayed in the panel
-     * @return result a JPanel for the LongTerm forecast.
-     * @see Weather
+     * @return a formatted JPanel containing the weather for a particular time
      */
     private JPanel makeCard(Weather w){
         JPanel result = new JPanel();
@@ -128,7 +126,7 @@ public class LongTermPanel extends JPanel{
      * @param s a string for the label.
      * @param size the font size.
      * @param type the font type.
-     * @return result a JLabel for the Long Term panel.
+     * @return a JLabel for the Long Term panel.
      */
     private JLabel makeLabel(String s, int size, int type){
         JLabel result = new JLabel(s);

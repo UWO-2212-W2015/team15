@@ -2,10 +2,7 @@ package team15.UserOjects;
 
 /**
  * The User object provides an api to interact with the underlying
- * weather application.  Users are identified by a unique name
- * to be provided when initialized.  Each user's preferences and location
- * are stored between program runs.
- *
+ * weather application.
  * @author team15
  */
 
@@ -39,7 +36,7 @@ public class User implements Serializable{
     
     /**
      * Returns the list of locations that are saved to this user. When dealing
-     * with this list order should be preserved as the indexes are important
+     * with this list the order should be preserved as the indices are important
      * to the add and remove functions
      * @return the list of locations that are saved to this user
      */
@@ -70,7 +67,7 @@ public class User implements Serializable{
     /**
      * Adds a location to the location list for this user
      * @param location the string that represents the location 
-     * @return true is the location was added
+     * @return true if the location was added, false otherwise
      */
     public final boolean addLocation(Location location){
         //Check if the location is already in the list
@@ -98,7 +95,7 @@ public class User implements Serializable{
     /**
      * removes the location from the list of locations
      * @param location the location object to be removed
-     * @return true if the object is remove, false otherwise
+     * @return true if the object was removed, false otherwise
      */
     public boolean removeLocation(Location location){
     	return locations.remove(location);

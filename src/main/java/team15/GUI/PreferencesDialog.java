@@ -1,8 +1,8 @@
 package team15.GUI;
 
 /**
- * A dialog window that allows the user to edit the display settings of the
- * program
+ * A dialog window that allows the user to configure the local weather display
+ * and temperature preferences.
  * 
  * @author team15
  */
@@ -273,7 +273,7 @@ public class PreferencesDialog extends JDialog{
     }
 
     /**
-     * Returns weather the settings were successfully updated by the dialog
+     * Returns whether the settings were successfully updated by the dialog
      * @return True if the settings were updated, False if there was a problem
      * saving the settings
      */
