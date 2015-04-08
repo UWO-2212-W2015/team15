@@ -296,6 +296,8 @@ public class Weather implements Serializable{
     
     /**
      * Converts the sunrise/sunset time from unix time format to a displayable format
+     *@param t unix sunrise/sunset time
+     *@return date a displayable format
      */
     private String convertSuntime(String t){
         if(t.equals("N/A")) return "N/A";
